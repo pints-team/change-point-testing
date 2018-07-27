@@ -2,16 +2,21 @@
 
 import pfunk
 
-fname = 'test.txt'
+if False:
+    fname = 'test.txt'
 
-w = pfunk.io.ResultWriter(fname, overwrite=True)
-w['x'] = 5
-w['y'] = 6
-print(w)
-w.write()
+    w = pfunk.io.ResultWriter(fname, overwrite=True)
+    w['x'] = 5
+    w['y'] = 6
+    print(w)
+    w.write()
 
-r = pfunk.io.ResultReader(fname)
-print(len(r))
-print(r['x'])
-print(r['y'])
-print(r)
+    r = pfunk.io.ResultReader(fname)
+    print(len(r))
+    print(r['x'])
+    print(r['y'])
+    print(r)
+
+if True:
+    print(pfunk.git.pints_hash())
+

@@ -65,9 +65,9 @@ class FunctionalTest(object):
         w['status'] = 'unitialised'
         w['date'] = date
         w['name'] = name
-        w['python'] = pfunk.PYTHON
-        #w['pints'] =
-        #TODO: Pints version, Pints commit hash
+        w['python'] = pfunk.PYTHON_VERSION
+        w['pints'] = pfunk.PINTS_VERSION
+        w['pints_commit'] = pfunk.PINTS_COMMIT
 
         # Run test
         try:
