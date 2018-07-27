@@ -2,7 +2,9 @@
 
 This repository will be used to house functional tests of Pints algorithms, that go beyond unit testing, and typically take longer to run.
 
-## To-do
+**At the moment, there is no service that runs these tests, even though we are setting it up so that we can start using one soon. However, it's perfectly possible for everyone to run tests locally and then commit the results to the git repo.**
+
+## Urgent to-do
 
 - [x] Result file reader and writer
 - [x] Test class
@@ -10,6 +12,7 @@ This repository will be used to house functional tests of Pints algorithms, that
 - [x] List of tests, test last run file reading/writing
 - [x] Analysis class: reads several results for 1 test
 - [x] Plot based on analysis class
+- [ ]
 
 ## How it works
 
