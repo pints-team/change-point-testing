@@ -5,44 +5,60 @@ This repository will be used to house functional tests of Pints algorithms, that
 ## To-do
 
 - [x] Result file reader and writer
-- [ ] Test class
-- [ ] Example test
-- [ ] List of tests, test last run file reading/writing
-- [ ] Analysis class: reads several results for 1 test
-- [ ] Plot based on analysis class
+- [x] Test class
+- [x] Example test
+- [x] List of tests, test last run file reading/writing
+- [x] Analysis class: reads several results for 1 test
+- [x] Plot based on analysis class
 
-## Preliminary design
+## How it works
 
-- Test
-    - Instance of a Test class. Probably some tests will be specific, others will be instances of the same class. For example, we could use a similar test for several optimisation methods / problems.
-    - Each _instance_ should have a unique name
-    
-- When run, each test should produce:
-    - a log (e.g. the method's `log_to_file`)
-    - a file with lots of output, in some yet-to-be-determined format. Example entries include datetime, name of the test, the random seed used, the commit hash of the current pints version
+### Running tests
 
-- Plotting
-    - We should add a script that (uses a library that) can read these 2nd files, and create plots of various quantities, over time.
+- Use `./funk -t test_name` to run a test.
+- This will create a result file in `results`, and possibly a log file in `logs`.
+- To see a list of tests, use `./funk --list`.
+- Use `./funk --next` to run the next test in line. This is determined by looking at the result files and seeing which test hasn't been run for the longest time.
 
-- Warnings / reporting
+### Adding tests
+
+- Add a test to the `tests` module, and then add it to `tests.py` so that the framework can find it.
+- Write any results (int, floats, strings, or numpy arrays) to the result object.
+- Write any pints logs to the given log path (e.g. `opt.set_log_to_file(log_path)`).
+
+Some details:
+- The internal pints repo is reloaded before every test is run, and the version number and commit hash are automatically added to the results object.
+- The numpy random generator is seeded before every tests is run, and the seed is automatically added to the results object.
+- If the test passes successfully, please set `status=passed` in the results object.
+
+### Creating plots
+
+- Use `./funk -p plot_name` to run a plot.
+- This will create a file in `plots`.
+- To see a list of plots, use `./funk --plots`.
+
+### Adding plots
+
+- Add a plot to the `plots` module, and then add it to `plots.py` so that the framework can find it
+- For plots of a single test, a results object will be passed in that provides access to all logged entries of a particular result. For example, if the test stores a value `x` the result object for plotting can be used as `result[x]` to obtain a tuple `times, values` where `times` are all the times where `x` was logged and `values` are all logged `x` values.
+
+### Installing
+
+- To install, use `pip install -r requirements`. This makes sure you have all the dependencies you know.
+
+
+## To-do
+
+- Reporting
     - Eventually, if everything works well, we can build something that emails us if the results drop and stay low for a couple of runs. Instead of emailing we could also just use the cmd line return value to indicate a failure.
     - I think it'd be best to have this analysis separate from the running of the tests, so for them a failure would be an exception occurring.
- 
+    
 - Travis
-    - Travis is for testing. This is testing, so should be ok? Can't see anything in the user agreement that says this would be wrong (bitcoing mining is explicitly not allowed).
-    - We need to add a list of tests, and then a file somewhere saying which test was last run, plus a script that will then start on the next test. This way, every time the script is run the next test is started.
-    
-- Pints
-    - We should probably have a local pints in this project, and git pull before every test is run. There's several git python packages. [GitPython](https://github.com/gitpython-developers/GitPython/graphs/contributors) currently seems best, and is what we're using for the web lab.
- 
-- Seeding
-    - Before running each test, we should generate a random seed, and then use this to seed the random generator. This means that we can reproduce the 
-    
-- Infra
-    - Don't think this should be pip-installable, but a requirements.txt would be nice so that we can install dependencies using `pip install -r requirements.txt`.
+    - Travis is for testing. This is testing, so should be ok? Can't see anything in the user agreement that says this would be wrong (bitcoing mining is explicitly not allowed).   
     
 - Storing data
     - I'd like to do everything disk based (inlcuding the current 'status') etc. This makes it easy to do things in a distributed way! For example, we could run a few tests offline
+    - **We need to use GitPython to git pull the test repo itself before every run (tricky?), and then commit the `results` and `logs` after each run.
     
 - Timing
     - We should log evaluations, and iterations, but _not_ run-time.
