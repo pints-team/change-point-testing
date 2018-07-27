@@ -90,14 +90,3 @@ class FunctionalTest(object):
             log.info('Writing result to ' + w.filename())
             w.write()
 
-
-
-
-
-
-
-
-
-
-
-#

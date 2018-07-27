@@ -24,18 +24,22 @@ def run_next_test():
     """
     Runs the next test.
     """
+    import pfunk.io
     import pfunk.tests
-
-    print('NEXT')
+    next = pfunk.io.find_next_test()
+    pfunk.tests.run(next)
 
 
 def show_test_list():
     """
     Shows the list of tests.
     """
-    import pfunk.tests
-    for test in pfunk.tests.tests():
-        print('  ' + test)
+    import pfunk.io
+    dates = pfunk.io.find_test_dates()
+    w = 1 + max([len(k) for k in dates.keys()])
+    for test in sorted(dates.items(), key=lambda x: x[1]):
+        name, date = test
+        print(name + ' ' * (w - len(name)) + pfunk.date(date))
 
 
 def main():

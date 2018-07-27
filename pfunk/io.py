@@ -11,8 +11,11 @@ from __future__ import print_function, unicode_literals
 
 import os
 import re
+import time
 import logging
 import numpy as np
+
+import pfunk
 
 # String types in Python 2 and 3
 try:
@@ -168,6 +171,7 @@ class ResultReader(object):
         # Get logger
         log = logging.getLogger(__name__)
 
+        # Parse file
         with open(self._filename, 'r') as f:
             for k, line in enumerate(f):
 
@@ -243,8 +247,50 @@ class ResultReader(object):
             [k + ': ' + str(v) for k, v in sorted(self._data.items())])
 
 
+def find_test_dates():
+    """
+    Scans the results directory, and returns a dict mapping test names to the
+    time (a ``time.struct_time``) when they were last run.
+    """
+    # Get logger
+    log = logging.getLogger(__name__)
 
+    # Get a list of available tests and the date they were last run
+    import pfunk.tests
+    dates = {}
+    for name in pfunk.tests.tests():
+        dates[name] = None
 
+    # Find all result files
+    for path in os.listdir(pfunk.DIR_RESULT):
+
+        # Attempt to read filename as test result
+        base, ext = os.path.splitext(path)
+        parts = base.split('-', 1)
+        if len(parts) != 2:
+            log.info('Skipping file in results dir ' + path)
+            continue
+        name, date = parts
+
+        # Skip unknown tests
+        if name not in dates:
+            continue
+
+        # Attempt to parse date
+        date = time.strptime(date, pfunk.DATE_FORMAT)
+        last = dates[name]
+        if last is None or date > last:
+            dates[name] = date
+
+    return dates
+
+def find_next_test():
+    """
+    Scans the results directory, and returns the test that hasn't been run for
+    the longest.
+    """
+    dates = find_test_dates()
+    return min(dates, key=dates.get)
 
 
 

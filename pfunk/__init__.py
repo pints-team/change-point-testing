@@ -41,9 +41,11 @@ if not os.path.isdir(DIR_RESULT):
 # Date formatting
 DATE_FORMAT = '%Y-%m-%d-%H:%M:%S'
 
-def date():
-    return time.strftime(DATE_FORMAT)
-
+def date(when=None):
+    if when:
+        return time.strftime(DATE_FORMAT, when)
+    else:
+        return time.strftime(DATE_FORMAT)
 
 # Python version
 PYTHON_VERSION = sys.version.replace('\n', '')
