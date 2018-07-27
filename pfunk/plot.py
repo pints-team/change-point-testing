@@ -54,7 +54,7 @@ class SingleTestPlot(FunctionalTestPlot):
         """
         # Create logger for _global_ console/file output
         log = logging.getLogger(__name__)
-        log.info('Running test: ' + self.name())
+        log.info('Running plot: ' + self.name())
 
         # Load test results
         results = pfunk.io.find_test_results(self._test_name)

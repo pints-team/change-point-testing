@@ -50,6 +50,15 @@ def run_named_plot(name):
     pfunk.plots.run(name)
 
 
+def run_all_plots():
+    """
+    Runs all plots.
+    """
+    import pfunk.plots
+    for name in pfunk.plots.plots():
+        pfunk.plots.run(name)
+
+
 def show_plot_list():
     """
     Shows the list of plots.
@@ -93,6 +102,11 @@ def main():
         action='store_true',
         help='Show a list of plots that can be run',
     )
+    parser.add_argument(
+        '--allplots',
+        action='store_true',
+        help='Run all plots',
+    )
 
     # Parse!
     args = parser.parse_args()
@@ -106,6 +120,8 @@ def main():
         run_named_test(args.t[0])
     elif args.p:
         run_named_plot(args.p[0])
+    elif args.allplots:
+        run_all_plots()
     else:
         parser.print_help()
 
