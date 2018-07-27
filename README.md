@@ -12,7 +12,10 @@ This repository will be used to house functional tests of Pints algorithms, that
 - [x] List of tests, test last run file reading/writing
 - [x] Analysis class: reads several results for 1 test
 - [x] Plot based on analysis class
-- [ ]
+- [ ] Add a functional test and plot for 1 optimiser
+- [ ] Add functional tests and plots for all optimisers
+- [ ] Add a functional test and plot for 1 sampler
+- [ ] Add functional tests and plots for all samplers
 
 ## How it works
 
