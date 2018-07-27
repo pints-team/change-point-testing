@@ -42,6 +42,23 @@ def show_test_list():
         print(name + ' ' * (w - len(name)) + pfunk.date(date))
 
 
+def run_named_plot(name):
+    """
+    Runs the plot ``name``.
+    """
+    import pfunk.plots
+    pfunk.plots.run(name)
+
+
+def show_plot_list():
+    """
+    Shows the list of plots.
+    """
+    import pfunk.plots
+    for k in pfunk.plots.plots():
+        print('  ' + k)
+
+
 def main():
     # Set up argument parsing
     parser = argparse.ArgumentParser(
@@ -49,26 +66,46 @@ def main():
     )
 
     # Run next in line
-    parser.add_argument('test_name', nargs='?')
+    parser.add_argument(
+        '-t',
+        metavar='test_name',
+        nargs=1,
+        help='Run a specific test',
+    )
+    parser.add_argument(
+        '-p',
+        metavar='plot_name',
+        nargs=1,
+        help='Run a specific plot',
+    )
     parser.add_argument(
         '--next',
         action='store_true',
         help='Run the next test in line.',
-        )
+    )
     parser.add_argument(
         '--list',
         action='store_true',
         help='Show a list of tests that can be run',
-        )
+    )
+    parser.add_argument(
+        '--plots',
+        action='store_true',
+        help='Show a list of plots that can be run',
+    )
 
     # Parse!
     args = parser.parse_args()
     if args.list:
         show_test_list()
+    elif args.plots:
+        show_plot_list()
     elif args.next:
         run_next_test()
-    elif args.test_name:
-        run_named_test(args.test_name)
+    elif args.t:
+        run_named_test(args.t[0])
+    elif args.p:
+        run_named_plot(args.p[0])
     else:
         parser.print_help()
 

@@ -10,29 +10,10 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import os
-import re
 
 import pfunk
 import logging
-
-
-# Test-name format regex
-NAME_FORMAT = re.compile(r'^[a-zA-Z]\w*$')
-
-
-def unique_path(path):
-    """
-    Returns a unique path equal or similar to the given one.
-    """
-    if not os.path.exists(path):
-        return path
-    base, ext = path.splitext()
-    base += '-'
-    i = 2
-    while os.path.exists(path):
-        path = base + str(i) + ext
-        i += 1
-    return path
+import numpy as np
 
 
 class FunctionalTest(object):
@@ -42,7 +23,7 @@ class FunctionalTest(object):
 
     def __init__(self, name):
         name = str(name)
-        if NAME_FORMAT.match(name) is None:
+        if pfunk.NAME_FORMAT.match(name) is None:
             raise ValueError('Invalid test name: ' + name)
         self._name = name
 
@@ -54,12 +35,16 @@ class FunctionalTest(object):
 
     def run(self):
         """ Runs this test and logs the output. """
-        # Prepare to run
-        pfunk.prepare_pints()
-
         # Create logger for _global_ console/file output
         log = logging.getLogger(__name__)
         log.info('Running test: ' + self.name())
+
+        # Prepare to run
+        pfunk.prepare_pints()
+
+        # Seed numpy random generator, so that we know the value
+        seed = np.random.randint(2**32)    # Numpy says max seed is 2**32 - 1
+        np.random.seed(seed)
 
         # Create test name
         date = pfunk.date()
@@ -67,8 +52,8 @@ class FunctionalTest(object):
 
         # Get path to log and result files
         base = name + '-' + date + '.txt'
-        log_path = unique_path(os.path.join(pfunk.DIR_LOG, base))
-        res_path = unique_path(os.path.join(pfunk.DIR_RESULT, base))
+        log_path = pfunk.io.unique_path(os.path.join(pfunk.DIR_LOG, base))
+        res_path = pfunk.io.unique_path(os.path.join(pfunk.DIR_RESULT, base))
 
         # Create result writer
         w = pfunk.io.ResultWriter(res_path)
@@ -78,6 +63,7 @@ class FunctionalTest(object):
         w['python'] = pfunk.PYTHON_VERSION
         w['pints'] = pfunk.PINTS_VERSION
         w['pints_commit'] = pfunk.PINTS_COMMIT
+        w['seed'] = seed
 
         # Run test
         try:

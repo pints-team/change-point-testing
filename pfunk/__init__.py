@@ -10,6 +10,7 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import os
+import re
 import sys
 import time
 import logging
@@ -25,6 +26,7 @@ log.info('Loading Pints Functional Testing.')
 DIR_PFUNK = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 DIR_LOG = os.path.join(DIR_PFUNK, 'logs')
 DIR_RESULT = os.path.join(DIR_PFUNK, 'results')
+DIR_PLOT = os.path.join(DIR_PFUNK, 'plot')
 DIR_PINTS_REPO = os.path.join(DIR_PFUNK, 'pints')
 DIR_PINTS_MODULE = os.path.join(DIR_PINTS_REPO, 'pints')
 
@@ -36,6 +38,9 @@ if not os.path.isdir(DIR_LOG):
 if not os.path.isdir(DIR_RESULT):
     log.info('Creating result dir: ' + DIR_RESULT)
     os.makedirs(DIR_RESULT)
+if not os.path.isdir(DIR_PLOT):
+    log.info('Creating plot dir: ' + DIR_PLOT)
+    os.makedirs(DIR_PLOT)
 
 
 # Date formatting
@@ -46,6 +51,11 @@ def date(when=None):
         return time.strftime(DATE_FORMAT, when)
     else:
         return time.strftime(DATE_FORMAT)
+
+
+# Test and plot name format (in regex form)
+NAME_FORMAT = re.compile(r'^[a-zA-Z]\w*$')
+
 
 # Python version
 PYTHON_VERSION = sys.version.replace('\n', '')
@@ -82,4 +92,7 @@ def prepare_pints():
 
 # Import test class
 from .test import FunctionalTest
+
+# Import plot classes
+from .plot import FunctionalTestPlot, SingleTestPlot
 

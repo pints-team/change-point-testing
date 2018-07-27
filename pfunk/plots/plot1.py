@@ -1,5 +1,5 @@
 #
-# Fake test 2
+# Fake plot for fake test 1
 #
 # This file is part of Pints Functional Testing.
 #  Copyright (c) 2017-2018, University of Oxford.
@@ -9,18 +9,22 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
-import numpy as np
+import matplotlib.pyplot as plt
 
 import pfunk
 
 
-class Test2(pfunk.FunctionalTest):
+class Test1Plot(pfunk.SingleTestPlot):
 
     def __init__(self):
-        super(Test2, self).__init__('test2')
+        super(Test1Plot, self).__init__('test1_plot', 'test1')
 
-    def _run(self, result, log_path):
+    def _plot(self, results, plot_path):
 
-        result['y'] = 2 + np.random.uniform(-0.5, 0.5)
-        result['status'] = 'done'
+        x, y = results['y']
 
+        f = plt.figure()
+        plt.xlabel('Index')
+        plt.ylabel('Y')
+        plt.plot(y)
+        plt.savefig(plot_path)

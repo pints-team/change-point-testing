@@ -9,6 +9,8 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
+import numpy as np
+
 import pfunk
 
 
@@ -18,6 +20,7 @@ class Test3(pfunk.FunctionalTest):
         super(Test3, self).__init__('test3')
 
     def _run(self, result, log_path):
-        print('Running ' + self.name())
+
+        result['y'] = 3 + np.random.uniform(-0.5, 0.5)
         result['status'] = 'done'
 

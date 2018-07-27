@@ -37,6 +37,21 @@ FLOAT_FORMAT = '{: .17e}'
 RESULT_KEY = re.compile(r'^[a-zA-Z]\w*$')
 
 
+def unique_path(path):
+    """
+    Returns a unique path equal or similar to the given one.
+    """
+    if not os.path.exists(path):
+        return path
+    base, ext = path.splitext()
+    base += '-'
+    i = 2
+    while os.path.exists(path):
+        path = base + str(i) + ext
+        i += 1
+    return path
+
+
 def clean_filename(filename):
     """ Tidies up a filename and returns it. """
     filename = str(filename)  # Separate line for nicer debugging if this fails
@@ -247,6 +262,55 @@ class ResultReader(object):
             [k + ': ' + str(v) for k, v in sorted(self._data.items())])
 
 
+class ResultSet(object):
+    """
+    Container for ResultReaders for the same test.
+
+    Data can be obtained from a ResultSet using::
+
+        x = ResultSet(result_files)
+        dates, values = x['score']
+
+    """
+    def __init__(self, result_files):
+        self._result_files = result_files
+        self._result_files.sort()
+
+        self._result_readers = None
+        self._cached = {}
+
+    def _read(self):
+        """ Reads all result files. """
+        self._result_readers = [ResultReader(x) for x in self._result_files]
+
+    def __getitem__(self, key):
+
+        try:
+            # Attempt to use cached version
+            return self._cached[key]
+
+        except KeyError:
+            # Read result files if not yet done
+            if self._result_readers is None:
+                self._read()
+
+            # Gather data
+            dates = []
+            values = []
+            for reader in self._result_readers:
+                try:
+                    date = reader['date']
+                    value = reader[key]
+                except KeyError:
+                    continue
+                dates.append(date)
+                values.append(value)
+
+            # Cache data and return
+            self._cached[key] = (dates, values)
+            return dates, values
+
+
 def find_test_dates():
     """
     Scans the results directory, and returns a dict mapping test names to the
@@ -284,6 +348,7 @@ def find_test_dates():
 
     return dates
 
+
 def find_next_test():
     """
     Scans the results directory, and returns the test that hasn't been run for
@@ -293,6 +358,26 @@ def find_next_test():
     return min(dates, key=dates.get)
 
 
+def find_test_results(test_name):
+    """
+    Returns a ResultSet for the given ``test_name``.
+    """
+    # Find all result files
+    results = []
+    for path in os.listdir(pfunk.DIR_RESULT):
+
+        # Attempt to read filename as test result
+        base, ext = os.path.splitext(path)
+        parts = base.split('-', 1)
+        if len(parts) != 2:
+            continue
+        name, date = parts
+
+        # Skip other tests
+        if name == test_name:
+            results.append(os.path.join(pfunk.DIR_RESULT, path))
+
+    return ResultSet(results)
 
 
 
