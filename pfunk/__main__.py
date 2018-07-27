@@ -11,21 +11,31 @@ from __future__ import print_function, unicode_literals
 
 import argparse
 
-import pfunk
-
 
 def run_named_test(name):
     """
     Runs the test ``name``.
     """
-    print('EXPLICIT ' + name)
+    import pfunk.tests
+    pfunk.tests.run(name)
 
 
 def run_next_test():
     """
     Runs the next test.
     """
+    import pfunk.tests
+
     print('NEXT')
+
+
+def show_test_list():
+    """
+    Shows the list of tests.
+    """
+    import pfunk.tests
+    for test in pfunk.tests.tests():
+        print('  ' + test)
 
 
 def main():
@@ -36,11 +46,22 @@ def main():
 
     # Run next in line
     parser.add_argument('test_name', nargs='?')
-    parser.add_argument('--next', action='store_true')
+    parser.add_argument(
+        '--next',
+        action='store_true',
+        help='Run the next test in line.',
+        )
+    parser.add_argument(
+        '--list',
+        action='store_true',
+        help='Show a list of tests that can be run',
+        )
 
     # Parse!
     args = parser.parse_args()
-    if args.next:
+    if args.list:
+        show_test_list()
+    elif args.next:
         run_next_test()
     elif args.test_name:
         run_named_test(args.test_name)

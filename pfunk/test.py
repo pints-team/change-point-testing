@@ -54,6 +54,9 @@ class FunctionalTest(object):
 
     def run(self):
         """ Runs this test and logs the output. """
+        # Prepare to run
+        pfunk.prepare_pints()
+
         # Create logger for _global_ console/file output
         log = logging.getLogger(__name__)
         log.info('Running test: ' + self.name())

@@ -58,19 +58,24 @@ from . import io
 from . import git
 
 
-# Ensure pints is up to date
-git.pints_refresh()
+# Pints version and repo
+PINTS_COMMIT = PINTS_VERSION = None
 
+def prepare_pints():
+    """ Makes sure Pints is up to date. Should be run before testing. """
+    global PINTS_COMMIT, PINTS_VERSION
 
-# Get Pints commit hash from git module
-PINTS_COMMIT = git.pints_hash()
+    # Ensure pints is up to date
+    if PINTS_COMMIT is None:
+        git.pints_refresh()
+        PINTS_COMMIT = git.pints_hash()
 
-
-# Get Pints version from local repo
-sys.path.insert(0, DIR_PINTS_REPO)
-import pints
-assert pints.__path__[0] == DIR_PINTS_MODULE
-PINTS_VERSION = pints.version(formatted=True)
+    # Get Pints version from local repo
+    if PINTS_VERSION is None:
+        sys.path.insert(0, DIR_PINTS_REPO)
+        import pints
+        assert pints.__path__[0] == DIR_PINTS_MODULE
+        PINTS_VERSION = pints.version(formatted=True)
 
 
 # Import test class
