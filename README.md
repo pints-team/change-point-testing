@@ -2,9 +2,16 @@
 
 This repository will be used to house functional tests of Pints algorithms, that go beyond unit testing, and typically take longer to run.
 
-## How does it work?
+## To-do
 
-Preliminary design
+- [x] Result file reader and writer
+- [ ] Test class
+- [ ] Example test
+- [ ] List of tests, test last run file reading/writing
+- [ ] Analysis class: reads several results for 1 test
+- [ ] Plot based on analysis class
+
+## Preliminary design
 
 - Test
     - Instance of a Test class. Probably some tests will be specific, others will be instances of the same class. For example, we could use a similar test for several optimisation methods / problems.
@@ -40,3 +47,4 @@ Preliminary design
 - Timing
     - We should log evaluations, and iterations, but _not_ run-time.
     - Two reasons: 1. Benchmarking is very hard, and we can't benchmark on testing machines (which are slow and whose performance varies hugely over time). 2. It'd stop us from being able to add data from different machines.
+
