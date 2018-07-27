@@ -1,0 +1,3 @@
+#!/usr/bin/env python3
+from pfunk.__main__ import main
+main()

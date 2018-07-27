@@ -1,0 +1,6 @@
+date: "2018-07-27-14:52:49"
+name: "test1_with_underscores"
+pints: "Pints 0.0.1"
+pints_commit: "78f1f1cd01812a192f88cf65648974987f34b085"
+python: "3.6.6 (default, Jul 19 2018, 14:25:17) [GCC 8.1.1 20180712 (Red Hat 8.1.1-5)]"
+status: "done"

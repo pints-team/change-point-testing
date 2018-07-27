@@ -11,6 +11,7 @@ from __future__ import print_function, unicode_literals
 
 import os
 import sys
+import time
 import logging
 
 
@@ -45,7 +46,6 @@ def date():
 
 
 # Python version
-import sys
 PYTHON_VERSION = sys.version.replace('\n', '')
 
 

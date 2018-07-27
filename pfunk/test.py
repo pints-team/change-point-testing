@@ -9,16 +9,18 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
+import os
 import re
 
 import pfunk
+import logging
 
 
 # Test-name format regex
 NAME_FORMAT = re.compile(r'^[a-zA-Z]\w*$')
 
 
-def unique_path(self, path):
+def unique_path(path):
     """
     Returns a unique path equal or similar to the given one.
     """
@@ -52,11 +54,16 @@ class FunctionalTest(object):
 
     def run(self):
         """ Runs this test and logs the output. """
+        # Create logger for _global_ console/file output
+        log = logging.getLogger(__name__)
+        log.info('Running test: ' + self.name())
+
+        # Create test name
         date = pfunk.date()
         name = self.name()
 
         # Get path to log and result files
-        base = date + '-' + name + '.txt'
+        base = name + '-' + date + '.txt'
         log_path = unique_path(os.path.join(pfunk.DIR_LOG, base))
         res_path = unique_path(os.path.join(pfunk.DIR_RESULT, base))
 
@@ -73,9 +80,11 @@ class FunctionalTest(object):
         try:
             self._run(w, log_path)
         except Exception:
+            log.error('Exception in test: ' + self.name())
             w['status'] = 'failed'
             raise
         finally:
+            log.info('Writing result to ' + w.filename())
             w.write()
 
 

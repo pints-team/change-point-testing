@@ -1,5 +1,5 @@
 #
-# Fake test 1
+# Fake test 3
 #
 # This file is part of Pints Functional Testing.
 #  Copyright (c) 2017-2018, University of Oxford.
@@ -12,10 +12,10 @@ from __future__ import print_function, unicode_literals
 import pfunk
 
 
-class Test1(pfunk.FunctionalTest):
+class Test3(pfunk.FunctionalTest):
 
     def __init__(self):
-        super(Test1, self).__init__('test1')
+        super(Test3, self).__init__('test3')
 
     def _run(self, result, log_path):
         print('Running ' + self.name())

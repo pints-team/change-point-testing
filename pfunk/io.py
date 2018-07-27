@@ -135,6 +135,10 @@ class ResultWriter(object):
     def __str__(self):
         return '\n'.join([k + ': ' + v for k, v in sorted(self._data.items())])
 
+    def filename(self):
+        """ Returns this ResultWriter's filename. """
+        return self._filename
+
 
 class ResultReader(object):
     """
@@ -161,8 +165,7 @@ class ResultReader(object):
 
     def _parse(self):
         """ Reads the data file, stores the key-value pairs. """
-        # Set up logging
-        logging.basicConfig()
+        # Get logger
         log = logging.getLogger(__name__)
 
         with open(self._filename, 'r') as f:

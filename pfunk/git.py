@@ -11,8 +11,8 @@ from __future__ import print_function, unicode_literals
 
 #import os
 #import sys
-import logging
 import git
+import logging
 
 import pfunk
 
@@ -28,7 +28,6 @@ def pints_refresh():
     """
     Updates the local pints repo.
     """
-    logging.basicConfig()
     log = logging.getLogger(__name__)
     log.info('Perfoming git pull')
 
