@@ -102,6 +102,32 @@ class FunctionalTestGroup(AbstractFunctionalTest):
 
     def run(self):
         """ Runs this group of tests. """
-        for test in self._tests:
-            test.run()
+        # Create logger for _global_ console/file output
+        log = logging.getLogger(__name__)
+        log.info('Running test group: ' + self.name())
+
+        # Create test name
+        date = pfunk.date()
+        name = self.name()
+
+        res_path = pfunk.unique_path(os.path.join(
+            pfunk.DIR_RESULT, name + '-' + date + '.txt'))
+
+        # Create result writer
+        w = pfunk.ResultWriter(res_path)
+        w['status'] = 'unitialised'
+        w['date'] = date
+        w['name'] = name
+
+        # Run tests
+        try:
+            for test in self._tests:
+                test.run()
+        except Exception:
+            log.error('Exception in test: ' + self.name())
+            w['status'] = 'failed'
+            raise
+        finally:
+            log.info('Writing result to ' + w.filename())
+            w.write()
 
