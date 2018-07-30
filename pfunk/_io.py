@@ -113,7 +113,7 @@ class ResultWriter(object):
                 + ']'
             )
         elif isinstance(value, np.ndarray):
-            if value.ndims > 1:
+            if value.ndim > 1:
                 raise ValueError(
                     'Unable to store arrays of 2 or more dimensions.')
             self._data[key] = (
