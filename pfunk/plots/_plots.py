@@ -34,9 +34,15 @@ add(Test1Plot())
 from .plot2 import Test2Plot
 add(Test2Plot())
 
-from .opt_fn_plot import OptimisationFitzhughNagumo
-add(OptimisationFitzhughNagumo('CMAES', [20, 40, 80, 160, 320]))
-add(OptimisationFitzhughNagumo('XNES', [20, 40, 80, 160, 320]))
-add(OptimisationFitzhughNagumo('SNES', [20, 40, 80, 160, 320]))
-add(OptimisationFitzhughNagumo('PSO', [20, 40, 80, 160, 320]))
+from .opt_fn_plot import OptimisationFitzhughNagumoByDate
+add(OptimisationFitzhughNagumoByDate('CMAES', [20, 40, 80, 160, 320]))
+add(OptimisationFitzhughNagumoByDate('XNES', [20, 40, 80, 160, 320]))
+add(OptimisationFitzhughNagumoByDate('SNES', [20, 40, 80, 160, 320]))
+add(OptimisationFitzhughNagumoByDate('PSO', [20, 40, 80, 160, 320]))
+
+from .opt_fn_plot_by_commit import OptimisationFitzhughNagumoByCommit
+add(OptimisationFitzhughNagumoByCommit('CMAES', [20, 40, 80, 160, 320]))
+add(OptimisationFitzhughNagumoByCommit('XNES', [20, 40, 80, 160, 320]))
+add(OptimisationFitzhughNagumoByCommit('SNES', [20, 40, 80, 160, 320]))
+add(OptimisationFitzhughNagumoByCommit('PSO', [20, 40, 80, 160, 320]))
 

@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import pfunk
 
 
-class OptimisationFitzhughNagumo(pfunk.MultiTestPlot):
+class OptimisationFitzhughNagumoByDate(pfunk.MultiTestPlot):
     """
     Plot for Fitzhugh-Nagumo optimiser tests.
     """
@@ -26,26 +26,26 @@ class OptimisationFitzhughNagumo(pfunk.MultiTestPlot):
         plot_name = 'opt_fn_' + method
         test_names = [plot_name + '_' + str(i) for i in max_iterations]
 
-        super(OptimisationFitzhughNagumo, self).__init__(plot_name, test_names)
+        super(OptimisationFitzhughNagumoByDate, self).__init__(
+            plot_name, test_names)
 
     def _run(self, results, plot_path, show):
 
         n = len(self._max_iterations)
 
-        fig = plt.figure()
+        plt.figure()
         plt.title('FN Optimisation with ' + self._method)
 
         for i, r in enumerate(results):
             maxi = self._max_iterations[i]
 
+            plt.suptitle('Max iterations: ' + str(maxi))
             #plt.subplot(n, 1, 1 + i)
             plt.xlabel('Run')
-            plt.ylabel('Score relative to f(true)')
+            plt.ylabel('Score relative to f(best)')
 
-            dates, scores = r['fbest_relative']
-            plt.plot(dates, scores, 'o:', label='max iter ' + str(maxi))
-
-        fig.autofmt_xdate()
+            dates, scores = r['date', 'fbest_relative']
+            plt.plot(dates, scores, 'o:', label='max ' + str(maxi))
 
         plt.legend()
         plt.savefig(plot_path)

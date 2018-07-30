@@ -260,8 +260,17 @@ class ResultSet(object):
     Data can be obtained from a ResultSet using::
 
         x = ResultSet(result_files)
-        dates, values = x['score']
+        scores = x['score']
 
+    This will return scores for all result files that have a ``score`` field
+    set.
+
+    Similarly, use::
+
+        dates, commits, scores = x['date', 'commit', 'score']
+
+    to get data from all files where ``date``, ``commit``, and ``score`` are
+    all set.
     """
     def __init__(self, result_files):
         self._result_files = result_files
@@ -286,21 +295,26 @@ class ResultSet(object):
             if self._result_readers is None:
                 self._read()
 
+            # Treat single-value case like multi-value case
+            single_value = (type(key) != tuple)
+            if single_value:
+                key = (key, )
+
             # Gather data
-            dates = []
             values = []
+            for k in key:
+                values.append([])
             for reader in self._result_readers:
                 try:
-                    date = reader['date']
-                    value = reader[key]
+                    row = [reader[k] for k in key]
                 except KeyError:
                     continue
-                dates.append(date)
-                values.append(value)
+                for k, value in enumerate(values):
+                    value.append(row[k])
 
             # Cache data and return
-            self._cached[key] = (dates, values)
-            return dates, values
+            self._cached[key] = values
+            return values[0] if single_value else values
 
 
 def find_test_dates():

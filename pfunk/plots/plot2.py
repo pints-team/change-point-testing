@@ -21,7 +21,7 @@ class Test2Plot(pfunk.SingleTestPlot):
 
     def _run(self, results, plot_path):
 
-        x, y = results['y']
+        x, y = results['date', 'y']
 
         plt.figure()
         plt.xlabel('Index')
