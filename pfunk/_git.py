@@ -1,5 +1,5 @@
 #
-# Git module.
+# Git functions.
 #
 # This file is part of Pints Functional Testing.
 #  Copyright (c) 2017-2018, University of Oxford.
@@ -9,9 +9,8 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
-#import os
-#import sys
 import git
+import sys
 import logging
 
 import pfunk
@@ -24,6 +23,7 @@ def pints_hash():
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
     return str(repo.head.commit.hexsha)
 
+
 def pints_refresh():
     """
     Updates the local pints repo.
@@ -33,4 +33,21 @@ def pints_refresh():
 
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
     log.info(repo.git.pull())
+
+
+def prepare_pints_repo():
+    """
+    Makes sure Pints is up to date. Should be run before importing pints.
+    """
+    # Ensure pints is up to date
+    if pfunk.PINTS_COMMIT is None:
+        pfunk.pints_refresh()
+        pfunk.PINTS_COMMIT = pfunk.pints_hash()
+
+    # Get Pints version from local repo
+    if pfunk.PINTS_VERSION is None:
+        sys.path.insert(0, pfunk.DIR_PINTS_REPO)
+        import pints
+        assert pints.__path__[0] == pfunk.DIR_PINTS_MODULE
+        pfunk.PINTS_VERSION = pints.version(formatted=True)
 

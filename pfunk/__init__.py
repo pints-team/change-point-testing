@@ -46,6 +46,7 @@ if not os.path.isdir(DIR_PLOT):
 # Date formatting
 DATE_FORMAT = '%Y-%m-%d-%H:%M:%S'
 
+
 def date(when=None):
     if when:
         return time.strftime(DATE_FORMAT, when)
@@ -61,38 +62,38 @@ NAME_FORMAT = re.compile(r'^[a-zA-Z]\w*$')
 PYTHON_VERSION = sys.version.replace('\n', '')
 
 
+# Pints version and repo
+# These are set using _git's function "prepare_pints_repo"
+PINTS_COMMIT = PINTS_VERSION = None
+
+
 #
 # Start importing sub modules
 #
 
 # Always import io and git
-from . import io
-from . import git
-
-
-# Pints version and repo
-PINTS_COMMIT = PINTS_VERSION = None
-
-def prepare_pints():
-    """ Makes sure Pints is up to date. Should be run before testing. """
-    global PINTS_COMMIT, PINTS_VERSION
-
-    # Ensure pints is up to date
-    if PINTS_COMMIT is None:
-        git.pints_refresh()
-        PINTS_COMMIT = git.pints_hash()
-
-    # Get Pints version from local repo
-    if PINTS_VERSION is None:
-        sys.path.insert(0, DIR_PINTS_REPO)
-        import pints
-        assert pints.__path__[0] == DIR_PINTS_MODULE
-        PINTS_VERSION = pints.version(formatted=True)
-
+from ._io import (  # noqa
+    find_next_test,
+    find_test_dates,
+    find_test_results,
+    ResultWriter,
+    unique_path,
+)
+from ._git import ( # noqa
+    pints_hash,
+    pints_refresh,
+    prepare_pints_repo,
+)
 
 # Import test class
-from .test import FunctionalTest
+from ._test import (    # noqa
+    FunctionalTest,
+    #FunctionalTestGroup,
+)
 
 # Import plot classes
-from .plot import FunctionalTestPlot, SingleTestPlot
+from ._plot import (    # noqa
+    FunctionalTestPlot,
+    SingleTestPlot,
+)
 

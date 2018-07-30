@@ -17,16 +17,22 @@ def run_named_test(name):
     Runs the test ``name``.
     """
     import pfunk.tests
-    pfunk.tests.run(name)
+    try:
+        pfunk.tests.run(name)
+    except KeyError:
+        print('Test not found: ' + name)
+        print('Available tests:')
+        for test in pfunk.tests.tests():
+            print('  ' + test)
 
 
 def run_next_test():
     """
     Runs the next test.
     """
-    import pfunk.io
+    import pfunk
     import pfunk.tests
-    next = pfunk.io.find_next_test()
+    next = pfunk.find_next_test()
     pfunk.tests.run(next)
 
 
@@ -34,8 +40,8 @@ def show_test_list():
     """
     Shows the list of tests.
     """
-    import pfunk.io
-    dates = pfunk.io.find_test_dates()
+    import pfunk
+    dates = pfunk.find_test_dates()
     w = 1 + max([len(k) for k in dates.keys()])
     for test in sorted(dates.items(), key=lambda x: x[1]):
         name, date = test
@@ -47,7 +53,13 @@ def run_named_plot(name):
     Runs the plot ``name``.
     """
     import pfunk.plots
-    pfunk.plots.run(name)
+    try:
+        pfunk.plots.run(name)
+    except KeyError:
+        print('Plot not found: ' + name)
+        print('Available plots:')
+        for plot in pfunk.plots.plots():
+            print('  ' + plot)
 
 
 def run_all_plots():

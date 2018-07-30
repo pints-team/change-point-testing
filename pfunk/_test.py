@@ -40,7 +40,7 @@ class FunctionalTest(object):
         log.info('Running test: ' + self.name())
 
         # Prepare to run
-        pfunk.prepare_pints()
+        pfunk.prepare_pints_repo()
 
         # Seed numpy random generator, so that we know the value
         seed = np.random.randint(2**32)    # Numpy says max seed is 2**32 - 1
@@ -52,11 +52,11 @@ class FunctionalTest(object):
 
         # Get path to log and result files
         base = name + '-' + date + '.txt'
-        log_path = pfunk.io.unique_path(os.path.join(pfunk.DIR_LOG, base))
-        res_path = pfunk.io.unique_path(os.path.join(pfunk.DIR_RESULT, base))
+        log_path = pfunk.unique_path(os.path.join(pfunk.DIR_LOG, base))
+        res_path = pfunk.unique_path(os.path.join(pfunk.DIR_RESULT, base))
 
         # Create result writer
-        w = pfunk.io.ResultWriter(res_path)
+        w = pfunk.ResultWriter(res_path)
         w['status'] = 'unitialised'
         w['date'] = date
         w['name'] = name

@@ -23,7 +23,7 @@ class Test1Plot(pfunk.SingleTestPlot):
 
         x, y = results['y']
 
-        f = plt.figure()
+        plt.figure()
         plt.xlabel('Index')
         plt.ylabel('Y')
         plt.plot(y)

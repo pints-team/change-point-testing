@@ -23,12 +23,6 @@ try:
 except NameError:
     basestring = str
 
-# StringIO in Python 2 and 3
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
-
 
 # High-precision floats
 FLOAT_FORMAT = '{: .17e}'
@@ -379,16 +373,3 @@ def find_test_results(test_name):
 
     return ResultSet(results)
 
-
-
-
-
-
-
-
-
-
-
-
-
-#

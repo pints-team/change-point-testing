@@ -10,7 +10,6 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import os
-import re
 
 import pfunk
 import logging
@@ -57,13 +56,13 @@ class SingleTestPlot(FunctionalTestPlot):
         log.info('Running plot: ' + self.name())
 
         # Load test results
-        results = pfunk.io.find_test_results(self._test_name)
+        results = pfunk.find_test_results(self._test_name)
 
         # Create plot name
         date = pfunk.date()
-        name = self.name()
+        #name = self.name()
         path = self._plot_name + '-' + date + '.png'
-        plot_path = pfunk.io.unique_path(os.path.join(pfunk.DIR_PLOT, path))
+        plot_path = pfunk.unique_path(os.path.join(pfunk.DIR_PLOT, path))
 
         # Plot
         try:
