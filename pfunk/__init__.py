@@ -100,5 +100,6 @@ from ._test import (    # noqa
 from ._plot import (    # noqa
     FunctionalTestPlot,
     SingleTestPlot,
+    MultiTestPlot,
 )
 

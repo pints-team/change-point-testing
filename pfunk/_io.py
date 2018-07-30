@@ -281,6 +281,7 @@ class ResultSet(object):
             return self._cached[key]
 
         except KeyError:
+
             # Read result files if not yet done
             if self._result_readers is None:
                 self._read()

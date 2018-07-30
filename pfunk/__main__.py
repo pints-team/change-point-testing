@@ -48,13 +48,13 @@ def show_test_list():
         print(name + ' ' * (w - len(name)) + pfunk.date(date))
 
 
-def run_named_plot(name):
+def run_named_plot(name, show=False):
     """
     Runs the plot ``name``.
     """
     import pfunk.plots
     try:
-        pfunk.plots.run(name)
+        pfunk.plots.run(name, show=show)
     except KeyError:
         print('Plot not found: ' + name)
         print('Available plots:')
@@ -62,13 +62,13 @@ def run_named_plot(name):
             print('  ' + plot)
 
 
-def run_all_plots():
+def run_all_plots(show=False):
     """
     Runs all plots.
     """
     import pfunk.plots
     for name in pfunk.plots.plots():
-        pfunk.plots.run(name)
+        pfunk.plots.run(name, show=show)
 
 
 def show_plot_list():
@@ -119,6 +119,11 @@ def main():
         action='store_true',
         help='Run all plots',
     )
+    parser.add_argument(
+        '--show',
+        action='store_true',
+        help='Show plots as well as saving them.',
+    )
 
     # Parse!
     args = parser.parse_args()
@@ -131,9 +136,9 @@ def main():
     elif args.t:
         run_named_test(args.t[0])
     elif args.p:
-        run_named_plot(args.p[0])
+        run_named_plot(args.p[0], args.show)
     elif args.allplots:
-        run_all_plots()
+        run_all_plots(args.show)
     else:
         parser.print_help()
 

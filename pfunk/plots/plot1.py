@@ -19,7 +19,7 @@ class Test1Plot(pfunk.SingleTestPlot):
     def __init__(self):
         super(Test1Plot, self).__init__('test1_plot', 'test1')
 
-    def _plot(self, results, plot_path):
+    def _run(self, results, plot_path):
 
         x, y = results['y']
 

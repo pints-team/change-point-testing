@@ -1,37 +1,9 @@
 #
-# This module contains a dict of all available tests.
+# Module for test implementations.
 #
 # This file is part of Pints Functional Testing.
 #  Copyright (c) 2017-2018, University of Oxford.
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
-import pfunk
-
-_tests = {}
-
-
-def add(test):
-    """ Adds a test to the list of available tests. """
-    if not isinstance(test, pfunk.AbstractFunctionalTest):
-        raise ValueError('All tests must extend AbstractFunctionalTest.')
-    _tests[test.name()] = test
-
-
-def tests():
-    """ Returns a sorted list of test names. """
-    return sorted(_tests.keys())
-
-
-def run(name):
-    """ Runs a selected test. """
-    _tests[name].run()
-
-
-from .test1 import Test1
-add(Test1())
-
-from .test2 import Test2
-from .test3 import Test3
-add(pfunk.FunctionalTestGroup('test2_and_3', Test2(), Test3()))
-
+from ._tests import *

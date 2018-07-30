@@ -42,7 +42,7 @@ class FunctionalTest(AbstractFunctionalTest):
     def _run(self, result_writer, log_path):
         raise NotImplementedError
 
-    def run(self):
+    def run(self, date=None):
         """ Runs this test and logs the output. """
         # Create logger for _global_ console/file output
         log = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ class FunctionalTest(AbstractFunctionalTest):
         np.random.seed(seed)
 
         # Create test name
-        date = pfunk.date()
+        date = date or pfunk.date()
         name = self.name()
 
         # Get path to log and result files
@@ -122,7 +122,7 @@ class FunctionalTestGroup(AbstractFunctionalTest):
         # Run tests
         try:
             for test in self._tests:
-                test.run()
+                test.run(date=date)
         except Exception:
             log.error('Exception in test: ' + self.name())
             w['status'] = 'failed'
