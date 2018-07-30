@@ -117,10 +117,7 @@ class ResultWriter(object):
                 raise ValueError(
                     'Unable to store arrays of 2 or more dimensions.')
             self._data[key] = (
-                + '['
-                + ', '.join([FLOAT_FORMAT.format(x) for x in value])
-                + ']'
-            )
+                '[' + ', '.join([FLOAT_FORMAT.format(x) for x in value]) + ']')
         elif isinstance(value, basestring):
             # Check for newlines
             if '\n' in value or '\r' in value:
