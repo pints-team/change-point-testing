@@ -32,7 +32,7 @@ DIR_PINTS_MODULE = os.path.join(DIR_PINTS_REPO, 'pints')
 DIR_RES_REPO = os.path.join(DIR_PFUNK, 'res')
 DIR_LOG = os.path.join(DIR_RES_REPO, 'logs')
 DIR_RESULT = os.path.join(DIR_RES_REPO, 'results')
-DIR_PLOT = os.path.join(DIR_RES_REPO, 'plot')
+DIR_PLOT = os.path.join(DIR_RES_REPO, 'plots')
 
 
 # Ensure log- and result directories exist
