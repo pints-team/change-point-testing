@@ -25,7 +25,7 @@ At the moment, there is no service that runs these tests, even though we are set
 
 - Use `./funk -t test_name` to run a test.
 - This will create a result file in `results`, and possibly a log file in `logs`.
-- To see a list of tests, use `./funk --list`.
+- To see a list of tests, use `./funk --tests`.
 - Use `./funk --next` to run the next test in line. This is determined by looking at the result files and seeing which test hasn't been run for the longest time.
 
 ### Adding tests

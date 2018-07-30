@@ -105,7 +105,7 @@ def main():
         help='Run the next test in line.',
     )
     parser.add_argument(
-        '--list',
+        '--tests',
         action='store_true',
         help='Show a list of tests that can be run',
     )
@@ -122,7 +122,7 @@ def main():
 
     # Parse!
     args = parser.parse_args()
-    if args.list:
+    if args.tests:
         show_test_list()
     elif args.plots:
         show_plot_list()
