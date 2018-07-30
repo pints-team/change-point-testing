@@ -1,8 +1,0 @@
-date: "2018-07-30-11:53:55"
-name: "test2"
-pints: "Pints 0.0.1"
-pints_commit: "a9b18adf0feaba1b0506a34afb27496a7c9f3093"
-python: "3.6.6 (default, Jul 19 2018, 14:25:17) [GCC 8.1.1 20180712 (Red Hat 8.1.1-5)]"
-seed: 2907014970
-status: "done"
-y:  1.99086846235879955e+00

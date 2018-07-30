@@ -23,12 +23,16 @@ log.info('Loading Pints Functional Testing.')
 
 
 # Define directories to use
+# The root of this repo
 DIR_PFUNK = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-DIR_LOG = os.path.join(DIR_PFUNK, 'logs')
-DIR_RESULT = os.path.join(DIR_PFUNK, 'results')
-DIR_PLOT = os.path.join(DIR_PFUNK, 'plot')
+# The root of the pints repo (submodule) and module
 DIR_PINTS_REPO = os.path.join(DIR_PFUNK, 'pints')
 DIR_PINTS_MODULE = os.path.join(DIR_PINTS_REPO, 'pints')
+# The root of the results repo (submodule) and subdirectoroes
+DIR_RES_REPO = os.path.join(DIR_PFUNK, 'res')
+DIR_LOG = os.path.join(DIR_RES_REPO, 'logs')
+DIR_RESULT = os.path.join(DIR_RES_REPO, 'results')
+DIR_PLOT = os.path.join(DIR_RES_REPO, 'plot')
 
 
 # Ensure log- and result directories exist

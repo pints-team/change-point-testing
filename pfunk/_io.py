@@ -317,7 +317,7 @@ def find_test_dates():
     import pfunk.tests
     dates = {}
     for name in pfunk.tests.tests():
-        dates[name] = None
+        dates[name] = time.struct_time([0] * 9)
 
     # Find all result files
     for path in os.listdir(pfunk.DIR_RESULT):

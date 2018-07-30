@@ -1,3 +1,6 @@
 [submodule "pints"]
 	path = pints
 	url = https://github.com/pints-team/pints.git
+[submodule "res"]
+	path = res
+	url = https://github.com/pints-team/functional-testing-results.git
