@@ -16,11 +16,10 @@ import logging
 import numpy as np
 
 
-class FunctionalTest(object):
+class AbstractFunctionalTest(object):
     """
-    Abstract base class for functional tests.
+    Abstract base class for functional tests or groups of tests.
     """
-
     def __init__(self, name):
         name = str(name)
         if pfunk.NAME_FORMAT.match(name) is None:
@@ -28,8 +27,18 @@ class FunctionalTest(object):
         self._name = name
 
     def name(self):
+        """ Runs this test's name. """
         return self._name
 
+    def run(self):
+        """ Runs this test and logs the output. """
+        raise NotImplementedError
+
+
+class FunctionalTest(AbstractFunctionalTest):
+    """
+    Abstract base class for single functional tests.
+    """
     def _run(self, result_writer, log_path):
         raise NotImplementedError
 
@@ -75,4 +84,24 @@ class FunctionalTest(object):
         finally:
             log.info('Writing result to ' + w.filename())
             w.write()
+
+
+class FunctionalTestGroup(AbstractFunctionalTest):
+    """
+    Group of tests to be run simultaneously.
+    """
+    def __init__(self, name, *tests):
+        super(FunctionalTestGroup, self).__init__(name)
+        self._tests = []
+        for test in tests:
+            if not isinstance(test, AbstractFunctionalTest):
+                raise ValueError(
+                    'All tests passed to a FunctionalTestGroup must extend'
+                    ' AbstractFunctionalTest.')
+            self._tests.append(test)
+
+    def run(self):
+        """ Runs this group of tests. """
+        for test in self._tests:
+            test.run()
 

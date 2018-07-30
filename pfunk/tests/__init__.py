@@ -13,8 +13,8 @@ _tests = {}
 
 def add(test):
     """ Adds a test to the list of available tests. """
-    if not isinstance(test, pfunk.FunctionalTest):
-        raise ValueError('Only FunctionalTest objects can be added.')
+    if not isinstance(test, pfunk.AbstractFunctionalTest):
+        raise ValueError('All tests must extend AbstractFunctionalTest.')
     _tests[test.name()] = test
 
 
@@ -32,7 +32,6 @@ from .test1 import Test1
 add(Test1())
 
 from .test2 import Test2
-add(Test2())
-
 from .test3 import Test3
-add(Test3())
+add(pfunk.FunctionalTestGroup('test2_and_3', Test2(), Test3()))
+
