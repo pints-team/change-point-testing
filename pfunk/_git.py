@@ -29,9 +29,11 @@ def pints_refresh():
     Updates the local pints repo.
     """
     log = logging.getLogger(__name__)
-    log.info('Perfoming git pull')
 
+    log.info('Checking out master branch')
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
+
+    log.info('Perfoming git pull')
     log.info(repo.git.pull())
 
 
