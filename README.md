@@ -6,19 +6,6 @@ This repository will be used to house functional tests of [Pints](https://github
 
 At the moment, there is no service that runs these tests, even though we are setting it up so that we can start using one soon. However, it's perfectly possible for everyone to run tests locally and then commit the results to the git repo.
 
-## Urgent to-do
-
-- [x] Result file reader and writer
-- [x] Test class
-- [x] Example test
-- [x] List of tests, test last run file reading/writing
-- [x] Analysis class: reads several results for 1 test
-- [x] Plot based on analysis class
-- [ ] Add a functional test and plot for 1 optimiser
-- [ ] Add functional tests and plots for all optimisers
-- [ ] Add a functional test and plot for 1 sampler
-- [ ] Add functional tests and plots for all samplers
-
 ## How it works
 
 ### Running tests
@@ -60,10 +47,7 @@ Some details:
 - Reporting
     - Eventually, if everything works well, we can build something that emails us if the results drop and stay low for a couple of runs. Instead of emailing we could also just use the cmd line return value to indicate a failure.
     - I think it'd be best to have this analysis separate from the running of the tests, so for them a failure would be an exception occurring.
-    
-- Travis
-    - Travis is for testing. This is testing, so should be ok? Can't see anything in the user agreement that says this would be wrong (bitcoing mining is explicitly not allowed).   
-    
+      
 - Storing data
     - I'd like to do everything disk based (inlcuding the current 'status') etc. This makes it easy to do things in a distributed way! For example, we could run a few tests offline
     - **We need to use GitPython to git pull the test repo itself before every run (tricky?), and then commit the `results` and `logs` after each run.
