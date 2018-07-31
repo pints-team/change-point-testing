@@ -47,6 +47,7 @@ class OptimisationFitzhughNagumoByDate(pfunk.MultiTestPlot):
             dates, scores = r['date', 'fbest_relative']
             plt.plot(dates, scores, 'o:', label='max ' + str(maxi))
 
+        plt.xticks(rotation='vertical')
         plt.legend()
         plt.savefig(plot_path)
 

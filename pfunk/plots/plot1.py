@@ -19,12 +19,16 @@ class Test1Plot(pfunk.SingleTestPlot):
     def __init__(self):
         super(Test1Plot, self).__init__('test1_plot', 'test1')
 
-    def _run(self, results, plot_path):
+    def _run(self, results, plot_path, show):
 
-        x, y = results['date', 'y']
+        dates, ys = results['date', 'y']
 
         plt.figure()
         plt.xlabel('Index')
         plt.ylabel('Y')
-        plt.plot(y)
+        plt.plot(dates, ys)
+        plt.xticks(rotation='vertical')
         plt.savefig(plot_path)
+
+        if show:
+            plt.show()

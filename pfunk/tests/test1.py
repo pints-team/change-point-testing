@@ -21,6 +21,8 @@ class Test1(pfunk.FunctionalTest):
 
     def _run(self, result, log_path):
 
+        print('Hello')
+
         result['y'] = 1 + np.random.uniform(-0.25, 0.25)
         result['status'] = 'done'
 
