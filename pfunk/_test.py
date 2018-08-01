@@ -42,12 +42,48 @@ class FunctionalTest(AbstractFunctionalTest):
     """
 
     def _run(self, result_writer, log_path):
+        """
+        This will be defined for an individual test. It will run the test,
+        store any test results using `result_writer` and perform logging using `log_path`
+
+        Args:
+
+        result_writer -- the test can use this to write any test outputs as `result_writer[output_name] = output_value`
+        log_path -- a path that the test can write any additional logging information
+
+
+        """
         raise NotImplementedError
 
-    def _analyse(self):
+    def _analyse(self, results):
+        """
+        This will be defined for an indiviual test. It will analyse the outputs
+        of a given test and determine if that test passed or failed
+
+        Args:
+
+        results -- the results from all the previously run tests (see pfunk.find_test_results)
+
+        Returns:
+
+        bool -- True if test has passed, False otherwise
+        """
         raise NotImplementedError
 
-    def _plot(self):
+    def _plot(self, results):
+        """
+        This will be defined for an indiviual test. It will generate a single plot, or multiple plots
+        for each test using the previous test results.
+
+        Args:
+
+        results -- the results from all the previously run tests (see pfunk.find_test_results)
+
+        Returns:
+
+        Matplotlib Figure or Iterable of Matplotlib Figures
+
+        """
         raise NotImplementedError
 
     def run(self, date=None):
@@ -96,6 +132,9 @@ class FunctionalTest(AbstractFunctionalTest):
     def analyse(self):
         """
         Checks if the test passed or failed
+
+        At the moment this just prints if the test has passed or failed. This
+        should do something more intelligent, e.g. email someone
         """
 
         # Create logger for _global_ console/file output
@@ -119,7 +158,11 @@ class FunctionalTest(AbstractFunctionalTest):
 
     def plot(self, show=False):
         """
-        Generates the plots
+        Generates the plots defined for this test
+
+        All plots returned by the test are written out to a filename defined by
+        the test name and current date. If `show==True` then the figures are shown
+        on the current display
         """
         # Create logger for _global_ console/file output
         log = logging.getLogger(__name__)
