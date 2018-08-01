@@ -106,7 +106,7 @@ class OptimisationFitzhughNagumo(pfunk.FunctionalTest):
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return assert_not_deviated_from(1.0, 1.0, results, 'fbest_relative')
+        return pfunk.assert_not_deviated_from(1.0, 1.0, results, 'fbest_relative')
 
     def _plot(self, results):
         fig = plt.figure()

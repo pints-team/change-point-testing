@@ -35,10 +35,7 @@ def plot(name, show):
 
 def analyse(name):
     """ Analyse results for a selected test. """
-    if _tests[name].analyse():
-        print('ahhhhhh, success')
-    else:
-        print('ahhhhhh, failure')
+    _tests[name].analyse()
 
 
 from .test1 import Test1

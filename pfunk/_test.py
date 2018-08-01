@@ -103,7 +103,7 @@ class FunctionalTest(AbstractFunctionalTest):
         log.info('Running analyse: ' + self.name())
 
         # Load test results
-        results = pfunk.find_test_results(self._test_name)
+        results = pfunk.find_test_results(self._name)
 
         # Plot
         try:
@@ -111,8 +111,11 @@ class FunctionalTest(AbstractFunctionalTest):
         except Exception:
             log.error('Exception in analyse: ' + self.name())
             raise
-
-        return result
+        finally:
+            if result:
+                log.info('Test '+self.name()+' has passed')
+            else:
+                log.info('Test '+self.name()+' has failed')
 
     def plot(self, show=False):
         """

@@ -10,7 +10,6 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import argparse
-import pfunk
 import pfunk.tests
 
 
@@ -68,7 +67,7 @@ def run_all_plots(show=False):
         pfunk.tests.plot(name, show)
 
 
-def run_named_analyse(name, show=False):
+def analyse_named_test(name, show=False):
     """
     Runs the analyse ``name``.
     """
@@ -78,7 +77,7 @@ def run_named_analyse(name, show=False):
         print_avail_tests(name)
 
 
-def run_all_analyse(show=False):
+def analyse_all_tests(show=False):
     """
     Runs all analyse.
     """
@@ -103,7 +102,13 @@ def main():
         '-p',
         metavar='plot_name',
         nargs=1,
-        help='Run a specific plot',
+        help='Generate the plots for a specific test',
+    )
+    parser.add_argument(
+        '-a',
+        metavar='analyse_name',
+        nargs=1,
+        help='Analyse a specific test',
     )
     parser.add_argument(
         '--next',
@@ -118,7 +123,12 @@ def main():
     parser.add_argument(
         '--allplots',
         action='store_true',
-        help='Run all plots',
+        help='Generates plots for all tests',
+    )
+    parser.add_argument(
+        '--allanalysis',
+        action='store_true',
+        help='Analyse all tests',
     )
     parser.add_argument(
         '--show',
@@ -136,8 +146,12 @@ def main():
         run_named_test(args.t[0])
     elif args.p:
         run_named_plot(args.p[0], args.show)
+    elif args.a:
+        analyse_named_test(args.a[0], args.show)
     elif args.allplots:
         run_all_plots(args.show)
+    elif args.allanalysis:
+        analyse_all_tests(args.show)
     else:
         parser.print_help()
 
