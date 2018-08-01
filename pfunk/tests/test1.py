@@ -8,6 +8,7 @@
 #
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
+from functools import reduce
 
 import numpy as np
 
@@ -26,3 +27,8 @@ class Test1(pfunk.FunctionalTest):
         result['y'] = 1 + np.random.uniform(-0.25, 0.25)
         result['status'] = 'done'
 
+    def _analyse(self, results):
+        return reduce(lambda a, b: a and (b >= 0.75 and b <= 1.25), results['y'])
+
+    def _plot(self, results):
+        print('y is ', results['y'])

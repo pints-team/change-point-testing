@@ -10,6 +10,7 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import pfunk
+import matplotlib.pyplot as plt
 
 
 class OptimisationFitzhughNagumo(pfunk.FunctionalTest):
@@ -41,7 +42,6 @@ class OptimisationFitzhughNagumo(pfunk.FunctionalTest):
         # Create name and initialise
         name = 'opt_fn_' + method + '_' + str(max_iterations)
         super(OptimisationFitzhughNagumo, self).__init__(name)
-
 
     def _run(self, result, log_path):
 
@@ -105,3 +105,19 @@ class OptimisationFitzhughNagumo(pfunk.FunctionalTest):
         # Store status
         result['status'] = 'done'
 
+    def _analyse(self, results):
+        return pfunk.assert_not_deviated_from(1.0, 1.0, results, 'fbest_relative')
+
+    def _plot(self, results):
+        fig = plt.figure()
+        plt.title('FN Optimisation with ' + self._method + 'and max iterations ' + str(self._max_iterations))
+
+        plt.xlabel('Run')
+        plt.ylabel('Score relative to f(true)')
+
+        commits, mean, std = pfunk.gather_statistics_per_commit(results, 'fbest_relative')
+
+        plt.errorbar(commits, mean, yerr=std)
+        fig.autofmt_xdate()
+
+        return fig

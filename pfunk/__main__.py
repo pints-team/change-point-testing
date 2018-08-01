@@ -10,28 +10,30 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import argparse
+import pfunk.tests
+
+
+def print_avail_tests(name):
+    print('Plot not found: ' + name)
+    print('Available tests:')
+    for test in pfunk.tests.tests():
+        print('  ' + test)
 
 
 def run_named_test(name):
     """
     Runs the test ``name``.
     """
-    import pfunk.tests
     try:
         pfunk.tests.run(name)
     except KeyError:
-        print('Test not found: ' + name)
-        print('Available tests:')
-        for test in pfunk.tests.tests():
-            print('  ' + test)
+        print_avail_tests(name)
 
 
 def run_next_test():
     """
     Runs the next test.
     """
-    import pfunk
-    import pfunk.tests
     next = pfunk.find_next_test()
     pfunk.tests.run(next)
 
@@ -40,7 +42,6 @@ def show_test_list():
     """
     Shows the list of tests.
     """
-    import pfunk
     dates = pfunk.find_test_dates()
     w = 1 + max([len(k) for k in dates.keys()])
     for test in sorted(dates.items(), key=lambda x: x[1]):
@@ -52,32 +53,36 @@ def run_named_plot(name, show=False):
     """
     Runs the plot ``name``.
     """
-    import pfunk.plots
     try:
-        pfunk.plots.run(name, show=show)
+        pfunk.tests.plot(name, show)
     except KeyError:
-        print('Plot not found: ' + name)
-        print('Available plots:')
-        for plot in pfunk.plots.plots():
-            print('  ' + plot)
+        print_avail_tests(name)
 
 
 def run_all_plots(show=False):
     """
     Runs all plots.
     """
-    import pfunk.plots
-    for name in pfunk.plots.plots():
-        pfunk.plots.run(name, show=show)
+    for name in pfunk.tests.tests():
+        pfunk.tests.plot(name, show)
 
 
-def show_plot_list():
+def analyse_named_test(name, show=False):
     """
-    Shows the list of plots.
+    Runs the analyse ``name``.
     """
-    import pfunk.plots
-    for k in pfunk.plots.plots():
-        print('  ' + k)
+    try:
+        pfunk.tests.analyse(name)
+    except KeyError:
+        print_avail_tests(name)
+
+
+def analyse_all_tests(show=False):
+    """
+    Runs all analyse.
+    """
+    for name in pfunk.tests.tests():
+        pfunk.tests.analyse(name)
 
 
 def main():
@@ -97,7 +102,13 @@ def main():
         '-p',
         metavar='plot_name',
         nargs=1,
-        help='Run a specific plot',
+        help='Generate the plots for a specific test',
+    )
+    parser.add_argument(
+        '-a',
+        metavar='analyse_name',
+        nargs=1,
+        help='Analyse a specific test',
     )
     parser.add_argument(
         '--next',
@@ -110,14 +121,14 @@ def main():
         help='Show a list of tests that can be run',
     )
     parser.add_argument(
-        '--plots',
-        action='store_true',
-        help='Show a list of plots that can be run',
-    )
-    parser.add_argument(
         '--allplots',
         action='store_true',
-        help='Run all plots',
+        help='Generates plots for all tests',
+    )
+    parser.add_argument(
+        '--allanalysis',
+        action='store_true',
+        help='Analyse all tests',
     )
     parser.add_argument(
         '--show',
@@ -129,16 +140,18 @@ def main():
     args = parser.parse_args()
     if args.tests:
         show_test_list()
-    elif args.plots:
-        show_plot_list()
     elif args.next:
         run_next_test()
     elif args.t:
         run_named_test(args.t[0])
     elif args.p:
         run_named_plot(args.p[0], args.show)
+    elif args.a:
+        analyse_named_test(args.a[0], args.show)
     elif args.allplots:
         run_all_plots(args.show)
+    elif args.allanalysis:
+        analyse_all_tests(args.show)
     else:
         parser.print_help()
 
