@@ -20,6 +20,7 @@ class AbstractFunctionalTest(object):
     """
     Abstract base class for functional tests or groups of tests.
     """
+
     def __init__(self, name):
         name = str(name)
         if pfunk.NAME_FORMAT.match(name) is None:
@@ -39,7 +40,14 @@ class FunctionalTest(AbstractFunctionalTest):
     """
     Abstract base class for single functional tests.
     """
+
     def _run(self, result_writer, log_path):
+        raise NotImplementedError
+
+    def _analyse(self):
+        raise NotImplementedError
+
+    def _plot(self):
         raise NotImplementedError
 
     def run(self, date=None):
@@ -85,49 +93,58 @@ class FunctionalTest(AbstractFunctionalTest):
             log.info('Writing result to ' + w.filename())
             w.write()
 
+    def analyse(self):
+        """
+        Checks if the test passed or failed
+        """
 
-class FunctionalTestGroup(AbstractFunctionalTest):
-    """
-    Group of tests to be run simultaneously.
-    """
-    def __init__(self, name, *tests):
-        super(FunctionalTestGroup, self).__init__(name)
-        self._tests = []
-        for test in tests:
-            if not isinstance(test, AbstractFunctionalTest):
-                raise ValueError(
-                    'All tests passed to a FunctionalTestGroup must extend'
-                    ' AbstractFunctionalTest.')
-            self._tests.append(test)
-
-    def run(self):
-        """ Runs this group of tests. """
         # Create logger for _global_ console/file output
         log = logging.getLogger(__name__)
-        log.info('Running test group: ' + self.name())
+        log.info('Running analyse: ' + self.name())
 
-        # Create test name
+        # Load test results
+        results = pfunk.find_test_results(self._test_name)
+
+        # Plot
+        try:
+            result = self._analyse(results)
+        except Exception:
+            log.error('Exception in analyse: ' + self.name())
+            raise
+
+        return result
+
+    def plot(self, show=False):
+        """
+        Generates the plots
+        """
+        # Create logger for _global_ console/file output
+        log = logging.getLogger(__name__)
+        log.info('Running plot: ' + self.name())
+
+        # Load test results
+        results = pfunk.find_test_results(self._name)
+
+        # Plot
+        try:
+            figs = self._plot(results)
+        except Exception:
+            log.error('Exception in plot: ' + self.name())
+            raise
+
         date = pfunk.date()
         name = self.name()
+        path = name + '-' + date + '.png'
 
-        res_path = pfunk.unique_path(os.path.join(
-            pfunk.DIR_RESULT, name + '-' + date + '.txt'))
-
-        # Create result writer
-        w = pfunk.ResultWriter(res_path)
-        w['status'] = 'unitialised'
-        w['date'] = date
-        w['name'] = name
-
-        # Run tests
         try:
-            for test in self._tests:
-                test.run(date=date)
-        except Exception:
-            log.error('Exception in test: ' + self.name())
-            w['status'] = 'failed'
-            raise
-        finally:
-            log.info('Writing result to ' + w.filename())
-            w.write()
+            # Assume that the user returns an iterable object containing figures
+            for i, fig in enumerate(figs):
+                plot_path = pfunk.unique_path(os.path.join(pfunk.DIR_PLOT, path))
+                fig.savefig(plot_path)
+        except TypeError:
+            # If not, then assume that the user returns a single figure
+            plot_path = pfunk.unique_path(os.path.join(pfunk.DIR_PLOT, path))
+            figs.savefig(plot_path)
 
+        if show:
+            plt.show()

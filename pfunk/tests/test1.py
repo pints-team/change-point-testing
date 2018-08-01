@@ -26,3 +26,12 @@ class Test1(pfunk.FunctionalTest):
         result['y'] = 1 + np.random.uniform(-0.25, 0.25)
         result['status'] = 'done'
 
+    def _analyse(self):
+        results = pfunk.find_test_results(self._name)
+        print('Analysing results', results)
+        return reduce(lambda a, b: a and (b >= 0.75 and b <= 1.25), results['y'])
+
+    def _plot(self):
+        results = pfunk.find_test_results(self._name)
+        print('Plotting results', results)
+        print('y is ', results['y'])

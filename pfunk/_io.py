@@ -79,6 +79,7 @@ class ResultWriter(object):
         w.write()
 
     """
+
     def __init__(self, filename, overwrite=False):
         filename = clean_filename(filename)
         if not can_write_file(filename, allow_overwrite=overwrite):
@@ -153,6 +154,7 @@ class ResultReader(object):
     """
     Reads a results file, providing access to its key-value pair data.
     """
+
     def __init__(self, filename):
         self._filename = clean_filename(filename)
 
@@ -272,6 +274,7 @@ class ResultSet(object):
     to get data from all files where ``date``, ``commit``, and ``score`` are
     all set.
     """
+
     def __init__(self, result_files):
         self._result_files = result_files
         self._result_files.sort()
@@ -385,3 +388,42 @@ def find_test_results(test_name):
 
     return ResultSet(results)
 
+
+def gather_statistics_per_commit(results, variable):
+    """
+    Gathers mean and standard devations of the given variable on a per commit basis.
+    Returns three lists `commits`, `mean` and `std`,  where `mean` is a list of mean values per commit
+    (ordered by increasing time), and `std` is a list of standard deviations per commit. `commits` is
+    the list of commits
+    """
+    # Fetch commits and scores
+    commits, scores = results['pints_commit', variable]
+
+    # Gather per commit
+    unique_commits = []
+    xinv = {}
+    y = []
+    for i, commit in enumerate(commits):
+        if commit in xinv:
+            xinv[commit]
+            y[xinv[commit]].append(scores[i])
+        else:
+            xinv[commit] = len(unique_commits)
+            unique_commits.append(commit)
+            y.append([scores[i]])
+    mean = []
+    std = []
+    for values in y:
+        mean.append(np.mean(values))
+        std.append(np.std(values))
+
+    return unique_commits, mean, std
+
+
+def assert_not_deviated_from(check_mean, check_std, results, variable):
+    """
+    Given a normal distribution of likelihood defined by `check_mean` and `check_std`, this returns true
+    if the given variable has not deviated more than 3 sigmas from `check_mean` over the last three commits
+    """
+    commits, mean, std = gather_statistics_per_commit(results, variable)
+    return np.allclose(np.array(mean[-3:]), check_mean, atol=3*check_std)

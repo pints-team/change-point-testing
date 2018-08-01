@@ -82,8 +82,10 @@ from ._io import (  # noqa
     find_test_results,
     ResultWriter,
     unique_path,
+    gather_statistics_per_commit,
+    assert_not_deviated_from
 )
-from ._git import ( # noqa
+from ._git import (  # noqa
     pints_hash,
     pints_refresh,
     prepare_pints_repo,
@@ -93,13 +95,4 @@ from ._git import ( # noqa
 from ._test import (    # noqa
     AbstractFunctionalTest,
     FunctionalTest,
-    FunctionalTestGroup,
 )
-
-# Import plot classes
-from ._plot import (    # noqa
-    FunctionalTestPlot,
-    SingleTestPlot,
-    MultiTestPlot,
-)
-

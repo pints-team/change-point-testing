@@ -7,7 +7,6 @@
 #  functional testing software package.
 #
 import pfunk
-from pfunk import FunctionalTestGroup as Group
 
 _tests = {}
 
@@ -29,46 +28,22 @@ def run(name):
     _tests[name].run()
 
 
+def plot(name, show):
+    """ Generates a selected test's plots. """
+    _tests[name].plot(show)
+
+
+def analyse(name):
+    """ Analyse results for a selected test. """
+    if _tests[name].analyse():
+        print('ahhhhhh, success')
+    else:
+        print('ahhhhhh, failure')
+
+
 from .test1 import Test1
 add(Test1())
 
-from .test2 import Test2
-from .test3 import Test3
-add(Group('test2_and_3', Test2(), Test3()))
 
 from .opt_fn import OptimisationFitzhughNagumo
-add(Group(
-    'opt_fn_CMAES',
-    OptimisationFitzhughNagumo('CMAES', 20),
-    OptimisationFitzhughNagumo('CMAES', 40),
-    OptimisationFitzhughNagumo('CMAES', 80),
-    OptimisationFitzhughNagumo('CMAES', 120),
-    OptimisationFitzhughNagumo('CMAES', 320),
-))
-
-add(Group(
-    'opt_fn_XNES',
-    OptimisationFitzhughNagumo('SNES', 20),
-    OptimisationFitzhughNagumo('SNES', 40),
-    OptimisationFitzhughNagumo('SNES', 80),
-    OptimisationFitzhughNagumo('SNES', 120),
-    OptimisationFitzhughNagumo('SNES', 320),
-))
-
-add(Group(
-    'opt_fn_SNES',
-    OptimisationFitzhughNagumo('XNES', 20),
-    OptimisationFitzhughNagumo('XNES', 40),
-    OptimisationFitzhughNagumo('XNES', 80),
-    OptimisationFitzhughNagumo('XNES', 120),
-    OptimisationFitzhughNagumo('XNES', 320),
-))
-
-add(Group(
-    'opt_fn_PSO',
-    OptimisationFitzhughNagumo('PSO', 20),
-    OptimisationFitzhughNagumo('PSO', 40),
-    OptimisationFitzhughNagumo('PSO', 80),
-    OptimisationFitzhughNagumo('PSO', 120),
-    OptimisationFitzhughNagumo('PSO', 320),
-))
+add(OptimisationFitzhughNagumo('CMAES', 100))
