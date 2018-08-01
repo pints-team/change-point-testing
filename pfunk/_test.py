@@ -1,5 +1,5 @@
 #
-# Fake test 1
+# Lists all tests.
 #
 # This file is part of Pints Functional Testing.
 #  Copyright (c) 2017-2018, University of Oxford.
@@ -193,4 +193,5 @@ class FunctionalTest(AbstractFunctionalTest):
             figs.savefig(plot_path)
 
         if show:
+            import matplotlib.pyplot as plt
             plt.show()
