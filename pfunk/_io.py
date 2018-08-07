@@ -422,8 +422,9 @@ def gather_statistics_per_commit(results, variable):
 
 def assert_not_deviated_from(check_mean, check_std, results, variable):
     """
-    Given a normal distribution of likelihood defined by `check_mean` and `check_std`, this returns true
-    if the given variable has not deviated more than 3 sigmas from `check_mean` over the last three commits
+    Given a normal distribution of likelihood defined by `check_mean` and
+    `check_std`, this returns true if the given variable has not deviated more
+    than 3 sigmas from `check_mean` over the last three commits.
     """
     commits, mean, std = gather_statistics_per_commit(results, variable)
     return np.allclose(np.array(mean[-3:]), check_mean, atol=3*check_std)

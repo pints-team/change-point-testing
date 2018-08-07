@@ -44,3 +44,7 @@ add(Test1())
 
 from .opt_fn import OptimisationFitzhughNagumo
 add(OptimisationFitzhughNagumo('CMAES', 100))
+
+
+from .sampling_normal import SamplingNormal
+add(SamplingNormal('AdaptiveCovarianceMCMC'))
