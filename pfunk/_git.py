@@ -76,7 +76,7 @@ def commit_results():
     log.info(repo.git.status())
 
     log.info('Performing git commit')
-    log.info(repo.git.commit('-m "New results"'))
+    log.info(repo.git.commit('-m New results'))
 
     log.info('Performing git push')
     log.info(repo.git.push())
