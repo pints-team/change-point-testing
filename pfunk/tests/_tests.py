@@ -68,3 +68,9 @@ add(SamplingBanana('MetropolisRandomWalkMCMC', 1))
 add(SamplingBanana('DifferentialEvolutionMCMC', 3))
 add(SamplingBanana('PopulationMCMC', 1))
 
+from .sampling_egg_box import SamplingEggBox
+add(SamplingEggBox('AdaptiveCovarianceMCMC', 1))
+add(SamplingEggBox('MetropolisRandomWalkMCMC', 1))
+add(SamplingEggBox('DifferentialEvolutionMCMC', 3))
+add(SamplingEggBox('PopulationMCMC', 1))
+

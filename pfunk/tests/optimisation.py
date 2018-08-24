@@ -109,7 +109,7 @@ class Optimisation(pfunk.FunctionalTest):
             frels.append(fbest / ftrue)
 
             # Maximum number of iterations
-            if iterations >= 10000:
+            if iterations >= 5000:
                 running = False
 
             # Maximum number of iterations without significant change
