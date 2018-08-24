@@ -1,5 +1,5 @@
 #
-# Nested sampling test: Can we recover a twisted gaussian banana distribution?
+# Nested sampling test: Can we recover a simple egg box distribution?
 #
 # This file is part of Pints Functional Testing.
 #  Copyright (c) 2017-2018, University of Oxford.
@@ -13,15 +13,16 @@ import pfunk
 import matplotlib.pyplot as plt
 
 
-class NestedBanana(pfunk.FunctionalTest):
+class NestedEggBox(pfunk.FunctionalTest):
     """
-    Runs a NestedSampling algorithm on a twisted gaussian banana LogPDF. Stores
-    the Kullback-Leibler divergence between the result and the true solution.
+    Runs an NestedSampling algorithm on a simple egg box LogPDF. Stores
+    a Kullback-Leibler-based score for the difference between the result and
+    the true solution.
 
     Arguments:
 
     ``method``
-        A *string* indicating the method to use, e.g. 'NestedEllipsoidSampler'.
+        A *string* indicating the method to use, e.g. 'AdaptiveCovarianceMCMC'.
         (Must be a string, because we shouldn't import pints before we start
         testing.)
 
@@ -33,8 +34,8 @@ class NestedBanana(pfunk.FunctionalTest):
         self._method = str(method)
 
         # Create name and initialise
-        name = 'nested_banana_' + self._method
-        super(NestedBanana, self).__init__(name)
+        name = 'nested_egg_box_' + self._method
+        super(NestedEggBox, self).__init__(name)
 
     def _run(self, result, log_path):
 
@@ -55,11 +56,14 @@ class NestedBanana(pfunk.FunctionalTest):
         method = getattr(pints, self._method)
 
         # Create a log pdf (use multi-modal, but with a single mode)
-        log_pdf = pints.toy.TwistedGaussianLogPDF(dimension=2, b=0.1)
+        sigma = 2
+        r = 4
+        log_pdf = pints.toy.SimpleEggBoxLogPDF(sigma=sigma, r=r)
 
         # Create a log prior
+        d = 2 * 6 * r * sigma
         log_prior = pints.MultivariateNormalLogPrior(
-            [0, 0], [[10, 0], [0, 10]])
+            [0, 0], [[d, 0], [0, d]])
 
         # Create a nested sampler
         sampler = method(log_pdf, log_prior)
@@ -70,20 +74,20 @@ class NestedBanana(pfunk.FunctionalTest):
         sampler.set_log_to_file(log_path)
 
         # Set max iterations
-        sampler.set_iterations(8000)
+        sampler.set_max_iterations(8000)
         sampler.set_posterior_samples(2000)
 
         # Run
         samples, logZ = sampler.run()
 
-        # Store kullback-leibler divergence
-        result['kld'] = log_pdf.kl_divergence(samples)
+        # Store kullback-leibler-based score
+        result['kld'] = log_pdf.kl_score(samples)
 
         # Store status
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return pfunk.assert_not_deviated_from(0, 0.05, results, 'kld')
+        return pfunk.assert_not_deviated_from(0, 0.5, results, 'kld')
 
     def _plot(self, results):
 
@@ -93,9 +97,9 @@ class NestedBanana(pfunk.FunctionalTest):
         fig = plt.figure()
         figs.append(fig)
         plt.suptitle(pfunk.date())
-        plt.title('Banana w. ' + self._method)
+        plt.title('Egg box w. ' + self._method)
         plt.xlabel('Commit')
-        plt.ylabel('Kullback-Leibler divergence (mean & std)')
+        plt.ylabel('Kullback-Leibler-based score (mean & std)')
         commits, mean, std = pfunk.gather_statistics_per_commit(results, 'kld')
         plt.errorbar(commits, mean, yerr=std, ecolor='k', fmt='o-', capsize=3)
         fig.autofmt_xdate()

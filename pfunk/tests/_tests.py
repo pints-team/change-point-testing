@@ -74,6 +74,14 @@ add(MCMCEggBox('MetropolisRandomWalkMCMC', 1))
 add(MCMCEggBox('DifferentialEvolutionMCMC', 3))
 add(MCMCEggBox('PopulationMCMC', 1))
 
+from .nested_normal import NestedNormal
+add(NestedNormal('NestedEllipsoidSampler'))
+add(NestedNormal('NestedRejectionSampler'))
+
 from .nested_banana import NestedBanana
 add(NestedBanana('NestedEllipsoidSampler'))
 add(NestedBanana('NestedRejectionSampler'))
+
+from .nested_egg_box import NestedEggBox
+add(NestedEggBox('NestedEllipsoidSampler'))
+add(NestedEggBox('NestedRejectionSampler'))

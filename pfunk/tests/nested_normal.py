@@ -1,5 +1,5 @@
 #
-# Nested sampling test: Can we recover a twisted gaussian banana distribution?
+# Simplest nested sampling test: Can we recover a unimodal normal distribution?
 #
 # This file is part of Pints Functional Testing.
 #  Copyright (c) 2017-2018, University of Oxford.
@@ -13,15 +13,15 @@ import pfunk
 import matplotlib.pyplot as plt
 
 
-class NestedBanana(pfunk.FunctionalTest):
+class NestedNormal(pfunk.FunctionalTest):
     """
-    Runs a NestedSampling algorithm on a twisted gaussian banana LogPDF. Stores
-    the Kullback-Leibler divergence between the result and the true solution.
+    Runs a NestedSampling algorithm on a normal LogPDF. Stores the distance of
+    the resulting mean to the true solution.
 
     Arguments:
 
     ``method``
-        A *string* indicating the method to use, e.g. 'NestedEllipsoidSampler'.
+        A *string* indicating the method to use, e.g. 'AdaptiveCovarianceMCMC'.
         (Must be a string, because we shouldn't import pints before we start
         testing.)
 
@@ -33,8 +33,8 @@ class NestedBanana(pfunk.FunctionalTest):
         self._method = str(method)
 
         # Create name and initialise
-        name = 'nested_banana_' + self._method
-        super(NestedBanana, self).__init__(name)
+        name = 'nested_normal_' + self._method
+        super(NestedNormal, self).__init__(name)
 
     def _run(self, result, log_path):
 
@@ -55,11 +55,11 @@ class NestedBanana(pfunk.FunctionalTest):
         method = getattr(pints, self._method)
 
         # Create a log pdf (use multi-modal, but with a single mode)
-        log_pdf = pints.toy.TwistedGaussianLogPDF(dimension=2, b=0.1)
+        xtrue = np.array([2, 2])
+        log_pdf = pints.toy.MultimodalNormalLogPDF([xtrue])
 
         # Create a log prior
-        log_prior = pints.MultivariateNormalLogPrior(
-            [0, 0], [[10, 0], [0, 10]])
+        log_prior = pints.MultivariateNormalLogPrior(xtrue, np.eye(2) * 2)
 
         # Create a nested sampler
         sampler = method(log_pdf, log_prior)
@@ -70,33 +70,42 @@ class NestedBanana(pfunk.FunctionalTest):
         sampler.set_log_to_file(log_path)
 
         # Set max iterations
-        sampler.set_iterations(8000)
-        sampler.set_posterior_samples(2000)
+        sampler.set_iterations(4000)
+        sampler.set_posterior_samples(1000)
 
         # Run
         samples, logZ = sampler.run()
 
-        # Store kullback-leibler divergence
-        result['kld'] = log_pdf.kl_divergence(samples)
+        # Store true solution
+        result['true'] = xtrue
+        result['mean_p0'] = np.mean(samples[:, 0])
+        result['mean_p1'] = np.mean(samples[:, 1])
+        result['std_p0'] = np.std(samples[:, 0])
+        result['std_p1'] = np.std(samples[:, 1])
+
+        xmean = np.mean(samples, axis=0)
+        result['distance'] = np.linalg.norm(xtrue - xmean)
 
         # Store status
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return pfunk.assert_not_deviated_from(0, 0.05, results, 'kld')
+        return pfunk.assert_not_deviated_from(
+            1.0, 1.0, results, 'distance')
 
     def _plot(self, results):
 
         figs = []
 
-        # Figure: KL per commit
+        # Figure: Distance to true mean
         fig = plt.figure()
         figs.append(fig)
         plt.suptitle(pfunk.date())
-        plt.title('Banana w. ' + self._method)
+        plt.title('Normal LogPDF w. ' + self._method)
         plt.xlabel('Commit')
-        plt.ylabel('Kullback-Leibler divergence (mean & std)')
-        commits, mean, std = pfunk.gather_statistics_per_commit(results, 'kld')
+        plt.ylabel('Distance from mean to true (mean & std)')
+        commits, mean, std = pfunk.gather_statistics_per_commit(
+            results, 'distance')
         plt.errorbar(commits, mean, yerr=std, ecolor='k', fmt='o-', capsize=3)
         fig.autofmt_xdate()
 
