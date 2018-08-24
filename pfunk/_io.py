@@ -99,26 +99,26 @@ class ResultWriter(object):
 
         # Conversions
         if isinstance(value, list):
-            # Lists: Only lists of floats are supported
-            value = np.array(value, dtype=float)
+            value = np.array(value)
 
         # Store string representation
         if isinstance(value, int):
             self._data[key] = str(value)
         elif isinstance(value, float):
             self._data[key] = FLOAT_FORMAT.format(value)
-        elif isinstance(value, list):
-            self._data[key] = (
-                + '['
-                + ', '.join([FLOAT_FORMAT.format(x) for x in value])
-                + ']'
-            )
         elif isinstance(value, np.ndarray):
             if value.ndim > 1:
                 raise ValueError(
                     'Unable to store arrays of 2 or more dimensions.')
-            self._data[key] = (
-                '[' + ', '.join([FLOAT_FORMAT.format(x) for x in value]) + ']')
+            if value.dtype == int:
+                self._data[key] = (
+                    '[' + ', '.join([str(x) for x in value]) + ']')
+            else:
+                self._data[key] = (
+                    '['
+                    + ', '.join([FLOAT_FORMAT.format(x) for x in value])
+                    + ']'
+                )
         elif isinstance(value, basestring):
             # Check for newlines
             if '\n' in value or '\r' in value:
