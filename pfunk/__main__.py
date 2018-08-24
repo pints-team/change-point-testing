@@ -38,6 +38,8 @@ def run(args):
     name = args.name if args.name else pfunk.find_next_test()
     print('Running test ' + name)
     pfunk.tests.run(name)
+    if args.plot or args.show:
+        pfunk.tests.plot(name, args.show)
     print('Done')
 
 
@@ -130,6 +132,16 @@ def main():
         '--next',
         action='store_true',
         help='Run the next test',
+    )
+    run_parser.add_argument(
+        '--plot',
+        action='store_true',
+        help='Create a plot after testing',
+    )
+    run_parser.add_argument(
+        '--show',
+        action='store_true',
+        help='Create and show a plot after testing.',
     )
     run_parser.set_defaults(func=run)
 
