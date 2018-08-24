@@ -64,6 +64,9 @@ def commit_results():
     """
     Commits any new results
     """
+    import socket
+    message = 'New results (' + socket.gethostname() + ' ' + pfunk.date() + ')'
+
     log = logging.getLogger(__name__)
 
     log.info('Loading results repo')
@@ -85,7 +88,7 @@ def commit_results():
     log.info(repo.git.status())
 
     log.info('Performing git commit')
-    log.info(repo.git.commit('-m New results'))
+    log.info(repo.git.commit('-m', message))
 
     log.info('Performing git push')
     log.info(repo.git.push())
