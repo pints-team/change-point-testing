@@ -58,6 +58,7 @@ class FunctionalTest(object):
         results = pfunk.find_test_results(self._name)
 
         # Plot
+        result = False
         try:
             result = self._analyse(results)
         except Exception:

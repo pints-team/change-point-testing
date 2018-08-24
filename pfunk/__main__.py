@@ -13,76 +13,56 @@ import argparse
 import pfunk.tests
 
 
-def print_avail_tests(name):
-    print('Plot not found: ' + name)
-    print('Available tests:')
-    for test in pfunk.tests.tests():
-        print('  ' + test)
-
-
-def run_named_test(name):
+def list_tests(args):
     """
-    Runs the test ``name``.
-    """
-    try:
-        pfunk.tests.run(name)
-    except KeyError:
-        print_avail_tests(name)
-
-
-def run_next_test():
-    """
-    Runs the next test.
-    """
-    next = pfunk.find_next_test()
-    pfunk.tests.run(next)
-
-
-def show_test_list():
-    """
-    Shows the list of tests.
+    Shows all available tests and the date they were last run.
     """
     dates = pfunk.find_test_dates()
-    w = 1 + max([len(k) for k in dates.keys()])
+    w = max(4, max([len(k) for k in dates.keys()]))
+    print('| Name' + ' ' * (w - 4) + ' | Last run            |')
+    print('-' * (w + 26))
     for test in sorted(dates.items(), key=lambda x: x[1]):
         name, date = test
-        print(name + ' ' * (w - len(name)) + pfunk.date(date))
+        print(
+            '| ' + name + ' ' * (w - len(name)) + ' | ' + pfunk.date(date)
+            + ' |'
+        )
 
 
-def run_named_plot(name, show=False):
+def run(args):
     """
-    Runs the plot ``name``.
+    Runs a test.
     """
-    try:
-        pfunk.tests.plot(name, show)
-    except KeyError:
-        print_avail_tests(name)
+    if args.name:
+        pfunk.tests.run(args.name)
+    elif args.next:
+        pfunk.tests.run(pfunk.find_next_test())
 
 
-def run_all_plots(show=False):
+def plot(args):
     """
-    Runs all plots.
+    Creates a plot for one or all tests.
     """
-    for name in pfunk.tests.tests():
-        pfunk.tests.plot(name, show)
+    if args.name:
+        pfunk.tests.plot(args.name, args.show)
+    elif args.all:
+        for name in pfunk.tests.tests():
+            print('Creating plot for ' + name)
+            pfunk.tests.plot(name, args.show)
+        print('Done!')
 
 
-def analyse_named_test(name, show=False):
+def analyse(args):
     """
-    Runs the analyse ``name``.
+    Analyses the result for one or all tests.
     """
-    try:
-        pfunk.tests.analyse(name)
-    except KeyError:
-        print_avail_tests(name)
-
-
-def analyse_all_tests(show=False):
-    """
-    Runs all analyse.
-    """
-    for name in pfunk.tests.tests():
-        pfunk.tests.analyse(name)
+    if args.name:
+        pfunk.tests.analyse(args.name)
+    elif args.all:
+        for name in pfunk.tests.tests():
+            print('Analysing ' + name)
+            pfunk.tests.analyse(name)
+        print('Done!')
 
 
 def main():
@@ -90,68 +70,84 @@ def main():
     parser = argparse.ArgumentParser(
         description='Run functional tests for Pints.',
     )
+    subparsers = parser.add_subparsers(help='commands')
 
-    # Run next in line
-    parser.add_argument(
-        '-t',
-        metavar='test_name',
-        nargs=1,
-        help='Run a specific test',
+    # Show a list of all available tests
+    list_parser = subparsers.add_parser('list', help='List tests')
+    list_parser.set_defaults(func=list_tests)
+
+    # Run a test
+    run_parser = subparsers.add_parser(
+        'run',
+        help='Run a test',
     )
-    parser.add_argument(
-        '-p',
-        metavar='plot_name',
-        nargs=1,
-        help='Generate the plots for a specific test',
+    group = run_parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        'name',
+        metavar='<name>',
+        nargs='?',
+        choices=pfunk.tests.tests(),
+        action='store',
+        help='The test to run',
     )
-    parser.add_argument(
-        '-a',
-        metavar='analyse_name',
-        nargs=1,
-        help='Analyse a specific test',
-    )
-    parser.add_argument(
+    group.add_argument(
         '--next',
         action='store_true',
-        help='Run the next test in line.',
+        help='Run the next test',
     )
-    parser.add_argument(
-        '--tests',
+    run_parser.set_defaults(func=run)
+
+    # Plot one or all test results
+    plot_parser = subparsers.add_parser(
+        'plot',
+        help='Plot one or all test results'
+    )
+    group = plot_parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        'name',
+        metavar='<name>',
+        nargs='?',
+        choices=pfunk.tests.tests(),
+        action='store',
+        help='The plot to create',
+    )
+    group.add_argument(
+        '--all',
         action='store_true',
-        help='Show a list of tests that can be run',
+        help='Create plots for all tests',
     )
-    parser.add_argument(
-        '--allplots',
+    plot_parser.add_argument(
+        '--show',
         action='store_true',
-        help='Generates plots for all tests',
+        help='Show plots on screen',
     )
-    parser.add_argument(
-        '--allanalysis',
+    plot_parser.set_defaults(func=plot)
+
+    # Analyse one or all test results
+    analyse_parser = subparsers.add_parser(
+        'analyse',
+        help='Analyse one or all test results'
+    )
+    group = analyse_parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        'name',
+        metavar='<name>',
+        nargs='?',
+        choices=pfunk.tests.tests(),
+        action='store',
+        help='The test to analyse',
+    )
+    group.add_argument(
+        '--all',
         action='store_true',
         help='Analyse all tests',
     )
-    parser.add_argument(
-        '--show',
-        action='store_true',
-        help='Show plots as well as saving them.',
-    )
+    analyse_parser.set_defaults(func=analyse)
 
     # Parse!
     args = parser.parse_args()
-    if args.tests:
-        show_test_list()
-    elif args.next:
-        run_next_test()
-    elif args.t:
-        run_named_test(args.t[0])
-    elif args.p:
-        run_named_plot(args.p[0], args.show)
-    elif args.a:
-        analyse_named_test(args.a[0], args.show)
-    elif args.allplots:
-        run_all_plots(args.show)
-    elif args.allanalysis:
-        analyse_all_tests(args.show)
+    if 'func' in args:
+        args.func(args)
     else:
         parser.print_help()
 

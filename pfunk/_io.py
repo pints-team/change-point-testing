@@ -433,5 +433,5 @@ def assert_not_deviated_from(mean, sigma, results, variable):
     more than 3 sigmas from the mean over the last three commits.
     """
     commits, xmean, xstd = gather_statistics_per_commit(results, variable)
-    return np.allclose(np.array(xmean[-3:]), mean, atol=3*std)
+    return np.allclose(np.array(xmean[-3:]), mean, atol=3*sigma)
 
