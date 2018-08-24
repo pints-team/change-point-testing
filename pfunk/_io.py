@@ -523,19 +523,19 @@ def generate_report(filename):
 
         for name, date in sorted(dates.items(), key=lambda x: x[0]):
             f.write('## ' + name + 2*eol)
-            f.write('Last run on: ' + dfmt(date) + eol*2)
-            f.write('Status: ' + ('ok' if states[name] else 'FAILED') + eol*2)
+            f.write('- Last run on: ' + dfmt(date) + eol)
+            f.write('- Status: ' + ('ok' if states[name] else 'FAILED') + eol)
 
             if name in plots:
                 f.write(
-                    'Last plots generated on: ' + dfmt(plot_dates[name])
-                    + eol*2)
+                    '- Last plots generated on: ' + dfmt(plot_dates[name])
+                    + eol)
                 for plot in sorted(
                         plots[name], key=lambda x: os.path.splitext(x)[0]):
                     #path = os.path.relpath(
                     #    os.path.join(pfunk.DIR_PLOT, plot), start=DIR)
                     path = os.path.join(DIR_PLOT, plot)
-                    f.write('![' + plot + '](' + path + ')' + eol*2)
+                    f.write(eol + '![' + plot + '](' + path + ')' + eol)
                 f.write(eol)
 
             f.write(eol)
