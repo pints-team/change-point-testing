@@ -37,4 +37,5 @@ Some details:
 
 ### Installing
 
+- When cloning, make sure to add the `--recursive` switch
 - To install, use `python3 -m pip install -r requirements`. This makes sure you have all the dependencies you know.
