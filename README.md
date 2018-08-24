@@ -37,4 +37,4 @@ Some details:
 
 ### Installing
 
-- To install, use `pip install -r requirements`. This makes sure you have all the dependencies you know.
+- To install, use `python3 -m pip install -r requirements`. This makes sure you have all the dependencies you know.
