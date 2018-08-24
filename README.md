@@ -1,12 +1,12 @@
 # Pints Functional Testing
 
-This repository will be used to house functional tests of [Pints](https://github.com/pints-team/pints) algorithms, that go beyond unit testing, and typically take longer to run.
-
-**Note: As this is part of the Pints project, GitHub project management features (e.g. issues) have been disabled for this repo. For tickets and discussion, please see [The main pints repository on GitHub](https://github.com/pints-team/pints).**
-
-At the moment, there is no service that runs these tests, even though we are setting it up so that we can start using one soon. However, it's perfectly possible for everyone to run tests locally and then commit the results to the git repo.
+This repository is used to house functional tests of [Pints](https://github.com/pints-team/pints) algorithms, that go beyond unit testing, and typically take longer to run.
 
 [Results are visible here](https://github.com/pints-team/functional-testing-results).
+
+GitHub project management features (e.g. issues) have been disabled for this repo. For tickets and discussion, please see [The main pints repository on GitHub](https://github.com/pints-team/pints).
+
+
 
 ## How it works
 
