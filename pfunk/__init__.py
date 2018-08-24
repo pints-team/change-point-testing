@@ -93,6 +93,5 @@ from ._git import (  # noqa
 
 # Import test class
 from ._test import (    # noqa
-    AbstractFunctionalTest,
     FunctionalTest,
 )

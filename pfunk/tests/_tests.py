@@ -13,8 +13,8 @@ _tests = {}
 
 def add(test):
     """ Adds a test to the list of available tests. """
-    if not isinstance(test, pfunk.AbstractFunctionalTest):
-        raise ValueError('All tests must extend AbstractFunctionalTest.')
+    if not isinstance(test, pfunk.FunctionalTest):
+        raise ValueError('All tests must extend FunctionalTest.')
     _tests[test.name()] = test
 
 
@@ -42,8 +42,8 @@ from .test1 import Test1
 add(Test1())
 
 
-from .opt_fn import OptimisationFitzhughNagumo
-add(OptimisationFitzhughNagumo('CMAES', 100))
+from .opt_fn import OptimisationFN
+add(OptimisationFN('CMAES'))
 
 
 from .sampling_normal import SamplingNormal

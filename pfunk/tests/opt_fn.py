@@ -13,10 +13,9 @@ import pfunk
 import matplotlib.pyplot as plt
 
 
-class OptimisationFitzhughNagumo(pfunk.FunctionalTest):
+class Optimisation(pfunk.FunctionalTest):
     """
-    Runs an optimisation on the Fitzhugh-Nagumo toy model, with a
-    user-specified maximum number of iterations.
+    Runs an optimisation and tracks convergence and relative best position.
 
     Arguments:
 
@@ -28,41 +27,170 @@ class OptimisationFitzhughNagumo(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, method, max_iterations):
+    def __init__(self, method):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
 
-        # Check number of iterations
-        max_iterations = int(max_iterations)
-        if not max_iterations > 0:
-            raise ValueError('Maximum number of iterations must be > 0.')
-        self._max_iterations = max_iterations
-
         # Create name and initialise
-        name = 'opt_fn_' + method + '_' + str(max_iterations)
-        super(OptimisationFitzhughNagumo, self).__init__(name)
+        name = 'opt_' + self._problem_name() + '_' + method
+        super(Optimisation, self).__init__(name)
+
+    def _problem(self):
+        """
+        Returns a tuple ``(score, xtrue, x0, sigma0, boundaries)``.
+        """
+        raise NotImplementedError
 
     def _run(self, result, log_path):
 
         import pints
-        import pints.toy
         import numpy as np
 
         # Store method and iterations
         result['method'] = self._method
-        result['max_iterations'] = self._max_iterations
 
         # Get method class
         method = getattr(pints, self._method)
+
+        # Get problem
+        score, xtrue, x0, sigma0, boundaries = self._problem()
+
+        # Evaluate at true parameters
+        ftrue = score(xtrue)
+
+        # Create optimiser
+        optimiser = method(x0, sigma0, boundaries)
+
+        # Count iterations and function evaluations
+        iteration = 0
+        evaluations = 0
+        unchanged_iterations = 0
+
+        # Create parallel evaluator
+        n_workers = pints.ParallelEvaluator.cpu_count()
+        if isinstance(optimiser, pints.PopulationBasedOptimiser):
+            n_workers = min(n_workers, optimiser.population_size())
+        evaluator = pints.ParallelEvaluator(score, n_workers=n_workers)
+
+        # Keep track of best position and score
+        fbest = float('inf')
+
+        # Start searching
+        evals = []
+        frels = []
+
+        running = True
+        while running:
+            xs = optimiser.ask()
+            fs = evaluator.evaluate(xs)
+            optimiser.tell(fs)
+
+            # Check if new best found
+            fnew = optimiser.fbest()
+            if fnew < fbest:
+                # Check if this counts as a significant change
+                if np.abs(fnew - fbest) < 1e-9:
+                    unchanged_iterations += 1
+                else:
+                    unchanged_iterations = 0
+
+                # Update best position
+                fbest = fnew
+            else:
+                unchanged_iterations += 1
+
+            # Update iteration and evaluation count
+            iteration += 1
+            evaluations += len(fs)
+
+            # Log evaluations and relative score
+            evals.append(evaluations)
+            frels.append(fbest / ftrue)
+
+            # Maximum number of iterations without significant change
+            if unchanged_iterations >= 200:
+                running = False
+
+            # Error in optimiser
+            error = optimiser.stop()
+            if error:
+                running = False
+
+        # Store solution
+        result['xbest'] = optimiser.xbest()
+        result['fbest'] = fbest
+
+        # Store solution, relative to likelihood at 'true' solution
+        # This should be 1 or below 1 if the optimum was found
+        result['fbest_relative'] = fbest / ftrue
+
+        # Store convergence information
+        result['evals'] = evals
+        result['frels'] = frels
+
+        # Store status
+        result['status'] = 'done'
+
+    def _analyse(self, results):
+        # The test has passed if the obtained ``fbest_relative`` has stayed
+        # near 3 sigma of the mean, with
+        return pfunk.assert_not_deviated_from(
+            1.0, 1.0, results, 'fbest_relative')
+
+    def _plot(self, results):
+
+        figs = []
+
+        #
+        # Plot 1: Relative score (fbest_relative) per commit.
+        #
+        commits, mean, std = pfunk.gather_statistics_per_commit(
+            results, 'fbest_relative')
+
+        fig = plt.figure()
+        plt.title('Optimisation result vs commits: ' + self.name())
+        plt.xlabel('Commit')
+        plt.ylabel('Relative final score: f(best) / f(true)')
+        plt.errorbar(commits, mean, yerr=std)
+        fig.autofmt_xdate()
+        figs.append(fig)
+
+        #
+        # Plot 2: Convergence
+        #
+        fig = plt.figure()
+        plt.title('Optimisation convergence: ' + self.name())
+        plt.xlabel('Evaluations')
+        plt.ylabel('f(best) / f(true)')
+        evals, frels = results['evals', 'frels']
+        for i, evs in enumerate(evals):
+            plt.plot(evs, frels[i])
+        figs.append(fig)
+
+        # Return
+        return figs
+
+
+class OptimisationFN(Optimisation):
+    """
+    Optimisation on a fitzhugh-nagumo problem.
+    """
+    def _problem_name(self):
+        return 'fn'
+
+    def _problem(self):
+        import numpy as np
+        import pints
+        import pints.toy
 
         # Create a model
         model = pints.toy.FitzhughNagumoModel()
 
         # Run a simulation
-        true_parameters = [0.1, 0.5, 3]
+        xtrue = [0.1, 0.5, 3]
         times = np.linspace(0, 20, 200)
-        values = model.simulate(true_parameters, times)
+        values = model.simulate(xtrue, times)
 
         # Add some noise
         sigma = 0.5
@@ -72,52 +200,14 @@ class OptimisationFitzhughNagumo(pfunk.FunctionalTest):
         problem = pints.MultiOutputProblem(model, times, noisy)
         score = pints.SumOfSquaresError(problem)
 
-        # Evaluate at true parameters
-        ftrue = score(true_parameters)
-
         # Select boundaries
         boundaries = pints.RectangularBoundaries([0, 0, 0], [10, 10, 10])
 
         # Select a random starting point
         x0 = boundaries.sample(1)[0]
 
-        # Create an optimisation problem
-        opt = pints.Optimisation(
-            score, x0, boundaries=boundaries, method=method)
+        # Select an initial sigma
+        sigma0 = (1 / 6) * boundaries.range()
 
-        # Log to file
-        opt.set_log_to_screen(False)
-        opt.set_log_to_file(log_path)
+        return score, xtrue, x0, sigma0, boundaries
 
-        # Set max iterations
-        opt.set_max_iterations(self._max_iterations)
-
-        # Run
-        xbest, fbest = opt.run()
-
-        # Store solution
-        result['xbest'] = xbest
-        result['fbest'] = fbest
-
-        # Store solution, relative to likelihood at 'true' solution
-        result['fbest_relative'] = fbest / ftrue
-
-        # Store status
-        result['status'] = 'done'
-
-    def _analyse(self, results):
-        return pfunk.assert_not_deviated_from(1.0, 1.0, results, 'fbest_relative')
-
-    def _plot(self, results):
-        fig = plt.figure()
-        plt.title('FN Optimisation with ' + self._method + 'and max iterations ' + str(self._max_iterations))
-
-        plt.xlabel('Run')
-        plt.ylabel('Score relative to f(true)')
-
-        commits, mean, std = pfunk.gather_statistics_per_commit(results, 'fbest_relative')
-
-        plt.errorbar(commits, mean, yerr=std)
-        fig.autofmt_xdate()
-
-        return fig

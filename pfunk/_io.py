@@ -37,7 +37,7 @@ def unique_path(path):
     """
     if not os.path.exists(path):
         return path
-    base, ext = path.splitext()
+    base, ext = os.path.splitext(path)
     base += '-'
     i = 2
     while os.path.exists(path):
@@ -211,9 +211,14 @@ class ResultReader(object):
                 if value[:1] == '[':
                     # Array
 
+                    floats = '.' in value
                     value = value[1:-1].split(',')
                     try:
-                        return np.array([float(x) for x in value])
+                        if floats:
+                            value = np.array([float(x) for x in value])
+                        else:
+                            value = np.array([int(x) for x in value])
+
                     except ValueError:
                         log.error(
                             'Unable to parse array for ' + key + ' on line '
@@ -391,10 +396,11 @@ def find_test_results(test_name):
 
 def gather_statistics_per_commit(results, variable):
     """
-    Gathers mean and standard devations of the given variable on a per commit basis.
-    Returns three lists `commits`, `mean` and `std`,  where `mean` is a list of mean values per commit
-    (ordered by increasing time), and `std` is a list of standard deviations per commit. `commits` is
-    the list of commits
+    Gathers mean and standard devations of the given variable on a per commit
+    basis. Returns three lists ``commits``, ``mean`` and ``std``,  where
+    ``mean`` is a list of mean values per commit (ordered by increasing time),
+    where ``std`` is a list of standard deviations per commit, and ``commits``
+    is the list of commits.
     """
     # Fetch commits and scores
     commits, scores = results['pints_commit', variable]
@@ -420,11 +426,12 @@ def gather_statistics_per_commit(results, variable):
     return unique_commits, mean, std
 
 
-def assert_not_deviated_from(check_mean, check_std, results, variable):
+def assert_not_deviated_from(mean, sigma, results, variable):
     """
-    Given a normal distribution of likelihood defined by `check_mean` and
-    `check_std`, this returns true if the given variable has not deviated more
-    than 3 sigmas from `check_mean` over the last three commits.
+    Given a normal distribution of likelihood defined by ``mean`` and
+    `` sigma``, this returns true if the given variable has not deviated by
+    more than 3 sigmas from the mean over the last three commits.
     """
-    commits, mean, std = gather_statistics_per_commit(results, variable)
-    return np.allclose(np.array(mean[-3:]), check_mean, atol=3*check_std)
+    commits, xmean, xstd = gather_statistics_per_commit(results, variable)
+    return np.allclose(np.array(xmean[-3:]), mean, atol=3*std)
+
