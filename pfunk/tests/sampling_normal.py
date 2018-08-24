@@ -27,13 +27,14 @@ class SamplingNormal(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, method):
+    def __init__(self, method, nchains):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
+        self._nchains = int(nchains)
 
         # Create name and initialise
-        name = 'sampling_normal_' + method
+        name = 'sampling_normal_' + self._method + '_' + str(self._nchains)
         super(SamplingNormal, self).__init__(name)
 
     def _run(self, result, log_path):
@@ -45,6 +46,8 @@ class SamplingNormal(pfunk.FunctionalTest):
         import logging
         log = logging.getLogger(__name__)
 
+        DEBUG = False
+
         # Store method name
         result['method'] = self._method
         log.info('Using method: ' + self._method)
@@ -53,41 +56,55 @@ class SamplingNormal(pfunk.FunctionalTest):
         method = getattr(pints, self._method)
 
         # Create a log pdf (use multi-modal, but with a single mode)
-        x_true = np.array([2, 2])
-        logpdf = pints.toy.MultimodalNormalLogPDF([x_true])
+        xtrue = np.array([2, 2])
+        logpdf = pints.toy.MultimodalNormalLogPDF([xtrue])
 
         # Generate a random start point
-        x0 = [x_true * np.random.normal(0, 3, size=2)]
+        x0 = xtrue * np.random.normal(0, 1, size=(self._nchains, 2))
 
         # Create an optimisation problem
-        mcmc = pints.MCMCSampling(logpdf, 1, x0, method=method)
+        mcmc = pints.MCMCSampling(logpdf, self._nchains, x0, method=method)
+        mcmc.set_parallel(True)
 
         # Log to file
-        mcmc.set_log_to_screen(False)
+        if not DEBUG:
+            mcmc.set_log_to_screen(False)
         mcmc.set_log_to_file(log_path)
 
         # Set max iterations
-        mcmc.set_max_iterations(2000)
+        mcmc.set_max_iterations(6000)
         if mcmc.method_needs_initial_phase():
-            mcmc.set_initial_phase_iterations(1000)
+            mcmc.set_initial_phase_iterations(2000)
 
         # Run
-        chain = mcmc.run()[0]
+        chains = mcmc.run()
+
+        if DEBUG:
+            import matplotlib.pyplot as plt
+            import pints.plot
+            pints.plot.trace(chains)
+            plt.show()
+
+        # Use first chain only
+        chain = chains[0]
 
         # Remove burn-in
-        chain = chain[1000:, :]
+        chain = chain[2000:, :]
         log.info('Chain shape (without burn-in): ' + str(chain.shape))
         log.info('Chain mean: ' + str(np.mean(chain, axis=0)))
 
         # Store true solution
-        result['true'] = x_true
+        result['true'] = xtrue
         result['mean_p0'] = np.mean(chain[:, 0])
         result['mean_p1'] = np.mean(chain[:, 1])
         result['std_p0'] = np.std(chain[:, 0])
         result['std_p1'] = np.std(chain[:, 1])
 
-        x_mean = np.mean(chain, axis=0)
-        result['distance'] = np.linalg.norm(x_true - x_mean)
+        xmean = np.mean(chain, axis=0)
+        result['distance'] = np.linalg.norm(xtrue - xmean)
+
+        # Store effective sample size
+        result['ess'] = pints.effective_sample_size(chain)
 
         # Store status
         result['status'] = 'done'
@@ -97,17 +114,31 @@ class SamplingNormal(pfunk.FunctionalTest):
             1.0, 1.0, results, 'distance')
 
     def _plot(self, results):
+
+        figs = []
+
+        # Figure: Distance to true mean
         fig = plt.figure()
+        figs.append(fig)
+        plt.suptitle(pfunk.date())
         plt.title('MCMCSampling on Normal LogPDF with ' + self._method)
-
         plt.xlabel('Commit')
-        plt.ylabel('Distance from mean to true')
-
+        plt.ylabel('Distance from mean to true (mean & std)')
         commits, mean, std = pfunk.gather_statistics_per_commit(
             results, 'distance')
-
-        plt.errorbar(commits, mean, yerr=std)
-
+        plt.errorbar(commits, mean, yerr=std, ecolor='k', fmt='o-', capsize=3)
         fig.autofmt_xdate()
 
-        return fig
+        # Figure: Effective sampling size
+        fig = plt.figure()
+        figs.append(fig)
+        plt.suptitle(pfunk.date())
+        plt.title('MCMCSampling on Normal LogPDF with ' + self._method)
+        plt.xlabel('Commit')
+        plt.ylabel('Effective sampling size (mean & std)')
+        commits, mean, std = pfunk.gather_statistics_per_commit(
+            results, 'ess')
+        plt.errorbar(commits, mean, yerr=std, ecolor='k', fmt='o-', capsize=3)
+        fig.autofmt_xdate()
+
+        return figs

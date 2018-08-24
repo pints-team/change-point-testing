@@ -56,6 +56,10 @@ add(OptimisationBR('XNES'))
 add(OptimisationBR('SNES'))
 add(OptimisationBR('PSO'))
 
-
 from .sampling_normal import SamplingNormal
-add(SamplingNormal('AdaptiveCovarianceMCMC'))
+add(SamplingNormal('AdaptiveCovarianceMCMC', 1))
+add(SamplingNormal('MetropolisRandomWalkMCMC', 1))
+add(SamplingNormal('DifferentialEvolutionMCMC', 3))
+#add(SamplingNormal('AdaptiveCovarianceMCMC', 1))
+#add(SamplingNormal('AdaptiveCovarianceMCMC', 1))
+

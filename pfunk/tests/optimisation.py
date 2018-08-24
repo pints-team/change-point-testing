@@ -153,10 +153,11 @@ class Optimisation(pfunk.FunctionalTest):
             results, 'fbest_relative')
 
         fig = plt.figure()
+        plt.suptitle(pfunk.date())
         plt.title('Optimisation result vs commits: ' + self.name())
         plt.xlabel('Commit')
-        plt.ylabel('Relative final score: f(best) / f(true)')
-        plt.errorbar(commits, mean, yerr=std)
+        plt.ylabel('Relative final score: f(best) / f(true)  (mean & std)')
+        plt.errorbar(commits, mean, yerr=std, ecolor='k', fmt='o-', capsize=3)
         fig.autofmt_xdate()
         figs.append(fig)
 
@@ -164,6 +165,7 @@ class Optimisation(pfunk.FunctionalTest):
         # Plot 2: Convergence
         #
         fig = plt.figure()
+        plt.suptitle(pfunk.date())
         plt.title('Optimisation convergence: ' + self.name())
         plt.xlabel('Evaluations')
         plt.ylabel('f(best) / f(true)')
