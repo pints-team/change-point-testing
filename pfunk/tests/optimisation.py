@@ -63,7 +63,7 @@ class Optimisation(pfunk.FunctionalTest):
         optimiser = method(x0, sigma0, boundaries)
 
         # Count iterations and function evaluations
-        iteration = 0
+        iterations = 0
         evaluations = 0
         unchanged_iterations = 0
 
@@ -101,12 +101,16 @@ class Optimisation(pfunk.FunctionalTest):
                 unchanged_iterations += 1
 
             # Update iteration and evaluation count
-            iteration += 1
+            iterations += 1
             evaluations += len(fs)
 
             # Log evaluations and relative score
             evals.append(evaluations)
             frels.append(fbest / ftrue)
+
+            # Maximum number of iterations
+            if iterations >= 10000:
+                running = False
 
             # Maximum number of iterations without significant change
             if unchanged_iterations >= 200:
@@ -211,3 +215,84 @@ class OptimisationFN(Optimisation):
 
         return score, xtrue, x0, sigma0, boundaries
 
+
+class OptimisationLogistic(Optimisation):
+    """
+    Optimisation on a logistic model.
+    """
+    def _problem_name(self):
+        return 'logistic'
+
+    def _problem(self):
+        import numpy as np
+        import pints
+        import pints.toy
+
+        # Load a forward model
+        model = pints.toy.LogisticModel()
+
+        # Create some toy data
+        xtrue = [0.015, 500]
+        times = np.linspace(0, 1000, 1000)
+        values = model.simulate(xtrue, times)
+
+        # Add noise
+        values += np.random.normal(0, 10, values.shape)
+
+        # Create problem
+        problem = pints.SingleOutputProblem(model, times, values)
+        score = pints.SumOfSquaresError(problem)
+
+        # Select some boundaries
+        boundaries = pints.RectangularBoundaries([0, 400], [0.03, 600])
+
+        # Select a random starting point
+        x0 = boundaries.sample(1)[0]
+
+        # Select an initial sigma
+        sigma0 = (1 / 6) * boundaries.range()
+
+        return score, xtrue, x0, sigma0, boundaries
+
+
+class OptimisationBR(Optimisation):
+    """
+    Optimisation on a Beeler-Reuter model.
+    """
+    def _problem_name(self):
+        return 'br'
+
+    def _problem(self):
+        import numpy as np
+        import pints
+        import pints.toy
+
+        # Load a forward model
+        model = pints.toy.ActionPotentialModel()
+
+        # Create some toy data
+        xtrue = model.suggested_parameters()
+        times = model.suggested_times()
+        values = model.simulate(xtrue, times)
+
+        # Add noise
+        values[:, 0] += np.random.normal(0, 1, values[:, 0].shape)
+        values[:, 1] += np.random.normal(0, 5e-7, values[:, 1].shape)
+
+        # Create problem and a weighted score function
+        problem = pints.MultiOutputProblem(model, times, values)
+        weights = [1 / 70, 1 / 0.000006]
+        score = pints.SumOfSquaresError(problem, weights=weights)
+
+        # Select some boundaries
+        lower = xtrue - 2
+        upper = xtrue + 2
+        boundaries = pints.RectangularBoundaries(lower, upper)
+
+        # Select a random starting point
+        x0 = boundaries.sample(1)[0]
+
+        # Select an initial sigma
+        sigma0 = (1 / 6) * boundaries.range()
+
+        return score, xtrue, x0, sigma0, boundaries

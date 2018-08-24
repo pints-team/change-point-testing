@@ -38,11 +38,23 @@ def analyse(name):
     return _tests[name].analyse()
 
 
-from .opt_fn import OptimisationFN
+from .optimisation import OptimisationLogistic
+add(OptimisationLogistic('CMAES'))
+add(OptimisationLogistic('XNES'))
+add(OptimisationLogistic('SNES'))
+add(OptimisationLogistic('PSO'))
+
+from .optimisation import OptimisationFN
 add(OptimisationFN('CMAES'))
 add(OptimisationFN('XNES'))
 add(OptimisationFN('SNES'))
 add(OptimisationFN('PSO'))
+
+from .optimisation import OptimisationBR
+add(OptimisationBR('CMAES'))
+add(OptimisationBR('XNES'))
+add(OptimisationBR('SNES'))
+add(OptimisationBR('PSO'))
 
 
 from .sampling_normal import SamplingNormal
