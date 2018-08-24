@@ -121,7 +121,7 @@ class MCMCNormal(pfunk.FunctionalTest):
         fig = plt.figure()
         figs.append(fig)
         plt.suptitle(pfunk.date())
-        plt.title('MCMCSampling on Normal LogPDF with ' + self._method)
+        plt.title('Normal LogPDF w. ' + self._method)
         plt.xlabel('Commit')
         plt.ylabel('Distance from mean to true (mean & std)')
         commits, mean, std = pfunk.gather_statistics_per_commit(
@@ -133,7 +133,7 @@ class MCMCNormal(pfunk.FunctionalTest):
         fig = plt.figure()
         figs.append(fig)
         plt.suptitle(pfunk.date())
-        plt.title('MCMCSampling on Normal LogPDF with ' + self._method)
+        plt.title('Normal LogPDF w. ' + self._method)
         plt.xlabel('Commit')
         plt.ylabel('Effective sampling size (mean & std)')
         commits, mean, std = pfunk.gather_statistics_per_commit(

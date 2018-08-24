@@ -116,7 +116,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
         fig = plt.figure()
         figs.append(fig)
         plt.suptitle(pfunk.date())
-        plt.title('Sampling on simple egg box with ' + self._method)
+        plt.title('Egg box w. ' + self._method)
         plt.xlabel('Commit')
         plt.ylabel('Kullback-Leibler-based score (mean & std)')
         commits, mean, std = pfunk.gather_statistics_per_commit(results, 'kld')
@@ -127,7 +127,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
         fig = plt.figure()
         figs.append(fig)
         plt.suptitle(pfunk.date())
-        plt.title('Sampling on simple egg box with ' + self._method)
+        plt.title('Egg box w. ' + self._method)
         plt.xlabel('Iteration')
         plt.ylabel('Kullback-Leibler-based score')
         iters, klds = results['iters', 'klds']

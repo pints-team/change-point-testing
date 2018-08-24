@@ -1,5 +1,5 @@
 #
-# Sampling test: Can we recover a twisted gaussian banana distribution?
+# Nested sampling test: Can we recover a twisted gaussian banana distribution?
 #
 # This file is part of Pints Functional Testing.
 #  Copyright (c) 2017-2018, University of Oxford.
@@ -13,29 +13,28 @@ import pfunk
 import matplotlib.pyplot as plt
 
 
-class MCMCBanana(pfunk.FunctionalTest):
+class NestedBanana(pfunk.FunctionalTest):
     """
-    Runs an MCMCSampling algorithm on a twisted gaussian banana LogPDF. Stores
+    Runs a NestedSampling algorithm on a twisted gaussian banana LogPDF. Stores
     the Kullback-Leibler divergence between the result and the true solution.
 
     Arguments:
 
     ``method``
-        A *string* indicating the method to use, e.g. 'AdaptiveCovarianceMCMC'.
+        A *string* indicating the method to use, e.g. 'NestedEllipsoidSampler'.
         (Must be a string, because we shouldn't import pints before we start
         testing.)
 
     """
 
-    def __init__(self, method, nchains):
+    def __init__(self, method):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
-        self._nchains = int(nchains)
 
         # Create name and initialise
-        name = 'mcmc_banana_' + self._method + '_' + str(self._nchains)
-        super(MCMCBanana, self).__init__(name)
+        name = 'nested_banana_' + self._method
+        super(NestedBanana, self).__init__(name)
 
     def _run(self, result, log_path):
 
@@ -46,7 +45,7 @@ class MCMCBanana(pfunk.FunctionalTest):
         import logging
         log = logging.getLogger(__name__)
 
-        DEBUG = False
+        DEBUG = True
 
         # Store method name
         result['method'] = self._method
@@ -58,48 +57,27 @@ class MCMCBanana(pfunk.FunctionalTest):
         # Create a log pdf (use multi-modal, but with a single mode)
         log_pdf = pints.toy.TwistedGaussianLogPDF(dimension=2, b=0.1)
 
-        # Generate a random start point
-        x0 = np.random.uniform([-20, -20], [20, 15], size=(self._nchains, 2))
+        # Create a log prior
+        log_prior = pints.MultivariateNormalLogPrior(
+            [0, 0], [[10, 0], [0, 10]])
 
-        # Create an optimisation problem
-        mcmc = pints.MCMCSampling(log_pdf, self._nchains, x0, method=method)
-        mcmc.set_parallel(True)
+        # Create a nested sampler
+        sampler = method(log_pdf, log_prior)
 
         # Log to file
         if not DEBUG:
-            mcmc.set_log_to_screen(False)
-        mcmc.set_log_to_file(log_path)
+            sampler.set_log_to_screen(False)
+        sampler.set_log_to_file(log_path)
 
         # Set max iterations
-        mcmc.set_max_iterations(10000)
-        if mcmc.method_needs_initial_phase():
-            mcmc.set_initial_phase_iterations(1000)
+        sampler.set_iterations(8000)
+        sampler.set_posterior_samples(2000)
 
         # Run
-        chains = mcmc.run()
-
-        if DEBUG:
-            import matplotlib.pyplot as plt
-            import pints.plot
-            pints.plot.trace(chains)
-            plt.show()
-
-        # Use first chain only
-        chain = chains[0]
-
-        # Calculate KLD after every n-th iteration
-        n = 100
-        iters = list(range(n, len(chain) + n, n))
-        result['iters'] = iters
-        result['klds'] = [log_pdf.kl_divergence(chain[:i]) for i in iters]
-
-        # Remove burn-in
-        chain = chain[5000:, :]
-        log.info('Chain shape (without burn-in): ' + str(chain.shape))
-        log.info('Chain mean: ' + str(np.mean(chain, axis=0)))
+        samples, logZ = sampler.run()
 
         # Store kullback-leibler divergence
-        result['kld'] = log_pdf.kl_divergence(chain)
+        result['kld'] = log_pdf.kl_divergence(samples)
 
         # Store status
         result['status'] = 'done'
@@ -121,16 +99,5 @@ class MCMCBanana(pfunk.FunctionalTest):
         commits, mean, std = pfunk.gather_statistics_per_commit(results, 'kld')
         plt.errorbar(commits, mean, yerr=std, ecolor='k', fmt='o-', capsize=3)
         fig.autofmt_xdate()
-
-        # Figure: KL over time
-        fig = plt.figure()
-        figs.append(fig)
-        plt.suptitle(pfunk.date())
-        plt.title('Banana w. ' + self._method)
-        plt.xlabel('Iteration')
-        plt.ylabel('Kullback-Leibler divergence')
-        iters, klds = results['iters', 'klds']
-        for i, x in enumerate(iters):
-            plt.plot(x, klds[i])
 
         return figs
