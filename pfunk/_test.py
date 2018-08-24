@@ -57,7 +57,7 @@ class FunctionalTest(object):
         # Load test results
         results = pfunk.find_test_results(self._name)
 
-        # Plot
+        # Analyse
         result = False
         try:
             result = self._analyse(results)
@@ -69,6 +69,9 @@ class FunctionalTest(object):
                 log.info('Test ' + self.name() + ' has passed')
             else:
                 log.info('Test ' + self.name() + ' has failed')
+
+        # Return
+        return result
 
     def name(self):
         """

@@ -17,7 +17,10 @@ import logging
 
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+if 'PFUNK_DEBUG' in os.environ:
+    logging.basicConfig(level=logging.INFO)
+else:
+    logging.basicConfig()
 log = logging.getLogger(__name__)
 log.info('Loading Pints Functional Testing.')
 

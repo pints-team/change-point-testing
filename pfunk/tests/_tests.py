@@ -35,7 +35,7 @@ def plot(name, show):
 
 def analyse(name):
     """ Analyse results for a selected test. """
-    _tests[name].analyse()
+    return _tests[name].analyse()
 
 
 from .opt_fn import OptimisationFN

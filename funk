@@ -1,3 +1,13 @@
 #!/usr/bin/env python3
+#
+# Run functional tests
+#
+# Allow changing pfunk logging level before pfunk import
+import sys
+if '--debug' in sys.argv:
+    import os
+    os.environ['PFUNK_DEBUG'] = 'debug'
+
+# Run
 from pfunk.__main__ import main
 main()

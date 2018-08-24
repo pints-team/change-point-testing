@@ -10,6 +10,7 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import argparse
+import pfunk
 import pfunk.tests
 
 
@@ -56,13 +57,20 @@ def analyse(args):
     """
     Analyses the result for one or all tests.
     """
-    if args.name:
-        pfunk.tests.analyse(args.name)
-    elif args.all:
-        for name in pfunk.tests.tests():
-            print('Analysing ' + name)
-            pfunk.tests.analyse(name)
-        print('Done!')
+    tests = [args.name] if args.name else pfunk.tests.tests()
+    failed = 0
+    for name in tests:
+        print('Analysing ' + name + ' ... ', end='')
+        result = pfunk.tests.analyse(name)
+        failed += 0 if result else 1
+        print('ok' if result else 'FAIL')
+
+    print()
+    print('-'*60)
+    print('Ran ' + str(len(tests)) + ' tests')
+
+    if failed:
+        print('Failed: ' + str(failed))
 
 
 def main():
@@ -71,6 +79,13 @@ def main():
         description='Run functional tests for Pints.',
     )
     subparsers = parser.add_subparsers(help='commands')
+
+    # Show all debug and info logging messages
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='Show debug and info output',
+    )
 
     # Show a list of all available tests
     list_parser = subparsers.add_parser('list', help='List tests')
