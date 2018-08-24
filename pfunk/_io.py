@@ -513,7 +513,8 @@ def generate_report(filename):
 
     # Plot location, relative to file
     DIR = os.path.dirname(os.path.abspath(filename))
-    print(DIR)
+    DIR_PLOT = 'https://github.com/pints-team/functional-testing-results'
+    DIR_PLOT += '/blob/master/plots'
 
     # Generate markdown report
     eol = '\n'
@@ -522,18 +523,19 @@ def generate_report(filename):
 
         for name, date in sorted(dates.items(), key=lambda x: x[0]):
             f.write('## ' + name + 2*eol)
-            f.write('Last run on: ' + dfmt(date) + eol)
-            f.write('Status: ' + ('ok' if states[name] else 'FAILED') + eol)
-            f.write(eol)
+            f.write('Last run on: ' + dfmt(date) + eol*2)
+            f.write('Status: ' + ('ok' if states[name] else 'FAILED') + eol*2)
 
             if name in plots:
                 f.write(
-                    'Last plots generated on: ' + dfmt(plot_dates[name]) + eol)
+                    'Last plots generated on: ' + dfmt(plot_dates[name])
+                    + eol*2)
                 for plot in sorted(
                         plots[name], key=lambda x: os.path.splitext(x)[0]):
-                    path = os.path.relpath(
-                        os.path.join(pfunk.DIR_PLOT, plot), start=DIR)
-                    f.write('![' + path + ']' + eol)
+                    #path = os.path.relpath(
+                    #    os.path.join(pfunk.DIR_PLOT, plot), start=DIR)
+                    path = os.path.join(DIR_PLOT, plot)
+                    f.write('![' + plot + '](' + path + ')' + eol*2)
                 f.write(eol)
 
             f.write(eol)
