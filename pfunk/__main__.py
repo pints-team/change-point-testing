@@ -94,6 +94,21 @@ def commit_results(args):
     print('Done')
 
 
+def weekend(args):
+    """
+    Keep running tests, generating reports, and committing results.
+    """
+    while True:
+        for i in range(5):
+            name = pfunk.find_next_test()
+            print('Running test ' + name)
+            pfunk.tests.run(name)
+            print('Done')
+            pfunk.commit_results()
+        pfunk.generate_report()
+        pfunk.commit_results()
+
+
 def main():
     # Set up argument parsing
     parser = argparse.ArgumentParser(
@@ -203,6 +218,13 @@ def main():
         help='Commit any new test results',
     )
     commit_parser.set_defaults(func=commit_results)
+
+    # Keep running tests, generating reports, and committing results
+    weekend_parser = subparsers.add_parser(
+        'weekend',
+        help='Keep running tests, generating reports, and committing results',
+    )
+    weekend_parser.set_defaults(func=weekend)
 
     # Parse!
     args = parser.parse_args()
