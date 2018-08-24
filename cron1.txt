@@ -3,5 +3,6 @@
 # Example 1: Every hour, or alternatively fired off any time the previous
 # job is done
 
+git pull
 ./funk test --next --plot
 ./funk commit

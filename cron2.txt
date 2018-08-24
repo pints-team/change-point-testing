@@ -2,5 +2,6 @@
 
 # Example 2: Daily
 
+git pull
 ./funk report
 ./funk commit
