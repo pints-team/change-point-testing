@@ -211,14 +211,13 @@ class ResultReader(object):
                 if value[:1] == '[':
                     # Array
 
-                    floats = '.' in value
+                    floats = '.' in value or 'nan' in value or 'inf' in value
                     value = value[1:-1].split(',')
                     try:
                         if floats:
                             value = np.array([float(x) for x in value])
                         else:
                             value = np.array([int(x) for x in value])
-
                     except ValueError:
                         log.error(
                             'Unable to parse array for ' + key + ' on line '
@@ -230,7 +229,7 @@ class ResultReader(object):
 
                     value = value[1:-1]
 
-                elif '.' in value:
+                elif '.' in value or 'nan' in value or 'inf' in value:
                     # Float
 
                     try:
