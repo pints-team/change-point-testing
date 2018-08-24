@@ -32,17 +32,18 @@ def pints_refresh():
 
     log.info('Checking out master branch')
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
+    repo.git.checkout('master')
 
     log.info('Perfoming git pull')
     log.info(repo.git.pull())
 
 
-def prepare_pints_repo():
+def prepare_pints_repo(force_refresh=False):
     """
     Makes sure Pints is up to date. Should be run before importing pints.
     """
     # Ensure pints is up to date
-    if pfunk.PINTS_COMMIT is None:
+    if pfunk.PINTS_COMMIT is None or force_refresh:
         pfunk.pints_refresh()
         pfunk.PINTS_COMMIT = pfunk.pints_hash()
 
@@ -51,6 +52,11 @@ def prepare_pints_repo():
         sys.path.insert(0, pfunk.DIR_PINTS_REPO)
         import pints
         assert list(pints.__path__)[0] == pfunk.DIR_PINTS_MODULE
+        pfunk.PINTS_VERSION = pints.version(formatted=True)
+    elif force_refresh:
+        import pints
+        import importlib
+        importlib.reload(pints)
         pfunk.PINTS_VERSION = pints.version(formatted=True)
 
 
@@ -62,6 +68,9 @@ def commit_results():
 
     log.info('Loading results repo')
     repo = git.Repo(pfunk.DIR_RES_REPO)
+
+    log.info('Checkout out master')
+    repo.git.checkout('master')
 
     log.info('Checking for changes')
     if not (repo.is_dirty() or repo.untracked_files):

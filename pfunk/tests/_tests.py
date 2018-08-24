@@ -28,7 +28,7 @@ def run(name):
     _tests[name].run()
 
 
-def plot(name, show):
+def plot(name, show=False):
     """ Generates a selected test's plots. """
     _tests[name].plot(show)
 

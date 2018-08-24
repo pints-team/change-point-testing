@@ -99,10 +99,12 @@ def weekend(args):
     Keep running tests, generating reports, and committing results.
     """
     while True:
+        pfunk.prepare_pints_repo(force_refresh=True)
         for i in range(5):
             name = pfunk.find_next_test()
             print('Running test ' + name)
             pfunk.tests.run(name)
+            pfunk.tests.plot(name)
             print('Done')
             pfunk.commit_results()
         pfunk.generate_report()
