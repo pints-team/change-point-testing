@@ -1,5 +1,5 @@
 #
-# Fake test 1
+# Simplest sampling test: Can we recover a unimodal normal distribution?
 #
 # This file is part of Pints Functional Testing.
 #  Copyright (c) 2017-2018, University of Oxford.

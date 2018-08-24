@@ -38,10 +38,6 @@ def analyse(name):
     _tests[name].analyse()
 
 
-from .test1 import Test1
-add(Test1())
-
-
 from .opt_fn import OptimisationFN
 add(OptimisationFN('CMAES'))
 
