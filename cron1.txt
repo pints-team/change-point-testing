@@ -1,0 +1,7 @@
+# Hi martin, this is an example of cron jobs we could run
+
+# Example 1: Every hour, or alternatively fired off any time the previous
+# job is done
+
+./funk test --next --plot
+./funk commit
