@@ -80,13 +80,14 @@ PINTS_COMMIT = PINTS_VERSION = None
 
 # Always import io and git
 from ._io import (  # noqa
+    assert_not_deviated_from,
     find_next_test,
     find_test_dates,
     find_test_results,
+    gather_statistics_per_commit,
+    generate_report,
     ResultWriter,
     unique_path,
-    gather_statistics_per_commit,
-    assert_not_deviated_from
 )
 from ._git import (  # noqa
     pints_hash,

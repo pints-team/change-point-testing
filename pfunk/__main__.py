@@ -9,6 +9,7 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
+import os
 import argparse
 import pfunk
 import pfunk.tests
@@ -73,6 +74,17 @@ def analyse(args):
         print('Failed: ' + str(failed))
 
 
+def generate_report(args):
+    """
+    Generates a report in Markdown format.
+    """
+    print('Generating test report')
+    filename = os.path.join(pfunk.DIR_PFUNK, 'report.md')
+    print('Storing in ' + filename)
+    pfunk.generate_report(filename)
+    print('Done')
+
+
 def main():
     # Set up argument parsing
     parser = argparse.ArgumentParser(
@@ -90,6 +102,13 @@ def main():
     # Show a list of all available tests
     list_parser = subparsers.add_parser('list', help='List tests')
     list_parser.set_defaults(func=list_tests)
+
+    # Show a list of all available tests
+    report_parser = subparsers.add_parser(
+        'report',
+        help='Generate a test report',
+    )
+    report_parser.set_defaults(func=generate_report)
 
     # Run a test
     run_parser = subparsers.add_parser(

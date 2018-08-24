@@ -363,6 +363,57 @@ def find_test_dates():
     return dates
 
 
+def find_test_plots():
+    """
+    Scans the plot directory, and returns a tuple ``(plots, dates)``, where
+    ``plots`` maps test names to a list of their most recent plot files, and
+    ``dates`` maps test names to the corresponding dates.
+    """
+    # Get logger
+    log = logging.getLogger(__name__)
+
+    # Get a list of available tests
+    import pfunk.tests
+    names = pfunk.tests.tests()
+    plots = {}
+    dates = {}
+
+    # Find all plot files
+    for path in os.listdir(pfunk.DIR_PLOT):
+
+        # Attempt to read filename as test result
+        base, ext = os.path.splitext(path)
+        parts = base.split('-', 1)
+        if len(parts) != 2:
+            log.info('Skipping file in plot dir ' + path)
+            continue
+        name, date = parts
+
+        # Multiple plots? Then get index
+        pos = date.rfind(':')
+        pos = date.find('-', pos)
+        if pos >= 0:
+            index = int(date[pos + 1:])
+            date = date[:pos]
+
+        # Skip unknown tests
+        if name not in names:
+            continue
+
+        # Attempt to parse date
+        date = time.strptime(date, pfunk.DATE_FORMAT)
+
+        # Store plot if latests
+
+        if name not in dates or date > dates[name]:
+            dates[name] = date
+            plots[name] = [path]
+        elif date == dates[name]:
+            plots[name].append(path)
+
+    return plots, dates
+
+
 def find_next_test():
     """
     Scans the results directory, and returns the test that hasn't been run for
@@ -435,3 +486,54 @@ def assert_not_deviated_from(mean, sigma, results, variable):
     commits, xmean, xstd = gather_statistics_per_commit(results, variable)
     return np.allclose(np.array(xmean[-3:]), mean, atol=3*sigma)
 
+
+def generate_report(filename):
+    """
+    Generates a markdown file containing information about all tests, including
+    links to the most recent plots.
+    """
+    # Get logger
+    log = logging.getLogger(__name__)
+
+    # Get a list of available tests and the date they were last run
+    dates = find_test_dates()
+
+    # Gather the status of every test
+    import pfunk.tests
+    states = {}
+    for key in dates.keys():
+        states[key] = pfunk.tests.analyse(key)
+
+    # Get a list of available tests and their most recent plots
+    plots, plot_dates = find_test_plots()
+
+    # Friendly date format
+    def dfmt(when):
+        return time.strftime('%Y-%m-%d %H:%M:%S', when)
+
+    # Plot location, relative to file
+    DIR = os.path.dirname(os.path.abspath(filename))
+    print(DIR)
+
+    # Generate markdown report
+    eol = '\n'
+    with open(filename, 'w') as f:
+        f.write('# Pints functional testing report' + 3*eol)
+
+        for name, date in sorted(dates.items(), key=lambda x: x[0]):
+            f.write('## ' + name + 2*eol)
+            f.write('Last run on: ' + dfmt(date) + eol)
+            f.write('Status: ' + ('ok' if states[name] else 'FAILED') + eol)
+            f.write(eol)
+
+            if name in plots:
+                f.write(
+                    'Last plots generated on: ' + dfmt(plot_dates[name]) + eol)
+                for plot in sorted(
+                        plots[name], key=lambda x: os.path.splitext(x)[0]):
+                    path = os.path.relpath(
+                        os.path.join(pfunk.DIR_PLOT, plot), start=DIR)
+                    f.write('![' + path + ']' + eol)
+                f.write(eol)
+
+            f.write(eol)
