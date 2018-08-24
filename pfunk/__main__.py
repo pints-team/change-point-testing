@@ -85,6 +85,15 @@ def generate_report(args):
     print('Done')
 
 
+def commit_results(args):
+    """
+    Commits any new results.
+    """
+    print('Committing new test results')
+    pfunk.commit_results()
+    print('Done')
+
+
 def main():
     # Set up argument parsing
     parser = argparse.ArgumentParser(
@@ -102,13 +111,6 @@ def main():
     # Show a list of all available tests
     list_parser = subparsers.add_parser('list', help='List tests')
     list_parser.set_defaults(func=list_tests)
-
-    # Show a list of all available tests
-    report_parser = subparsers.add_parser(
-        'report',
-        help='Generate a test report',
-    )
-    report_parser.set_defaults(func=generate_report)
 
     # Run a test
     run_parser = subparsers.add_parser(
@@ -177,6 +179,20 @@ def main():
         help='Analyse all tests',
     )
     analyse_parser.set_defaults(func=analyse)
+
+    # Compile a report of test results
+    report_parser = subparsers.add_parser(
+        'report',
+        help='Generate a test report',
+    )
+    report_parser.set_defaults(func=generate_report)
+
+    # Commit any new test results
+    commit_parser = subparsers.add_parser(
+        'commit',
+        help='Commit any new test results',
+    )
+    commit_parser.set_defaults(func=commit_results)
 
     # Parse!
     args = parser.parse_args()

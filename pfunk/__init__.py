@@ -90,6 +90,7 @@ from ._io import (  # noqa
     unique_path,
 )
 from ._git import (  # noqa
+    commit_results,
     pints_hash,
     pints_refresh,
     prepare_pints_repo,

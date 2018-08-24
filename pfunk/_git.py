@@ -52,3 +52,33 @@ def prepare_pints_repo():
         import pints
         assert list(pints.__path__)[0] == pfunk.DIR_PINTS_MODULE
         pfunk.PINTS_VERSION = pints.version(formatted=True)
+
+
+def commit_results():
+    """
+    Commits any new results
+    """
+    log = logging.getLogger(__name__)
+
+    log.info('Loading results repo')
+    repo = git.Repo(pfunk.DIR_RES_REPO)
+
+    log.info('Checking for untracked files')
+    if not repo.untracked_files:
+        log.info('No untracked files found')
+        return
+
+    log.info('Perfoming git pull')
+    log.info(repo.git.pull())
+
+    log.info('Perfoming git add')
+    print(pfunk.DIR_RES_REPO)
+    log.info(repo.git.add(pfunk.DIR_RES_REPO))
+    log.info(repo.git.status())
+
+    log.info('Performing git commit')
+    log.info(repo.git.commit('-m "New results"'))
+
+    log.info('Performing git push')
+    log.info(repo.git.push())
+
