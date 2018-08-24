@@ -40,6 +40,9 @@ def analyse(name):
 
 from .opt_fn import OptimisationFN
 add(OptimisationFN('CMAES'))
+add(OptimisationFN('XNES'))
+add(OptimisationFN('SNES'))
+add(OptimisationFN('PSO'))
 
 
 from .sampling_normal import SamplingNormal

@@ -35,10 +35,10 @@ def run(args):
     """
     Runs a test.
     """
-    if args.name:
-        pfunk.tests.run(args.name)
-    elif args.next:
-        pfunk.tests.run(pfunk.find_next_test())
+    name = args.name if args.name else pfunk.find_next_test()
+    print('Running test ' + name)
+    pfunk.tests.run(name)
+    print('Done')
 
 
 def plot(args):
