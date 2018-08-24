@@ -51,6 +51,8 @@ def prepare_pints_repo(force_refresh=False):
     if pfunk.PINTS_VERSION is None:
         sys.path.insert(0, pfunk.DIR_PINTS_REPO)
         import pints
+        import importlib
+        importlib.reload(pints)
         assert list(pints.__path__)[0] == pfunk.DIR_PINTS_MODULE
         pfunk.PINTS_VERSION = pints.version(formatted=True)
     elif force_refresh:
