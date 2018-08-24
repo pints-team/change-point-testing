@@ -47,7 +47,7 @@ class SamplingEggBox(pfunk.FunctionalTest):
         import logging
         log = logging.getLogger(__name__)
 
-        DEBUG = True
+        DEBUG = False
 
         # Store method name
         result['method'] = self._method
