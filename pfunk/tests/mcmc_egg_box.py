@@ -13,7 +13,7 @@ import pfunk
 import matplotlib.pyplot as plt
 
 
-class SamplingEggBox(pfunk.FunctionalTest):
+class MCMCEggBox(pfunk.FunctionalTest):
     """
     Runs an MCMCSampling algorithm on a simple egg box LogPDF. Stores
     a Kullback-Leibler-based score for the difference between the result and
@@ -35,8 +35,8 @@ class SamplingEggBox(pfunk.FunctionalTest):
         self._nchains = int(nchains)
 
         # Create name and initialise
-        name = 'sampling_egg_box_' + self._method + '_' + str(self._nchains)
-        super(SamplingEggBox, self).__init__(name)
+        name = 'mcmc_egg_box_' + self._method + '_' + str(self._nchains)
+        super(MCMCEggBox, self).__init__(name)
 
     def _run(self, result, log_path):
 

@@ -56,21 +56,21 @@ add(OptimisationBR('XNES'))
 add(OptimisationBR('SNES'))
 add(OptimisationBR('PSO'))
 
-from .sampling_normal import SamplingNormal
-add(SamplingNormal('AdaptiveCovarianceMCMC', 1))
-add(SamplingNormal('MetropolisRandomWalkMCMC', 1))
-add(SamplingNormal('DifferentialEvolutionMCMC', 3))
-add(SamplingNormal('PopulationMCMC', 1))
+from .mcmc_normal import MCMCNormal
+add(MCMCNormal('AdaptiveCovarianceMCMC', 1))
+add(MCMCNormal('MetropolisRandomWalkMCMC', 1))
+add(MCMCNormal('DifferentialEvolutionMCMC', 3))
+add(MCMCNormal('PopulationMCMC', 1))
 
-from .sampling_banana import SamplingBanana
-add(SamplingBanana('AdaptiveCovarianceMCMC', 1))
-add(SamplingBanana('MetropolisRandomWalkMCMC', 1))
-add(SamplingBanana('DifferentialEvolutionMCMC', 3))
-add(SamplingBanana('PopulationMCMC', 1))
+from .mcmc_banana import MCMCBanana
+add(MCMCBanana('AdaptiveCovarianceMCMC', 1))
+add(MCMCBanana('MetropolisRandomWalkMCMC', 1))
+add(MCMCBanana('DifferentialEvolutionMCMC', 3))
+add(MCMCBanana('PopulationMCMC', 1))
 
-from .sampling_egg_box import SamplingEggBox
-add(SamplingEggBox('AdaptiveCovarianceMCMC', 1))
-add(SamplingEggBox('MetropolisRandomWalkMCMC', 1))
-add(SamplingEggBox('DifferentialEvolutionMCMC', 3))
-add(SamplingEggBox('PopulationMCMC', 1))
+from .mcmc_egg_box import MCMCEggBox
+add(MCMCEggBox('AdaptiveCovarianceMCMC', 1))
+add(MCMCEggBox('MetropolisRandomWalkMCMC', 1))
+add(MCMCEggBox('DifferentialEvolutionMCMC', 3))
+add(MCMCEggBox('PopulationMCMC', 1))
 
