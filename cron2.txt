@@ -3,3 +3,4 @@
 # Example 2: Daily
 
 ./funk report
+./funk commit

@@ -151,7 +151,6 @@ class FunctionalTest(object):
         ``log_path`` -- a path that the test can write any additional logging
         information
 
-
         """
         raise NotImplementedError
 
