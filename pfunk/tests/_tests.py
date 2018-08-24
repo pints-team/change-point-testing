@@ -60,6 +60,11 @@ from .sampling_normal import SamplingNormal
 add(SamplingNormal('AdaptiveCovarianceMCMC', 1))
 add(SamplingNormal('MetropolisRandomWalkMCMC', 1))
 add(SamplingNormal('DifferentialEvolutionMCMC', 3))
-#add(SamplingNormal('AdaptiveCovarianceMCMC', 1))
-#add(SamplingNormal('AdaptiveCovarianceMCMC', 1))
+add(SamplingNormal('PopulationMCMC', 1))
+
+from .sampling_banana import SamplingBanana
+add(SamplingBanana('AdaptiveCovarianceMCMC', 1))
+add(SamplingBanana('MetropolisRandomWalkMCMC', 1))
+add(SamplingBanana('DifferentialEvolutionMCMC', 3))
+add(SamplingBanana('PopulationMCMC', 1))
 
