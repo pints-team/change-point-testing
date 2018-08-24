@@ -6,7 +6,7 @@ This repository will be used to house functional tests of [Pints](https://github
 
 At the moment, there is no service that runs these tests, even though we are setting it up so that we can start using one soon. However, it's perfectly possible for everyone to run tests locally and then commit the results to the git repo.
 
-[Results are visible here](report.md).
+[Results are visible here](https://github.com/pints-team/functional-testing-results).
 
 ## How it works
 

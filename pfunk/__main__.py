@@ -81,9 +81,7 @@ def generate_report(args):
     Generates a report in Markdown format.
     """
     print('Generating test report')
-    filename = os.path.join(pfunk.DIR_PFUNK, 'report.md')
-    print('Storing in ' + filename)
-    pfunk.generate_report(filename)
+    pfunk.generate_report()
     print('Done')
 
 

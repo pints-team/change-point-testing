@@ -63,16 +63,15 @@ def commit_results():
     log.info('Loading results repo')
     repo = git.Repo(pfunk.DIR_RES_REPO)
 
-    log.info('Checking for untracked files')
-    if not repo.untracked_files:
-        log.info('No untracked files found')
+    log.info('Checking for changes')
+    if not (repo.is_dirty() or repo.untracked_files):
+        log.info('No changes found')
         return
 
     log.info('Perfoming git pull')
     log.info(repo.git.pull())
 
     log.info('Perfoming git add')
-    print(pfunk.DIR_RES_REPO)
     log.info(repo.git.add(pfunk.DIR_RES_REPO))
     log.info(repo.git.status())
 

@@ -487,7 +487,7 @@ def assert_not_deviated_from(mean, sigma, results, variable):
     return np.allclose(np.array(xmean[-3:]), mean, atol=3*sigma)
 
 
-def generate_report(filename):
+def generate_report():
     """
     Generates a markdown file containing information about all tests, including
     links to the most recent plots.
@@ -512,9 +512,8 @@ def generate_report(filename):
         return time.strftime('%Y-%m-%d %H:%M:%S', when)
 
     # Plot location, relative to file
-    DIR = os.path.dirname(os.path.abspath(filename))
-    DIR_PLOT = 'https://github.com/pints-team/functional-testing-results'
-    DIR_PLOT += '/blob/master/plots'
+    filename = os.path.join(pfunk.DIR_RES_REPO, 'README.md')
+    dirname = os.path.relpath(pfunk.DIR_PLOT, start=pfunk.DIR_RES_REPO)
 
     # Generate markdown report
     eol = '\n'
@@ -532,9 +531,7 @@ def generate_report(filename):
                     + eol)
                 for plot in sorted(
                         plots[name], key=lambda x: os.path.splitext(x)[0]):
-                    #path = os.path.relpath(
-                    #    os.path.join(pfunk.DIR_PLOT, plot), start=DIR)
-                    path = os.path.join(DIR_PLOT, plot)
+                    path = os.path.join(dirname, plot)
                     f.write(eol + '![' + plot + '](' + path + ')' + eol)
                 f.write(eol)
 
