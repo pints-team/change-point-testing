@@ -54,12 +54,13 @@ class NestedNormal(pfunk.FunctionalTest):
         # Get method class
         method = getattr(pints, self._method)
 
-        # Create a log pdf (use multi-modal, but with a single mode)
-        xtrue = np.array([2, 2])
-        log_pdf = pints.toy.MultimodalNormalLogPDF([xtrue])
+        # Create a log pdf
+        xtrue = np.array([2, 4])
+        sigma = np.diag(np.array([1, 3]))
+        log_pdf = pints.toy.NormalLogPDF(xtrue, sigma)
 
         # Create a log prior
-        log_prior = pints.MultivariateNormalLogPrior(xtrue, np.eye(2) * 2)
+        log_prior = pints.MultivariateNormalLogPrior(xtrue + 1, sigma * 2)
 
         # Create a nested sampler
         sampler = method(log_pdf, log_prior)
@@ -76,37 +77,45 @@ class NestedNormal(pfunk.FunctionalTest):
         # Run
         samples, logZ = sampler.run()
 
-        # Store true solution
-        result['true'] = xtrue
-        result['mean_p0'] = np.mean(samples[:, 0])
-        result['mean_p1'] = np.mean(samples[:, 1])
-        result['std_p0'] = np.std(samples[:, 0])
-        result['std_p1'] = np.std(samples[:, 1])
+        # Calculate KLD after every n-th iteration
+        n = 100
+        iters = list(range(n, len(samples) + n, n))
+        result['iters'] = iters
+        result['klds'] = [log_pdf.kl_divergence(samples[:i]) for i in iters]
 
-        xmean = np.mean(samples, axis=0)
-        result['distance'] = np.linalg.norm(xtrue - xmean)
+        # Store kullback-leibler divergence
+        result['kld'] = log_pdf.kl_divergence(samples)
 
         # Store status
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return pfunk.assert_not_deviated_from(
-            1.0, 1.0, results, 'distance')
+        return pfunk.assert_not_deviated_from(0, 0.15, results, 'kld')
 
     def _plot(self, results):
 
         figs = []
 
-        # Figure: Distance to true mean
+        # Figure: KL per commit
         fig = plt.figure()
         figs.append(fig)
         plt.suptitle(pfunk.date())
-        plt.title('Normal LogPDF w. ' + self._method)
+        plt.title('Normal w. ' + self._method)
         plt.xlabel('Commit')
-        plt.ylabel('Distance from mean to true (mean & std)')
-        commits, mean, std = pfunk.gather_statistics_per_commit(
-            results, 'distance')
+        plt.ylabel('Kullback-Leibler divergence (mean & std)')
+        commits, mean, std = pfunk.gather_statistics_per_commit(results, 'kld')
         plt.errorbar(commits, mean, yerr=std, ecolor='k', fmt='o-', capsize=3)
         fig.autofmt_xdate()
+
+        # Figure: KL over time
+        fig = plt.figure()
+        figs.append(fig)
+        plt.suptitle(pfunk.date())
+        plt.title('Normal w. ' + self._method)
+        plt.xlabel('Iteration')
+        plt.ylabel('Kullback-Leibler divergence')
+        iters, klds = results['iters', 'klds']
+        for i, x in enumerate(iters):
+            plt.plot(x, klds[i])
 
         return figs
