@@ -102,6 +102,9 @@ class MCMCEggBox(pfunk.FunctionalTest):
         # Store kullback-leibler-based score
         result['kld'] = log_pdf.kl_score(chain)
 
+        # Store effective sample size
+        result['ess'] = pints.effective_sample_size(chain)
+
         # Store status
         result['status'] = 'done'
 
@@ -133,5 +136,16 @@ class MCMCEggBox(pfunk.FunctionalTest):
         iters, klds = results['iters', 'klds']
         for i, x in enumerate(iters):
             plt.plot(x, klds[i])
+
+        # Figure: ESS per commit
+        fig = plt.figure()
+        figs.append(fig)
+        plt.suptitle(pfunk.date())
+        plt.title('Banana w. ' + self._method)
+        plt.xlabel('Commit')
+        plt.ylabel('Effective sample size (mean & std)')
+        commits, mean, std = pfunk.gather_statistics_per_commit(results, 'ess')
+        plt.errorbar(commits, mean, yerr=std, ecolor='k', fmt='o-', capsize=3)
+        fig.autofmt_xdate()
 
         return figs
