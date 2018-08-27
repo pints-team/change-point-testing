@@ -106,7 +106,7 @@ def weekend(args):
             pfunk.tests.run(name)
             pfunk.tests.plot(name)
             print('Done')
-            pfunk.commit_results()
+            #pfunk.commit_results()
         pfunk.generate_report()
         pfunk.commit_results()
 
