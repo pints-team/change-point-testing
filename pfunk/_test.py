@@ -134,11 +134,10 @@ class FunctionalTest(object):
             plot_path = pfunk.unique_path(os.path.join(pfunk.DIR_PLOT, path))
             figs.savefig(plot_path)
 
-        if show:
-            import matplotlib.pyplot as plt
-            plt.show()
-
         # Close all figures
+        import matplotlib.pyplot as plt
+        if show:
+            plt.show()
         plt.close('all')
 
     def _run(self, result_writer, log_path):
