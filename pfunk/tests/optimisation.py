@@ -149,15 +149,16 @@ class Optimisation(pfunk.FunctionalTest):
         #
         # Plot 1: Relative score (fbest_relative) per commit.
         #
-        commits, mean, std = pfunk.gather_statistics_per_commit(
-            results, 'fbest_relative')
-
         fig = plt.figure()
         plt.suptitle(pfunk.date())
         plt.title('Optimisation result vs commits: ' + self.name())
         plt.xlabel('Commit')
         plt.ylabel('Relative final score: f(best) / f(true)  (mean & std)')
-        plt.errorbar(commits, mean, yerr=std, ecolor='k', fmt='o-', capsize=3)
+        commits, scores = results['pints_commit', 'fbest_relative']
+        plt.plot(commits, scores, 'x', alpha=0.75)
+        commits, mean, std = pfunk.gather_statistics_per_commit(
+            results, 'fbest_relative')
+        plt.plot(commits, mean, 'o-')
         fig.autofmt_xdate()
         figs.append(fig)
 
