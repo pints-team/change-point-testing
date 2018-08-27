@@ -138,6 +138,9 @@ class FunctionalTest(object):
             import matplotlib.pyplot as plt
             plt.show()
 
+        # Close all figures
+        plt.close('all')
+
     def _run(self, result_writer, log_path):
         """
         This will be defined for an individual test. It will run the test,
