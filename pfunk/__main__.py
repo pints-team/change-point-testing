@@ -100,7 +100,7 @@ def weekend(args):
     """
     while True:
         pfunk.prepare_pints_repo(force_refresh=True)
-        for i in range(5):
+        for i in range(10):
             name = pfunk.find_next_test()
             print('Running test ' + name)
             pfunk.tests.run(name)
