@@ -1,7 +1,0 @@
-# Hi martin, this is an example of cron jobs we could run
-
-# Example 2: Daily
-
-git pull
-./funk report
-./funk commit
