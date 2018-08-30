@@ -531,9 +531,13 @@ def gather_statistics_per_commit(
     std = []
     for y in values:
         y = np.array(y)
-        y = y[np.isfinite(y)]
-        mean.append(np.mean(y))
-        std.append(np.std(y))
+        yf = y[np.isfinite(y)]
+        if len(yf):
+            mean.append(np.mean(yf))
+            std.append(np.std(yf))
+        else:
+            mean.append(y[0])
+            std.append(0)
 
     return commits, scores, unique, mean, std
 
