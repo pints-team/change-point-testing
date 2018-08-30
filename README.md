@@ -13,10 +13,10 @@ GitHub project management features (e.g. issues) have been disabled for this rep
 ### Running tests
 
 - To see a list of available tests, use `./funk list`.
-- Use `./funk test test_name` to run a test.
+- Use `./funk run test_name` to run a test.
 - This will create a result file in `results`, and possibly a log file in `logs`.
-- Use `./funk test --next` to run the next test in line. This is determined by looking at the result files and seeing which test hasn't been run for the longest time.
-- Use `./funk test test_name --show` to show the resulting plot as well
+- Use `./funk run --next` to run the next test in line. This is determined by looking at the result files and seeing which test hasn't been run for the longest time.
+- Use `./funk run test_name --show` to show the resulting plot as well
 
 ### Adding tests
 
