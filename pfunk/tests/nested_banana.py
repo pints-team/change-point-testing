@@ -104,14 +104,14 @@ class NestedBanana(pfunk.FunctionalTest):
         )
 
         # Figure: KL over time
-        fig = plt.figure()
-        figs.append(fig)
-        plt.suptitle(pfunk.date())
-        plt.title('Normal w. ' + self._method)
-        plt.xlabel('Iteration')
-        plt.ylabel('Kullback-Leibler divergence')
-        iters, klds = results['iters', 'klds']
-        for i, x in enumerate(iters):
-            plt.plot(x, klds[i])
+        figs.append(pfunk.plot.convergence(
+            results,
+            'iters',
+            'klds',
+            'Banana w. ' + self._method,
+            'Iteration',
+            'Kullback-Leibler divergence',
+            0, 1)
+        )
 
         return figs

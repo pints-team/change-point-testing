@@ -10,7 +10,7 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import pfunk
-import matplotlib.pyplot as plt
+from scipy import stats
 
 
 class Optimisation(pfunk.FunctionalTest):
@@ -159,15 +159,22 @@ class Optimisation(pfunk.FunctionalTest):
         #
         # Plot 2: Convergence
         #
-        fig = plt.figure()
-        plt.suptitle(pfunk.date())
-        plt.title('Optimisation convergence: ' + self.name())
-        plt.xlabel('Evaluations')
-        plt.ylabel('f(best) / f(true)')
+        # Get good limits for plot
         evals, frels = results['evals', 'frels']
-        for i, evs in enumerate(evals):
-            plt.plot(evs, frels[i])
-        figs.append(fig)
+        frels = [f[-1] for f in frels]
+        mid, rng = stats.scoreatpercentile(frels, 50), stats.iqr(frels)
+        ymin = mid - 2 * rng
+        ymax = mid + 2 * rng
+
+        figs.append(pfunk.plot.convergence(
+            results,
+            'evals',
+            'frels',
+            self.name(),
+            'Evaluations',
+            'f(best) / f(true)',
+            ymin, ymax)
+        )
 
         # Return
         return figs

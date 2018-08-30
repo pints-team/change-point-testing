@@ -124,16 +124,15 @@ class MCMCBanana(pfunk.FunctionalTest):
         )
 
         # Figure: KL over time
-        fig = plt.figure()
-        plt.suptitle(pfunk.date())
-        plt.title('Banana w. ' + self._method)
-        plt.xlabel('Iteration')
-        plt.ylabel('Kullback-Leibler divergence')
-        plt.ylim(0, 100)
-        iters, klds = results['iters', 'klds']
-        for i, x in enumerate(iters):
-            plt.plot(x, klds[i])
-        figs.append(fig)
+        figs.append(pfunk.plot.convergence(
+            results,
+            'iters',
+            'klds',
+            'Banana w. ' + self._method,
+            'Iteration',
+            'Kullback-Leibler divergence',
+            0, 10)
+        )
 
         # Figure: ESS per commit
         figs.append(pfunk.plot.variable(

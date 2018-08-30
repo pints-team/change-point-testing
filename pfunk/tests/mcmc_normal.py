@@ -125,16 +125,15 @@ class MCMCNormal(pfunk.FunctionalTest):
         )
 
         # Figure: KL over time
-        fig = plt.figure()
-        figs.append(fig)
-        plt.suptitle(pfunk.date())
-        plt.title('Normal w. ' + self._method)
-        plt.xlabel('Iteration')
-        plt.ylabel('Kullback-Leibler divergence')
-        plt.ylim(0, 10)
-        iters, klds = results['iters', 'klds']
-        for i, x in enumerate(iters):
-            plt.plot(x, klds[i])
+        figs.append(pfunk.plot.convergence(
+            results,
+            'iters',
+            'klds',
+            'Normal w. ' + self._method,
+            'Iteration',
+            'Kullback-Leibler divergence',
+            0, 10)
+        )
 
         # Figure: ESS per commit
         figs.append(pfunk.plot.variable(

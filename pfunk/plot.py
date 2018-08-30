@@ -61,6 +61,43 @@ def variable(results, variable, title, ylabel):
     if ymax > 1000:
         plt.subplots_adjust(0.1, 0.16, 0.99, 0.92, 0.2, 0)
     else:
-        plt.subplots_adjust(0.07, 0.16, 0.99, 0.92, 0.15, 0)
+        plt.subplots_adjust(0.07, 0.16, 0.99, 0.92, 0.17, 0)
 
     return fig
+
+
+def convergence(results, xvar, yvar, title, xlabel, ylabel, ymin, ymax):
+    """
+    Plots a variable over e.g. time, iterations, evaluations.
+    """
+    fig = plt.figure(figsize=(11, 4.5))
+    plt.suptitle(title + ' (' + pfunk.date() + ')')
+
+    xs, ys = results[xvar, yvar]
+    if len(xs) == 0:
+        plt.text(0.5, 0.5, 'No data')
+        return fig
+
+    plt.subplot(1, 2, 1)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    for i, x in enumerate(xs):
+        plt.plot(x, ys[i])
+
+    plt.subplot(1, 2, 2)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    for i, x in enumerate(xs):
+        plt.plot(x, ys[i])
+
+    ymin = max(ymin, min([min(y) for y in ys]))
+    ymax = min(ymax, max([max(y) for y in ys]))
+    plt.ylim(ymin, ymax)
+
+    if ymax > 1000 or ymax < 1.5:
+        plt.subplots_adjust(0.1, 0.1, 0.99, 0.92, 0.2, 0)
+    else:
+        plt.subplots_adjust(0.07, 0.1, 0.99, 0.92, 0.15, 0)
+
+    return fig
+
