@@ -131,6 +131,7 @@ class MCMCNormal(pfunk.FunctionalTest):
         plt.title('Normal w. ' + self._method)
         plt.xlabel('Iteration')
         plt.ylabel('Kullback-Leibler divergence')
+        plt.ylim(0, 10)
         iters, klds = results['iters', 'klds']
         for i, x in enumerate(iters):
             plt.plot(x, klds[i])

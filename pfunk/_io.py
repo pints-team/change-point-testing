@@ -14,6 +14,7 @@ import re
 import time
 import logging
 import numpy as np
+from scipy import stats
 
 import pfunk
 
@@ -490,7 +491,7 @@ def gather_statistics_per_commit(
         if isinstance(scores[i], (float, int)):
             values[j].append(scores[i])
         else:
-            values[j].extend(scores[i])
+            values[j] += list(scores[i])
 
     # Convert to short commit names
     if short_names:
@@ -499,30 +500,38 @@ def gather_statistics_per_commit(
 
     # Remove outliers
     if remove_outliers:
-        r = 3
+        r = 2
         for i in range(len(values)):
             y = np.array(values[i])
-            mean, std = np.mean(y), np.std(y)
-            distance = np.abs(y - mean)
+            y = y[np.isfinite(y)]
+            if len(y) < 2:
+                continue
+            #mid, rng = np.mean(y), np.std(y)
+            mid, rng = stats.scoreatpercentile(y, 50), stats.iqr(y)
+            distance = np.abs(y - mid)
             ifurthest = np.argmax(distance)
-            while distance[ifurthest] > r * std:
+            while distance[ifurthest] > r * rng:
                 y = np.delete(y, ifurthest)
-                mean, std = np.mean(y), np.std(y)
-                distance = np.abs(y - mean)
+                #mean, std = np.mean(y), np.std(y)
+                mid, rng = stats.scoreatpercentile(y, 50), stats.iqr(y)
+                distance = np.abs(y - mid)
                 ifurthest = np.argmax(distance)
             values[i] = y
 
-        # Reconstruct commits/scores arrays from filtered data
-        commits = []
-        scores = []
-        for i, y in enumerate(values):
-            commits.extend([unique[i]] * len(y))
-            scores.extend(y)
+    # Reconstruct commits/scores arrays from filtered data, and collapse
+    # multi-valued data if given (e.g ess)
+    commits = []
+    scores = []
+    for i, y in enumerate(values):
+        commits.extend([unique[i]] * len(y))
+        scores.extend(y)
 
     # Gather mean and standard deviation
     mean = []
     std = []
     for y in values:
+        y = np.array(y)
+        y = y[np.isfinite(y)]
         mean.append(np.mean(y))
         std.append(np.std(y))
 

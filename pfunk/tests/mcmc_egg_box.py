@@ -130,6 +130,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
         plt.title('Egg box w. ' + self._method)
         plt.xlabel('Iteration')
         plt.ylabel('Kullback-Leibler-based score')
+        plt.ylim(0, 60000)
         iters, klds = results['iters', 'klds']
         for i, x in enumerate(iters):
             plt.plot(x, klds[i])

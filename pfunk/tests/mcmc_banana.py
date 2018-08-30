@@ -129,6 +129,7 @@ class MCMCBanana(pfunk.FunctionalTest):
         plt.title('Banana w. ' + self._method)
         plt.xlabel('Iteration')
         plt.ylabel('Kullback-Leibler divergence')
+        plt.ylim(0, 100)
         iters, klds = results['iters', 'klds']
         for i, x in enumerate(iters):
             plt.plot(x, klds[i])

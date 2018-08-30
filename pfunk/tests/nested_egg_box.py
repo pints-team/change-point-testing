@@ -80,6 +80,12 @@ class NestedEggBox(pfunk.FunctionalTest):
         # Run
         samples, logZ = sampler.run()
 
+        # Calculate KL-based score after every n-th iteration
+        n = 100
+        iters = list(range(n, len(samples) + n, n))
+        result['iters'] = iters
+        result['klds'] = [log_pdf.kl_divergence(samples[:i]) for i in iters]
+
         # Store kullback-leibler-based score
         result['kld'] = log_pdf.kl_score(samples)
 
@@ -100,5 +106,16 @@ class NestedEggBox(pfunk.FunctionalTest):
             'Egg box w. ' + self._method,
             'Kullback-Leibler-based score')
         )
+
+        # Figure: KL over time
+        fig = plt.figure()
+        figs.append(fig)
+        plt.suptitle(pfunk.date())
+        plt.title('Normal w. ' + self._method)
+        plt.xlabel('Iteration')
+        plt.ylabel('Kullback-Leibler-based score')
+        iters, klds = results['iters', 'klds']
+        for i, x in enumerate(iters):
+            plt.plot(x, klds[i])
 
         return figs
