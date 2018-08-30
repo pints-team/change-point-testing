@@ -444,37 +444,89 @@ def find_test_results(test_name):
     return ResultSet(results)
 
 
-def gather_statistics_per_commit(results, variable):
+def gather_statistics_per_commit(
+        results, variable, remove_outliers=False, short_names=True):
     """
     Gathers mean and standard devations of the given variable on a per commit
-    basis. Returns three lists ``commits``, ``mean`` and ``std``,  where
-    ``mean`` is a list of mean values per commit (ordered by increasing time),
-    where ``std`` is a list of standard deviations per commit, and ``commits``
-    is the list of commits.
+    basis.
+
+    Returns a tuple ``(commits, values, unique, mean, std)``, where ``commits``
+    is a list of commit names (ordered by date) and ``values`` are the
+    corresponding values. Next, ``unique`` is a list of unique commit names,
+    and ``mean`` and ``std`` are the mean and standard deviations per unique
+    commit.
+
+    Arguments::
+
+    ``results``
+        The results object to get data from.
+    ``variable``
+        The variable to get data for.
+    ``remove_outliers``
+        Optional argument. If set to ``True`` outliers will be removed from the
+        returned data, and won't be included when calculating mean and std.
+    ``short_names``
+        Optional argument. If set to ``False`` the long commit names will be
+        returned.
+
     """
     # Fetch commits and scores
     commits, scores = results['pints_commit', variable]
 
-    # Gather per commit
-    unique_commits = []
-    xinv = {}
-    y = []
+    # Gather values per commit
+    unique = []
+    values = []
+    lookup = {}
     for i, commit in enumerate(commits):
-        if commit in xinv:
-            xinv[commit]
-            y[xinv[commit]].append(scores[i])
+        # Get appropriate commit list
+        try:
+            j = lookup[commit]
+        except KeyError:
+            j = lookup[commit] = len(values)
+            values.append([])
+            unique.append(commit)
+
+        # Flatten lists (i.e. ess)
+        if isinstance(scores[i], (float, int)):
+            values[j].append(scores[i])
         else:
-            xinv[commit] = len(unique_commits)
-            unique_commits.append(commit)
-            y.append([scores[i]])
+            values[j].extend(scores[i])
+
+    # Convert to short commit names
+    if short_names:
+        unique = [x[:7] for x in unique]
+        commits = [x[:7] for x in commits]
+
+    # Remove outliers
+    if remove_outliers:
+        r = 3
+        for i in range(len(values)):
+            y = np.array(values[i])
+            mean, std = np.mean(y), np.std(y)
+            distance = np.abs(y - mean)
+            ifurthest = np.argmax(distance)
+            while distance[ifurthest] > r * std:
+                y = np.delete(y, ifurthest)
+                mean, std = np.mean(y), np.std(y)
+                distance = np.abs(y - mean)
+                ifurthest = np.argmax(distance)
+            values[i] = y
+
+        # Reconstruct commits/scores arrays from filtered data
+        commits = []
+        scores = []
+        for i, y in enumerate(values):
+            commits.extend([unique[i]] * len(y))
+            scores.extend(y)
+
+    # Gather mean and standard deviation
     mean = []
     std = []
-    for values in y:
-        mean.append(np.mean(values))
-        std.append(np.std(values))
+    for y in values:
+        mean.append(np.mean(y))
+        std.append(np.std(y))
 
-    return unique_commits, mean, std
-
+    return commits, scores, unique, mean, std
 
 def assert_not_deviated_from(mean, sigma, results, variable):
     """
@@ -482,8 +534,9 @@ def assert_not_deviated_from(mean, sigma, results, variable):
     `` sigma``, this returns true if the given variable has not deviated by
     more than 3 sigmas from the mean over the last three commits.
     """
-    commits, xmean, xstd = gather_statistics_per_commit(results, variable)
-    return np.allclose(np.array(xmean[-3:]), mean, atol=3*sigma)
+    x, y, u, m, s = gather_statistics_per_commit(
+        results, variable, remove_outliers=False)
+    return np.allclose(np.array(m[-3:]), mean, atol=3*sigma)
 
 
 def generate_report():
@@ -507,8 +560,9 @@ def generate_report():
     plots, plot_dates = find_test_plots()
 
     # Friendly date format
-    def dfmt(when):
-        return time.strftime('%Y-%m-%d %H:%M:%S', when)
+    def dfmt(when=None):
+        f = '%Y-%m-%d %H:%M:%S'
+        return time.strftime(f) if when is None else time.strftime(f, when)
 
     # Plot location, relative to file
     filename = os.path.join(pfunk.DIR_RES_REPO, 'README.md')
@@ -518,6 +572,7 @@ def generate_report():
     eol = '\n'
     with open(filename, 'w') as f:
         f.write('# Pints functional testing report' + 3*eol)
+        f.write('Generated on: ' + dfmt() + 3*eol)
 
         for name, date in sorted(dates.items(), key=lambda x: x[0]):
             f.write('## ' + name + 2*eol)

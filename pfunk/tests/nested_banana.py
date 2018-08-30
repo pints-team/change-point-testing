@@ -90,16 +90,11 @@ class NestedBanana(pfunk.FunctionalTest):
         figs = []
 
         # Figure: KL per commit
-        fig = plt.figure()
-        figs.append(fig)
-        plt.suptitle(pfunk.date())
-        plt.title('Banana w. ' + self._method)
-        plt.xlabel('Commit')
-        plt.ylabel('Kullback-Leibler divergence (mean & std)')
-        commits, scores = results['pints_commit', 'kld']
-        plt.plot(commits, scores, 'x', alpha=0.75)
-        commits, mean, std = pfunk.gather_statistics_per_commit(results, 'kld')
-        plt.plot(commits, mean, 'o-')
-        fig.autofmt_xdate()
+        figs.append(pfunk.plot.variable(
+            results,
+            'kll',
+            'Banana w. ' + self._method,
+            'Kullback-Leibler divergence')
+        )
 
         return figs

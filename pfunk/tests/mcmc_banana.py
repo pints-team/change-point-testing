@@ -10,6 +10,7 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import pfunk
+import pfunk.plot
 import matplotlib.pyplot as plt
 
 
@@ -115,21 +116,15 @@ class MCMCBanana(pfunk.FunctionalTest):
         figs = []
 
         # Figure: KL per commit
-        fig = plt.figure()
-        figs.append(fig)
-        plt.suptitle(pfunk.date())
-        plt.title('Banana w. ' + self._method)
-        plt.xlabel('Commit')
-        plt.ylabel('Kullback-Leibler divergence (mean & std)')
-        commits, scores = results['pints_commit', 'kld']
-        plt.plot(commits, scores, 'x', alpha=0.75)
-        commits, mean, std = pfunk.gather_statistics_per_commit(results, 'kld')
-        plt.plot(commits, mean, 'o-')
-        fig.autofmt_xdate()
+        figs.append(pfunk.plot.variable(
+            results,
+            'kld',
+            'Banana w. ' + self._method,
+            'Kullback-Leibler divergence')
+        )
 
         # Figure: KL over time
         fig = plt.figure()
-        figs.append(fig)
         plt.suptitle(pfunk.date())
         plt.title('Banana w. ' + self._method)
         plt.xlabel('Iteration')
@@ -137,18 +132,14 @@ class MCMCBanana(pfunk.FunctionalTest):
         iters, klds = results['iters', 'klds']
         for i, x in enumerate(iters):
             plt.plot(x, klds[i])
+        figs.append(fig)
 
         # Figure: ESS per commit
-        fig = plt.figure()
-        figs.append(fig)
-        plt.suptitle(pfunk.date())
-        plt.title('Banana w. ' + self._method)
-        plt.xlabel('Commit')
-        plt.ylabel('Effective sample size (mean & std)')
-        commits, scores = results['pints_commit', 'ess']
-        plt.plot(commits, scores, 'x', alpha=0.75)
-        commits, mean, std = pfunk.gather_statistics_per_commit(results, 'ess')
-        plt.plot(commits, mean, 'o-')
-        fig.autofmt_xdate()
+        figs.append(pfunk.plot.variable(
+            results,
+            'ess',
+            'Banana w. ' + self._method,
+            'Effective sample size')
+        )
 
         return figs
