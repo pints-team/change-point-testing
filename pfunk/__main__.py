@@ -36,8 +36,9 @@ def run(args):
     Runs a test.
     """
     name = args.name if args.name else pfunk.find_next_test()
-    print('Running test ' + name)
-    pfunk.tests.run(name)
+    for i in range(args.r):
+        print('Running test ' + name)
+        pfunk.tests.run(name)
     if args.plot or args.show:
         pfunk.tests.plot(name, args.show)
     print('Done')
@@ -157,6 +158,10 @@ def main():
         '--show',
         action='store_true',
         help='Create and show a plot after testing.',
+    )
+    run_parser.add_argument(
+        '-r', default=1, type=int,
+        help='Number of test repeats to run.',
     )
     run_parser.set_defaults(func=run)
 
