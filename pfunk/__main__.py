@@ -40,6 +40,7 @@ def run(args):
         print('Running test ' + name)
         pfunk.tests.run(name)
     if args.plot or args.show:
+        print('Creating plot for ' + name)
         pfunk.tests.plot(name, args.show)
     print('Done')
 
