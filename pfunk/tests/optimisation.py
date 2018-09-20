@@ -184,6 +184,7 @@ class OptimisationFN(Optimisation):
     """
     Optimisation on a fitzhugh-nagumo problem.
     """
+
     def _problem_name(self):
         return 'fn'
 
@@ -224,6 +225,7 @@ class OptimisationLogistic(Optimisation):
     """
     Optimisation on a logistic model.
     """
+
     def _problem_name(self):
         return 'logistic'
 
@@ -263,8 +265,15 @@ class OptimisationBR(Optimisation):
     """
     Optimisation on a Beeler-Reuter model.
     """
+
     def _problem_name(self):
         return 'br'
+
+    def _analyse(self, results):
+        # Beeler-Reuter model is a little more tricky than the rest,
+        # so increase sigma to 2.0
+        return pfunk.assert_not_deviated_from(
+            1.0, 2.0, results, 'fbest_relative')
 
     def _problem(self):
         import numpy as np
