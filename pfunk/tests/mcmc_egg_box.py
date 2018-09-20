@@ -120,7 +120,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
             results,
             'kld',
             'Egg box w. ' + self._method,
-            'Kullback-Leibler-based score')
+            'Kullback-Leibler-based score', 3*0.5)
         )
 
         # Figure: KL over time

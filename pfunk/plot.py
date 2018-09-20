@@ -16,7 +16,8 @@ import matplotlib.pyplot as plt
 
 import pfunk
 
-def variable(results, variable, title, ylabel):
+
+def variable(results, variable, title, ylabel, threshold=None):
     """
     Creates and returns a default plot for a variable vs commits.
     """
@@ -35,6 +36,8 @@ def variable(results, variable, title, ylabel):
     x += np.random.uniform(-r, r, x.shape)
     plt.plot(u, m, 'ko-', alpha=0.5)
     plt.plot(x, y, 'x', alpha=0.75)
+    if threshold:
+        plt.axhline(threshold)
     try:
         y = np.array(y)
         ymax = np.max(y[np.isfinite(y)])
@@ -51,6 +54,8 @@ def variable(results, variable, title, ylabel):
     x += np.random.uniform(-r, r, x.shape)
     plt.plot(u, m, 'ko-', alpha=0.5)
     plt.plot(x, y, 'x', alpha=0.75)
+    if threshold:
+        plt.axhline(threshold)
     y = np.array(y)
     try:
         y = np.array(y)
@@ -100,4 +105,3 @@ def convergence(results, xvar, yvar, title, xlabel, ylabel, ymin, ymax):
         plt.subplots_adjust(0.07, 0.1, 0.99, 0.92, 0.15, 0)
 
     return fig
-

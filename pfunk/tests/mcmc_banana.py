@@ -120,7 +120,7 @@ class MCMCBanana(pfunk.FunctionalTest):
             results,
             'kld',
             'Banana w. ' + self._method,
-            'Kullback-Leibler divergence')
+            'Kullback-Leibler divergence', 3*0.05)
         )
 
         # Figure: KL over time

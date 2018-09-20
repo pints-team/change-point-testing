@@ -121,7 +121,7 @@ class MCMCNormal(pfunk.FunctionalTest):
             results,
             'kld',
             'Normal w. ' + self._method,
-            'Kullback-Leibler divergence')
+            'Kullback-Leibler divergence', 3*0.05)
         )
 
         # Figure: KL over time

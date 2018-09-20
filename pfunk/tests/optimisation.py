@@ -153,7 +153,7 @@ class Optimisation(pfunk.FunctionalTest):
             results,
             'fbest_relative',
             self.name(),
-            'Final f(best) / f(true)')
+            'Final f(best) / f(true)', 3.0)
         )
 
         #
@@ -268,12 +268,6 @@ class OptimisationBR(Optimisation):
 
     def _problem_name(self):
         return 'br'
-
-    def _analyse(self, results):
-        # Beeler-Reuter model is a little more tricky than the rest,
-        # so increase sigma to 2.0
-        return pfunk.assert_not_deviated_from(
-            1.0, 2.0, results, 'fbest_relative')
 
     def _problem(self):
         import numpy as np
