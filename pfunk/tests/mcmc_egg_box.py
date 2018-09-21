@@ -99,11 +99,15 @@ class MCMCEggBox(pfunk.FunctionalTest):
         log.info('Chain shape (without burn-in): ' + str(chain.shape))
         log.info('Chain mean: ' + str(np.mean(chain, axis=0)))
 
-        # Store kullback-leibler-based score
-        result['kld'] = log_pdf.kl_score(chain)
+        # Store kullback-leibler divergence
+        kld = log_pdf.kl_score(chain)
+        result['kld'] = kld
+        log.info('Final KLD: ' + str(kld))
 
         # Store effective sample size
-        result['ess'] = pints.effective_sample_size(chain)
+        ess = pints.effective_sample_size(chain)
+        result['ess'] = ess
+        log.info('Final ESS: ' + str(ess))
 
         # Store status
         result['status'] = 'done'
