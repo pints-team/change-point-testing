@@ -28,10 +28,11 @@ class NestedEggBox(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, method):
+    def __init__(self, method, pass_threshold):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
+        self._pass_threshold = float(pass_threshold)
 
         # Create name and initialise
         name = 'nested_egg_box_' + self._method
@@ -93,7 +94,7 @@ class NestedEggBox(pfunk.FunctionalTest):
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return pfunk.assert_not_deviated_from(0, 0.5, results, 'kld')
+        return pfunk.assert_not_deviated_from(0, self._pass_threshold, results, 'kld')
 
     def _plot(self, results):
 
@@ -103,10 +104,9 @@ class NestedEggBox(pfunk.FunctionalTest):
         figs.append(pfunk.plot.variable(
             results,
             'kld',
-            'Egg box w. ' + self._method,
+            'Egg box w. ' + self._method, 3*self._pass_threshold,
             'Kullback-Leibler-based score')
         )
-
 
         # Figure: KL over time
         figs.append(pfunk.plot.convergence(

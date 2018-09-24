@@ -27,10 +27,11 @@ class NestedNormal(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, method):
+    def __init__(self, method, pass_threshold):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
+        self._pass_threshold = float(pass_threshold)
 
         # Create name and initialise
         name = 'nested_normal_' + self._method
@@ -90,7 +91,7 @@ class NestedNormal(pfunk.FunctionalTest):
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return pfunk.assert_not_deviated_from(0, 0.15, results, 'kld')
+        return pfunk.assert_not_deviated_from(0, self._pass_threshold, results, 'kld')
 
     def _plot(self, results):
 
@@ -100,7 +101,7 @@ class NestedNormal(pfunk.FunctionalTest):
         figs.append(pfunk.plot.variable(
             results,
             'kld',
-            'Normal w. ' + self._method,
+            'Normal w. ' + self._method, 3*self._pass_threshold,
             'Kullback-Leibler divergence')
         )
 

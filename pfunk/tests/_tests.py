@@ -80,13 +80,13 @@ add(MCMCBanana('PopulationMCMC', 1, 1.0))
 #add(MCMCEggBox('PopulationMCMC', 1))
 
 from .nested_normal import NestedNormal
-add(NestedNormal('NestedEllipsoidSampler'))
-add(NestedNormal('NestedRejectionSampler'))
+add(NestedNormal('NestedEllipsoidSampler', 0.16))
+add(NestedNormal('NestedRejectionSampler', 0.16))
 
 from .nested_banana import NestedBanana
-add(NestedBanana('NestedEllipsoidSampler'))
-add(NestedBanana('NestedRejectionSampler'))
+add(NestedBanana('NestedEllipsoidSampler', 0.4))
+add(NestedBanana('NestedRejectionSampler', 0.4))
 
 from .nested_egg_box import NestedEggBox
-add(NestedEggBox('NestedEllipsoidSampler'))
-add(NestedEggBox('NestedRejectionSampler'))
+add(NestedEggBox('NestedEllipsoidSampler', 0.12))
+add(NestedEggBox('NestedRejectionSampler', 0.12))
