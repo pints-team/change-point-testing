@@ -64,18 +64,20 @@ add(MCMCNormal('DreamMCMC', 3, 0.05))
 add(MCMCNormal('PopulationMCMC', 1, 1.0))
 
 from .mcmc_banana import MCMCBanana
-add(MCMCBanana('AdaptiveCovarianceMCMC', 1))
-add(MCMCBanana('MetropolisRandomWalkMCMC', 1))
-add(MCMCBanana('DifferentialEvolutionMCMC', 3))
-add(MCMCBanana('DreamMCMC', 3))
-add(MCMCBanana('PopulationMCMC', 1))
+add(MCMCBanana('AdaptiveCovarianceMCMC', 1, 1.0))
+add(MCMCBanana('MetropolisRandomWalkMCMC', 1, 1.0))
+add(MCMCBanana('DifferentialEvolutionMCMC', 3, 1.0))
+add(MCMCBanana('DreamMCMC', 3, 1.0))
+add(MCMCBanana('PopulationMCMC', 1, 1.0))
 
-from .mcmc_egg_box import MCMCEggBox
-add(MCMCEggBox('AdaptiveCovarianceMCMC', 4))
-add(MCMCEggBox('MetropolisRandomWalkMCMC', 4))
-add(MCMCEggBox('DifferentialEvolutionMCMC', 4))
-add(MCMCEggBox('DreamMCMC', 4))
-add(MCMCEggBox('PopulationMCMC', 1))
+# issue 516 - turn off egg box test for mcmc samplers
+# due to high difficulty of the problem
+#from .mcmc_egg_box import MCMCEggBox
+#add(MCMCEggBox('AdaptiveCovarianceMCMC', 1))
+#add(MCMCEggBox('MetropolisRandomWalkMCMC', 1))
+#add(MCMCEggBox('DifferentialEvolutionMCMC', 3))
+#add(MCMCEggBox('DreamMCMC', 3))
+#add(MCMCEggBox('PopulationMCMC', 1))
 
 from .nested_normal import NestedNormal
 add(NestedNormal('NestedEllipsoidSampler'))

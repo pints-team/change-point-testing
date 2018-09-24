@@ -28,11 +28,12 @@ class MCMCEggBox(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, method, nchains):
+    def __init__(self, method, nchains, pass_threshold):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
         self._nchains = int(nchains)
+        self._pass_threshold = float(pass_threshold)
 
         # Create name and initialise
         name = 'mcmc_egg_box_' + self._method + '_' + str(self._nchains)
@@ -113,7 +114,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return pfunk.assert_not_deviated_from(0, 0.5, results, 'kld')
+        return pfunk.assert_not_deviated_from(0, self._pass_threshold, results, 'kld')
 
     def _plot(self, results):
 
@@ -124,7 +125,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
             results,
             'kld',
             'Egg box w. ' + self._method,
-            'Kullback-Leibler-based score', 3*0.5)
+            'Kullback-Leibler-based score', 3*self._pass_threshold)
         )
 
         # Figure: KL over time
