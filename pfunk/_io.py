@@ -541,6 +541,7 @@ def gather_statistics_per_commit(
 
     return commits, scores, unique, mean, std
 
+
 def assert_not_deviated_from(mean, sigma, results, variable):
     """
     Given a normal distribution of likelihood defined by ``mean`` and
@@ -586,6 +587,12 @@ def generate_report():
     with open(filename, 'w') as f:
         f.write('# Pints functional testing report' + 3*eol)
         f.write('Generated on: ' + dfmt() + 3*eol)
+        f.write('Failed tests:' + eol)
+        for name, result in states.items():
+            if not result:
+                f.write('- [' + name + '](#' + name.lower() + ')' + eol)
+
+        f.write(eol)
 
         for name, date in sorted(dates.items(), key=lambda x: x[0]):
             f.write('## ' + name + 2*eol)
