@@ -39,22 +39,22 @@ def analyse(name):
 
 
 from .optimisation import OptimisationLogistic
-add(OptimisationLogistic('CMAES'))
-add(OptimisationLogistic('XNES'))
-add(OptimisationLogistic('SNES'))
-add(OptimisationLogistic('PSO'))
+add(OptimisationLogistic('CMAES', 1.0))
+add(OptimisationLogistic('XNES', 1.0))
+add(OptimisationLogistic('SNES', 1.0))
+add(OptimisationLogistic('PSO', 1.0))
 
 from .optimisation import OptimisationFN
-add(OptimisationFN('CMAES'))
-add(OptimisationFN('XNES'))
-add(OptimisationFN('SNES'))
-add(OptimisationFN('PSO'))
+add(OptimisationFN('CMAES', 1.0))
+add(OptimisationFN('XNES', 1.0))
+add(OptimisationFN('SNES', 1.0))
+add(OptimisationFN('PSO', 1.0))
 
 from .optimisation import OptimisationBR
-add(OptimisationBR('CMAES'))
-add(OptimisationBR('XNES'))
-add(OptimisationBR('SNES'))
-add(OptimisationBR('PSO'))
+add(OptimisationBR('CMAES', 2.0))
+add(OptimisationBR('XNES', 2.0))
+add(OptimisationBR('SNES', 2.0))
+add(OptimisationBR('PSO', 2.0))
 
 from .mcmc_normal import MCMCNormal
 add(MCMCNormal('AdaptiveCovarianceMCMC', 1, 0.05))

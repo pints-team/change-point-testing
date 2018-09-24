@@ -27,10 +27,11 @@ class Optimisation(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, method):
+    def __init__(self, method, pass_threshold):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
+        self._pass_threshold = float(pass_threshold)
 
         # Create name and initialise
         name = 'opt_' + self._problem_name() + '_' + method
@@ -140,7 +141,7 @@ class Optimisation(pfunk.FunctionalTest):
         # The test has passed if the obtained ``fbest_relative`` has stayed
         # near 3 sigma of the mean, with
         return pfunk.assert_not_deviated_from(
-            1.0, 1.0, results, 'fbest_relative')
+            1.0, self._pass_threshold, results, 'fbest_relative')
 
     def _plot(self, results):
 
@@ -153,7 +154,7 @@ class Optimisation(pfunk.FunctionalTest):
             results,
             'fbest_relative',
             self.name(),
-            'Final f(best) / f(true)', 3.0)
+            'Final f(best) / f(true)', 1.0+3*self._pass_threshold)
         )
 
         #

@@ -104,8 +104,8 @@ class NestedEggBox(pfunk.FunctionalTest):
         figs.append(pfunk.plot.variable(
             results,
             'kld',
-            'Egg box w. ' + self._method, 3*self._pass_threshold,
-            'Kullback-Leibler-based score')
+            'Egg box w. ' + self._method,
+            'Kullback-Leibler-based score', 3*self._pass_threshold)
         )
 
         # Figure: KL over time

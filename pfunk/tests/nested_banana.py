@@ -100,8 +100,8 @@ class NestedBanana(pfunk.FunctionalTest):
         figs.append(pfunk.plot.variable(
             results,
             'kld',
-            'Banana w. ' + self._method, 3*self._pass_threshold,
-            'Kullback-Leibler divergence')
+            'Banana w. ' + self._method,
+            'Kullback-Leibler divergence', 3*self._pass_threshold)
         )
 
         # Figure: KL over time

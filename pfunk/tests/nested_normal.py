@@ -101,8 +101,8 @@ class NestedNormal(pfunk.FunctionalTest):
         figs.append(pfunk.plot.variable(
             results,
             'kld',
-            'Normal w. ' + self._method, 3*self._pass_threshold,
-            'Kullback-Leibler divergence')
+            'Normal w. ' + self._method,
+            'Kullback-Leibler divergence', 3*self._pass_threshold)
         )
 
         # Figure: KL over time
