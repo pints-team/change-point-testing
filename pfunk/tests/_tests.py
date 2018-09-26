@@ -58,7 +58,7 @@ add(OptimisationBR('PSO', 2.0))
 
 from .mcmc_normal import MCMCNormal
 add(MCMCNormal('AdaptiveCovarianceMCMC', 1, 0.05))
-add(MCMCNormal('MetropolisRandomWalkMCMC', 1, 0.2)
+add(MCMCNormal('MetropolisRandomWalkMCMC', 1, 0.2))
 add(MCMCNormal('DifferentialEvolutionMCMC', 3, 0.1))
 add(MCMCNormal('DreamMCMC', 3, 0.1))
 add(MCMCNormal('PopulationMCMC', 1, 1.0))
