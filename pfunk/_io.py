@@ -354,8 +354,9 @@ def find_test_dates():
         if name not in dates:
             continue
 
-        # Attempt to parse date
-        date = time.strptime(date, pfunk.DATE_FORMAT)
+        # Attempt to parse date - remember to clean off trailing '-2.txt' if there
+        cleaned_to_date_format = re.sub(r'''-[0-9]+$''', '', date)
+        date = time.strptime(cleaned_to_date_format, pfunk.DATE_FORMAT)
         last = dates[name]
         if last is None or date > last:
             dates[name] = date
