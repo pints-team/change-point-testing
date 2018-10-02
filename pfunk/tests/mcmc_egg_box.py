@@ -145,7 +145,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
             results,
             'iters2',
             'klds2',
-            'Banana w. ' + self._method,
+            'Egg box w. ' + self._method,
             'Iteration (sliding window)',
             'Kullback-Leibler-based score',
             0, 60000)
