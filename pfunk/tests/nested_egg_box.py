@@ -88,7 +88,7 @@ class NestedEggBox(pfunk.FunctionalTest):
         iters = list(range(0, n_samples - n_window + n_jump, n_jump))
         result['iters2'] = iters
         result['klds2'] = [
-            log_pdf.kl_divergence(samples[i:i + n_window]) for i in iters]
+            log_pdf.kl_score(samples[i:i + n_window]) for i in iters]
 
         # Store kullback-leibler-based score
         result['kld'] = log_pdf.kl_score(samples)
