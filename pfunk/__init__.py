@@ -95,6 +95,9 @@ from ._git import (  # noqa
     pints_refresh,
     prepare_pints_repo,
 )
+from ._util import (  # noqa
+    weave,
+)
 
 # Import test class
 from ._test import (    # noqa

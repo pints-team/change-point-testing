@@ -79,9 +79,12 @@ class MCMCEggBox(pfunk.FunctionalTest):
         mcmc.set_log_to_file(log_path)
 
         # Set max iterations
-        mcmc.set_max_iterations(10000)
+        n_iter = 10000
+        n_burn = 5000
+        n_init = 1000
+        mcmc.set_max_iterations(n_iter)
         if mcmc.method_needs_initial_phase():
-            mcmc.set_initial_phase_iterations(2000)
+            mcmc.set_initial_phase_iterations(n_init)
 
         # Run
         chains = mcmc.run()
@@ -92,35 +95,38 @@ class MCMCEggBox(pfunk.FunctionalTest):
             pints.plot.trace(chains)
             plt.show()
 
-        # Combine chains
-        chain = np.vstack(chains)
+        # Combine chains (weaving, so we can see the combined progress per
+        # iteration for multi-chain methods)
+        chain = pfunk.weave(chains)
 
-        # Calculate KL-based score after every n-th iteration
-        n = 100
-        iters = list(range(n, len(chain) + n, n))
-        result['iters'] = iters
-        result['klds'] = [log_pdf.kl_score(chain[:i]) for i in iters]
+        # Calculate KLD for a sliding window
+        n_samples = len(chain)              # Total samples
+        n_window = 500 * self._nchains      # Window size
+        n_jump = 20 * self._nchains         # Spacing between windows
+        iters = list(range(0, n_samples - n_window + n_jump, n_jump))
+        result['iters2'] = iters
+        result['klds2'] = [
+            log_pdf.kl_divergence(chain[i:i + n_window]) for i in iters]
 
         # Remove burn-in
-        chain = chain[5000:, :]
+        # For multi-chain, multiply by n_chains because we wove the chains
+        # together.
+        chain = chain[n_burn * self._nchains:]
         log.info('Chain shape (without burn-in): ' + str(chain.shape))
         log.info('Chain mean: ' + str(np.mean(chain, axis=0)))
 
-        # Store kullback-leibler divergence
-        kld = log_pdf.kl_score(chain)
-        result['kld'] = kld
-        log.info('Final KLD: ' + str(kld))
+        # Store kullback-leibler divergence after burn-in
+        result['kld'] = log_pdf.kl_divergence(chain)
 
         # Store effective sample size
-        ess = pints.effective_sample_size(chain)
-        result['ess'] = ess
-        log.info('Final ESS: ' + str(ess))
+        result['ess'] = pints.effective_sample_size(chain)
 
         # Store status
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return pfunk.assert_not_deviated_from(0, self._pass_threshold, results, 'kld')
+        return pfunk.assert_not_deviated_from(
+            0, self._pass_threshold, results, 'kld')
 
     def _plot(self, results):
 
@@ -131,16 +137,16 @@ class MCMCEggBox(pfunk.FunctionalTest):
             results,
             'kld',
             'Egg box w. ' + self._method,
-            'Kullback-Leibler-based score', 3*self._pass_threshold)
+            'Kullback-Leibler-based score', 3 * self._pass_threshold)
         )
 
         # Figure: KL over time
         figs.append(pfunk.plot.convergence(
             results,
-            'iters',
-            'klds',
+            'iters2',
+            'klds2',
             'Banana w. ' + self._method,
-            'Iteration',
+            'Iteration (sliding window)',
             'Kullback-Leibler-based score',
             0, 60000)
         )
