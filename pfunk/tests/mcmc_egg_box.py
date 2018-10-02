@@ -57,12 +57,6 @@ class MCMCEggBox(pfunk.FunctionalTest):
         # Get method class
         method = getattr(pints, self._method)
 
-        # Check number of chains
-        if isinstance(method, pints.SingleChainMCMC) and self._nchains > 1:
-            log.warn('SingleChainMCMC run with more than 1 chain.')
-        elif isinstance(method, pints.MultiChainMCMC) and self._nchains == 1:
-            log.warn('MultiChainMCMC run with only 1 chain.')
-
         # Create a log pdf (use multi-modal, but with a single mode)
         log_pdf = pints.toy.SimpleEggBoxLogPDF(sigma=2, r=4)
 
@@ -92,8 +86,8 @@ class MCMCEggBox(pfunk.FunctionalTest):
             pints.plot.trace(chains)
             plt.show()
 
-        # Combine chains
-        chain = np.vstack(chains)
+        # Use first chain only
+        chain = chains[0]
 
         # Calculate KL-based score after every n-th iteration
         n = 100

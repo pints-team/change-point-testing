@@ -56,12 +56,6 @@ class MCMCNormal(pfunk.FunctionalTest):
         # Get method class
         method = getattr(pints, self._method)
 
-        # Check number of chains
-        if isinstance(method, pints.SingleChainMCMC) and self._nchains > 1:
-            log.warn('SingleChainMCMC run with more than 1 chain.')
-        elif isinstance(method, pints.MultiChainMCMC) and self._nchains == 1:
-            log.warn('MultiChainMCMC run with only 1 chain.')
-
         # Create a log pdf
         xtrue = np.array([2, 4])
         sigma = np.array([1, 3])
@@ -93,8 +87,8 @@ class MCMCNormal(pfunk.FunctionalTest):
             pints.plot.trace(chains)
             plt.show()
 
-        # Combine chains
-        chain = np.vstack(chains)
+        # Use first chain only
+        chain = chains[0]
 
         # Calculate KLD after every n-th iteration
         n = 100
