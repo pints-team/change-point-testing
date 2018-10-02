@@ -63,12 +63,13 @@ add(MCMCNormal('DifferentialEvolutionMCMC', 3, 0.1))
 add(MCMCNormal('DreamMCMC', 3, 0.1))
 add(MCMCNormal('PopulationMCMC', 1, 1.0))
 
-from .mcmc_banana import MCMCBanana
-add(MCMCBanana('AdaptiveCovarianceMCMC', 1, 1.0))
-add(MCMCBanana('MetropolisRandomWalkMCMC', 1, 1.0))
-add(MCMCBanana('DifferentialEvolutionMCMC', 3, 1.0))
-add(MCMCBanana('DreamMCMC', 3, 1.0))
-add(MCMCBanana('PopulationMCMC', 1, 1.0))
+# issue 518 - turn off banana test for mcmc samplers
+# from .mcmc_banana import MCMCBanana
+# add(MCMCBanana('AdaptiveCovarianceMCMC', 1, 1.0))
+# add(MCMCBanana('MetropolisRandomWalkMCMC', 1, 1.0))
+# add(MCMCBanana('DifferentialEvolutionMCMC', 3, 1.0))
+# add(MCMCBanana('DreamMCMC', 3, 1.0))
+# add(MCMCBanana('PopulationMCMC', 1, 1.0))
 
 # issue 516 - turn off egg box test for mcmc samplers
 # due to high difficulty of the problem
