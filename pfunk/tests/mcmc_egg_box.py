@@ -86,8 +86,8 @@ class MCMCEggBox(pfunk.FunctionalTest):
         mcmc.set_log_to_file(log_path)
 
         # Set max iterations
-        n_iter = 10000
-        n_burn = 5000
+        n_iter = 50000
+        n_burn = 10000
         n_init = 1000
         mcmc.set_max_iterations(n_iter)
         if mcmc.method_needs_initial_phase():
