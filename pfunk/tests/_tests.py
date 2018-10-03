@@ -79,9 +79,9 @@ add(MCMCBanana('DreamMCMC', 3, 1.0))
 # due to high difficulty of the problem
 from .mcmc_egg_box import MCMCEggBox
 # Single-chain methods
-add(MCMCEggBox('AdaptiveCovarianceMCMC', 1))
-add(MCMCEggBox('MetropolisRandomWalkMCMC', 1))
-add(MCMCEggBox('PopulationMCMC', 1))
+add(MCMCEggBox('AdaptiveCovarianceMCMC', 1, 1.0))
+add(MCMCEggBox('MetropolisRandomWalkMCMC', 1, 1.0))
+add(MCMCEggBox('PopulationMCMC', 1, 1.0))
 # Multi-chain methods
 add(MCMCEggBox('DifferentialEvolutionMCMC', 6, 1.0))
 add(MCMCEggBox('DreamMCMC', 6, 1.0))
