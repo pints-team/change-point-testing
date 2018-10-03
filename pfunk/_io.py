@@ -473,7 +473,7 @@ def gather_statistics_per_commit(
 
     """
     # Fetch commits and scores
-    commits, scores = results['pints_commit', variable]
+    commits, scores = results['commit', variable]
 
     # Gather values per commit
     unique = []

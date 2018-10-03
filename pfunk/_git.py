@@ -16,6 +16,14 @@ import logging
 import pfunk
 
 
+def pfunk_hash():
+    """
+    Returns the current pfunk commit hash.
+    """
+    repo = git.Repo(pfunk.DIR_PFUNK)
+    return str(repo.head.commit.hexsha)
+
+
 def pints_hash():
     """
     Returns the current pints commit hash.

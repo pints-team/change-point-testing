@@ -188,6 +188,8 @@ class FunctionalTest(object):
         w['python'] = pfunk.PYTHON_VERSION
         w['pints'] = pfunk.PINTS_VERSION
         w['pints_commit'] = pfunk.PINTS_COMMIT
+        w['pfunk_commit'] = pfunk.PFUNK_COMMIT
+        w['commit'] = pfunk.PFUNK_COMMIT + '/' + pfunk.PINTS_COMMIT
         w['seed'] = seed
 
         # Run test

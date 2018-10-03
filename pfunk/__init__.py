@@ -69,7 +69,7 @@ NAME_FORMAT = re.compile(r'^[a-zA-Z]\w*$')
 PYTHON_VERSION = sys.version.replace('\n', '')
 
 
-# Pints version and repo
+# Pints version and commit
 # These are set using _git's function "prepare_pints_repo"
 PINTS_COMMIT = PINTS_VERSION = None
 
@@ -94,6 +94,7 @@ from ._git import (  # noqa
     pints_hash,
     pints_refresh,
     prepare_pints_repo,
+    pfunk_hash,
 )
 from ._util import (  # noqa
     weave,
@@ -103,3 +104,7 @@ from ._util import (  # noqa
 from ._test import (    # noqa
     FunctionalTest,
 )
+
+
+# PFunk commit
+PFUNK_COMMIT = pfunk_hash()
