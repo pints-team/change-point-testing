@@ -70,18 +70,18 @@ from .mcmc_banana import MCMCBanana
 # Single-chain methods
 add(MCMCBanana('AdaptiveCovarianceMCMC', 1, 1.0))
 add(MCMCBanana('MetropolisRandomWalkMCMC', 1, 1.0))
-add(MCMCBanana('PopulationMCMC', 1, 1.0))
+#add(MCMCBanana('PopulationMCMC', 1, 1.0, 50000))
 # Multi-chain methods
 add(MCMCBanana('DifferentialEvolutionMCMC', 3, 1.0))
 add(MCMCBanana('DreamMCMC', 3, 1.0))
 
 # issue 516 - turn off egg box test for mcmc samplers
 # due to high difficulty of the problem
-from .mcmc_egg_box import MCMCEggBox
+#from .mcmc_egg_box import MCMCEggBox
 # Single-chain methods
 #add(MCMCEggBox('AdaptiveCovarianceMCMC', 1, 1.0))
 #add(MCMCEggBox('MetropolisRandomWalkMCMC', 1, 1.0))
-add(MCMCEggBox('PopulationMCMC', 1, 1.0))
+#add(MCMCEggBox('PopulationMCMC', 1, 1.0))
 # Multi-chain methods
 #add(MCMCEggBox('DifferentialEvolutionMCMC', 6, 1.0))
 #add(MCMCEggBox('DreamMCMC', 6, 1.0))

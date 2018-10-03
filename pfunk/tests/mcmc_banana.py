@@ -31,12 +31,13 @@ class MCMCBanana(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, method, nchains, pass_threshold):
+    def __init__(self, method, nchains, pass_threshold, max_iter=10000):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
         self._nchains = int(nchains)
         self._pass_threshold = float(pass_threshold)
+        self._max_iter = int(max_iter)
 
         # Create name and initialise
         name = 'mcmc_banana_' + self._method + '_' + str(self._nchains)
@@ -83,8 +84,8 @@ class MCMCBanana(pfunk.FunctionalTest):
         mcmc.set_log_to_file(log_path)
 
         # Set max iterations
-        n_iter = 10000
-        n_burn = 5000
+        n_iter = self._max_iter
+        n_burn = int(n_iter / 2)
         n_init = 1000
         mcmc.set_max_iterations(n_iter)
         if mcmc.method_needs_initial_phase():
