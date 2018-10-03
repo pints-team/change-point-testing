@@ -154,7 +154,7 @@ class Optimisation(pfunk.FunctionalTest):
             results,
             'fbest_relative',
             self.name(),
-            'Final f(best) / f(true)', 1.0+3*self._pass_threshold)
+            'Final f(best) / f(true)', 1 + 3 * self._pass_threshold)
         )
 
         #

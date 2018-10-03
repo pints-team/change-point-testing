@@ -9,8 +9,9 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
+import logging
+
 import pfunk
-import matplotlib.pyplot as plt
 
 
 class NestedEggBox(pfunk.FunctionalTest):
@@ -42,9 +43,7 @@ class NestedEggBox(pfunk.FunctionalTest):
 
         import pints
         import pints.toy
-        import numpy as np
 
-        import logging
         log = logging.getLogger(__name__)
 
         DEBUG = False
@@ -97,7 +96,8 @@ class NestedEggBox(pfunk.FunctionalTest):
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return pfunk.assert_not_deviated_from(0, self._pass_threshold, results, 'kld')
+        return pfunk.assert_not_deviated_from(
+            0, self._pass_threshold, results, 'kld')
 
     def _plot(self, results):
 
@@ -108,7 +108,7 @@ class NestedEggBox(pfunk.FunctionalTest):
             results,
             'kld',
             'Egg box w. ' + self._method,
-            'Kullback-Leibler-based score', 3*self._pass_threshold)
+            'Kullback-Leibler-based score', 3 * self._pass_threshold)
         )
 
         # Figure: KL over time

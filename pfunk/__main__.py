@@ -9,9 +9,8 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
-import os
-import argparse
 import fnmatch
+import argparse
 
 import pfunk
 import pfunk.tests
@@ -74,6 +73,10 @@ def run(args):
         for i in range(args.r):
             print('Running test ' + name)
             pfunk.tests.run(name)
+        if args.analyse:
+            print('Analysing ' + name + ' ... ', end='')
+            result = pfunk.tests.analyse(name)
+            print('ok' if result else 'FAIL')
         if args.plot or args.show:
             print('Creating plot for ' + name)
             pfunk.tests.plot(name, args.show)
@@ -115,7 +118,7 @@ def analyse(args):
         print('ok' if result else 'FAIL')
 
     print()
-    print('-'*60)
+    print('-' * 60)
     print('Ran ' + str(len(names)) + ' tests')
 
     if failed:
@@ -202,6 +205,11 @@ def main():
         '--show',
         action='store_true',
         help='Create and show a plot after testing.',
+    )
+    run_parser.add_argument(
+        '--analyse',
+        action='store_true',
+        help='Analyse the test result after running.',
     )
     run_parser.add_argument(
         '-r', default=1, type=int,

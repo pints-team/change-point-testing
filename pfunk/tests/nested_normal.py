@@ -10,7 +10,6 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import pfunk
-import matplotlib.pyplot as plt
 
 
 class NestedNormal(pfunk.FunctionalTest):
@@ -94,7 +93,8 @@ class NestedNormal(pfunk.FunctionalTest):
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return pfunk.assert_not_deviated_from(0, self._pass_threshold, results, 'kld')
+        return pfunk.assert_not_deviated_from(
+            0, self._pass_threshold, results, 'kld')
 
     def _plot(self, results):
 
@@ -105,7 +105,7 @@ class NestedNormal(pfunk.FunctionalTest):
             results,
             'kld',
             'Normal w. ' + self._method,
-            'Kullback-Leibler divergence', 3*self._pass_threshold)
+            'Kullback-Leibler divergence', 3 * self._pass_threshold)
         )
 
         # Figure: KL over time

@@ -9,9 +9,12 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
+import logging
+import numpy as np
+import matplotlib.pyplot as plt
+
 import pfunk
 import pfunk.plot
-import matplotlib.pyplot as plt
 
 
 class MCMCBanana(pfunk.FunctionalTest):
@@ -43,9 +46,6 @@ class MCMCBanana(pfunk.FunctionalTest):
 
         import pints
         import pints.toy
-        import numpy as np
-
-        import logging
         log = logging.getLogger(__name__)
 
         DEBUG = False
@@ -94,7 +94,6 @@ class MCMCBanana(pfunk.FunctionalTest):
         chains = mcmc.run()
 
         if DEBUG:
-            import matplotlib.pyplot as plt
             import pints.plot
             pints.plot.trace(chains)
             plt.show()

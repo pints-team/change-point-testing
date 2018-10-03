@@ -6,4 +6,4 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
-from ._tests import *
+from ._tests import *   # noqa

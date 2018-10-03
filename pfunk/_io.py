@@ -354,7 +354,8 @@ def find_test_dates():
         if name not in dates:
             continue
 
-        # Attempt to parse date - remember to clean off trailing '-2.txt' if there
+        # Attempt to parse date
+        # remember to clean off trailing '-2.txt' if there
         cleaned_to_date_format = re.sub(r'''-[0-9]+$''', '', date)
         date = time.strptime(cleaned_to_date_format, pfunk.DATE_FORMAT)
         last = dates[name]
@@ -394,7 +395,7 @@ def find_test_plots():
         pos = date.rfind(':')
         pos = date.find('-', pos)
         if pos >= 0:
-            index = int(date[pos + 1:])
+            #index = int(date[pos + 1:])
             date = date[:pos]
 
         # Skip unknown tests
@@ -551,7 +552,7 @@ def assert_not_deviated_from(mean, sigma, results, variable):
     """
     x, y, u, m, s = gather_statistics_per_commit(
         results, variable, remove_outliers=False)
-    return np.allclose(np.array(m[-3:]), mean, atol=3*sigma)
+    return np.allclose(np.array(m[-3:]), mean, atol=3 * sigma)
 
 
 def generate_report():
@@ -559,9 +560,6 @@ def generate_report():
     Generates a markdown file containing information about all tests, including
     links to the most recent plots.
     """
-    # Get logger
-    log = logging.getLogger(__name__)
-
     # Get a list of available tests and the date they were last run
     dates = find_test_dates()
 
@@ -586,8 +584,8 @@ def generate_report():
     # Generate markdown report
     eol = '\n'
     with open(filename, 'w') as f:
-        f.write('# Pints functional testing report' + 3*eol)
-        f.write('Generated on: ' + dfmt() + 3*eol)
+        f.write('# Pints functional testing report' + 3 * eol)
+        f.write('Generated on: ' + dfmt() + 3 * eol)
         f.write('Failed tests:' + eol)
         for name, result in states.items():
             if not result:
@@ -596,7 +594,7 @@ def generate_report():
         f.write(eol)
 
         for name, date in sorted(dates.items(), key=lambda x: x[0]):
-            f.write('## ' + name + 2*eol)
+            f.write('## ' + name + 2 * eol)
             f.write('- Last run on: ' + dfmt(date) + eol)
             f.write('- Status: ' + ('ok' if states[name] else 'FAILED') + eol)
 

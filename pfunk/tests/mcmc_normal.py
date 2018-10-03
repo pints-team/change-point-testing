@@ -94,7 +94,6 @@ class MCMCNormal(pfunk.FunctionalTest):
         chains = mcmc.run()
 
         if DEBUG:
-            import matplotlib.pyplot as plt
             import pints.plot
             pints.plot.trace(chains)
             plt.show()

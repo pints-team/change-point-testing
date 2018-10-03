@@ -9,8 +9,9 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
+import logging
+
 import pfunk
-import matplotlib.pyplot as plt
 
 
 class NestedBanana(pfunk.FunctionalTest):
@@ -41,9 +42,7 @@ class NestedBanana(pfunk.FunctionalTest):
 
         import pints
         import pints.toy
-        import numpy as np
 
-        import logging
         log = logging.getLogger(__name__)
 
         DEBUG = False
@@ -93,7 +92,8 @@ class NestedBanana(pfunk.FunctionalTest):
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return pfunk.assert_not_deviated_from(0, self._pass_threshold, results, 'kld')
+        return pfunk.assert_not_deviated_from(
+            0, self._pass_threshold, results, 'kld')
 
     def _plot(self, results):
 
@@ -104,7 +104,7 @@ class NestedBanana(pfunk.FunctionalTest):
             results,
             'kld',
             'Banana w. ' + self._method,
-            'Kullback-Leibler divergence', 3*self._pass_threshold)
+            'Kullback-Leibler divergence', 3 * self._pass_threshold)
         )
 
         # Figure: KL over time
