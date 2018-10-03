@@ -11,6 +11,8 @@ from __future__ import print_function, unicode_literals
 
 import os
 import argparse
+import fnmatch
+
 import pfunk
 import pfunk.tests
 
@@ -31,17 +33,51 @@ def list_tests(args):
         )
 
 
+def _parse_pattern(pattern, show_options=True):
+    """
+    Attempts to match the given pattern to tests, returning a list of matching
+    test names.
+
+    If no matches are found an empty list is returned. If ``show_options`` is
+    set (default), an error message with a list of options is also displayed.
+    """
+    # Unix-style pattern matching via fnmatch
+    names = []
+    for test in pfunk.tests.tests():
+        if fnmatch.fnmatch(test, pattern):
+            names.append(test)
+
+    # Show options
+    if show_options and not names:
+        print('No tests found for: "' + pattern + '"')
+        print('Options:')
+        for test in sorted(pfunk.tests.tests()):
+            print('  ' + test)
+
+    return names
+
+
 def run(args):
     """
     Runs a test.
     """
-    name = args.name if args.name else pfunk.find_next_test()
-    for i in range(args.r):
-        print('Running test ' + name)
-        pfunk.tests.run(name)
-    if args.plot or args.show:
-        print('Creating plot for ' + name)
-        pfunk.tests.plot(name, args.show)
+    # Parse test name, or get next test to run
+    if args.name is None:
+        names = [pfunk.find_next_test()]
+    else:
+        names = _parse_pattern(args.name)
+    if not names:
+        return
+
+    # Run tests
+    for name in names:
+        for i in range(args.r):
+            print('Running test ' + name)
+            pfunk.tests.run(name)
+        if args.plot or args.show:
+            print('Creating plot for ' + name)
+            pfunk.tests.plot(name, args.show)
+
     print('Done')
 
 
@@ -50,7 +86,8 @@ def plot(args):
     Creates a plot for one or all tests.
     """
     if args.name:
-        pfunk.tests.plot(args.name, args.show)
+        for name in _parse_pattern(args.name):
+            pfunk.tests.plot(name, args.show)
     elif args.all:
         for name in pfunk.tests.tests():
             print('Creating plot for ' + name)
@@ -62,9 +99,16 @@ def analyse(args):
     """
     Analyses the result for one or all tests.
     """
-    tests = [args.name] if args.name else pfunk.tests.tests()
+    # Parse test name, or get next test to run
+    if args.name is None:
+        names = [pfunk.find_next_test()]
+    else:
+        names = _parse_pattern(args.name)
+    if not names:
+        return
+
     failed = 0
-    for name in tests:
+    for name in names:
         print('Analysing ' + name + ' ... ', end='')
         result = pfunk.tests.analyse(name)
         failed += 0 if result else 1
@@ -72,7 +116,7 @@ def analyse(args):
 
     print()
     print('-'*60)
-    print('Ran ' + str(len(tests)) + ' tests')
+    print('Ran ' + str(len(names)) + ' tests')
 
     if failed:
         print('Failed: ' + str(failed))
@@ -141,9 +185,8 @@ def main():
         'name',
         metavar='<name>',
         nargs='?',
-        choices=pfunk.tests.tests(),
         action='store',
-        help='The test to run',
+        help='The test to run (can be a unix-style pattern)',
     )
     group.add_argument(
         '--next',
@@ -176,9 +219,8 @@ def main():
         'name',
         metavar='<name>',
         nargs='?',
-        choices=pfunk.tests.tests(),
         action='store',
-        help='The plot to create',
+        help='The plot to create (can be a unix-style pattern)',
     )
     group.add_argument(
         '--all',
@@ -202,7 +244,6 @@ def main():
         'name',
         metavar='<name>',
         nargs='?',
-        choices=pfunk.tests.tests(),
         action='store',
         help='The test to analyse',
     )
