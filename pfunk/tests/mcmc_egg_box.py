@@ -63,13 +63,20 @@ class MCMCEggBox(pfunk.FunctionalTest):
         elif isinstance(method, pints.MultiChainMCMC) and self._nchains == 1:
             log.warn('MultiChainMCMC run with only 1 chain.')
 
-        # Create a log pdf (use multi-modal, but with a single mode)
-        log_pdf = pints.toy.SimpleEggBoxLogPDF(sigma=2, r=4)
+        # Create a log pdf
+        sigma = 2
+        r = 4
+        log_pdf = pints.toy.SimpleEggBoxLogPDF(sigma=sigma, r=r)
 
-        # Generate a random start point
-        x0 = np.random.uniform(-20, 20, size=(self._nchains, 2))
+        # Create a log prior
+        d = 2 * 6 * r * sigma
+        log_prior = pints.MultivariateNormalLogPrior(
+            [0, 0], [[d, 0], [0, d]])
 
-        # Create an optimisation problem
+        # Generate random starting point(s)
+        x0 = log_prior.sample(self._nchains)
+
+        # Set up a sampling routine
         mcmc = pints.MCMCSampling(log_pdf, self._nchains, x0, method=method)
         mcmc.set_parallel(True)
 
@@ -104,8 +111,8 @@ class MCMCEggBox(pfunk.FunctionalTest):
         n_window = 500 * self._nchains      # Window size
         n_jump = 20 * self._nchains         # Spacing between windows
         iters = list(range(0, n_samples - n_window + n_jump, n_jump))
-        result['iters2'] = iters
-        result['klds2'] = [
+        result['iters'] = iters
+        result['klds'] = [
             log_pdf.kl_score(chain[i:i + n_window]) for i in iters]
 
         # Remove burn-in
@@ -143,8 +150,8 @@ class MCMCEggBox(pfunk.FunctionalTest):
         # Figure: KL over time
         figs.append(pfunk.plot.convergence(
             results,
-            'iters2',
-            'klds2',
+            'iters',
+            'klds',
             'Egg box w. ' + self._method,
             'Iteration (sliding window)',
             'Kullback-Leibler-based score',

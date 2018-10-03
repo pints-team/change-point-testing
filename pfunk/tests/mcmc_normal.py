@@ -64,13 +64,16 @@ class MCMCNormal(pfunk.FunctionalTest):
 
         # Create a log pdf
         xtrue = np.array([2, 4])
-        sigma = np.array([1, 3])
+        sigma = np.diag(np.array([1, 3]))
         log_pdf = pints.toy.NormalLogPDF(xtrue, sigma)
 
-        # Generate a random start point
-        x0 = xtrue * np.random.normal(0, 2, size=(self._nchains, 2))
+        # Create a log prior
+        log_prior = pints.MultivariateNormalLogPrior(xtrue + 1, sigma * 2)
 
-        # Create an optimisation problem
+        # Generate random points
+        x0 = log_prior.sample(self._nchains)
+
+        # Create a sampling routine
         mcmc = pints.MCMCSampling(log_pdf, self._nchains, x0, method=method)
         mcmc.set_parallel(True)
 
@@ -105,8 +108,8 @@ class MCMCNormal(pfunk.FunctionalTest):
         n_window = 500 * self._nchains      # Window size
         n_jump = 20 * self._nchains         # Spacing between windows
         iters = list(range(0, n_samples - n_window + n_jump, n_jump))
-        result['iters2'] = iters
-        result['klds2'] = [
+        result['iters'] = iters
+        result['klds'] = [
             log_pdf.kl_divergence(chain[i:i + n_window]) for i in iters]
 
         # Remove burn-in
@@ -144,8 +147,8 @@ class MCMCNormal(pfunk.FunctionalTest):
         # Figure: KL over time
         figs.append(pfunk.plot.convergence(
             results,
-            'iters2',
-            'klds2',
+            'iters',
+            'klds',
             'Normal w. ' + self._method,
             'Iteration (sliding window)',
             'Kullback-Leibler divergence',

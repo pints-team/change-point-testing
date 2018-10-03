@@ -66,10 +66,14 @@ class MCMCBanana(pfunk.FunctionalTest):
         # Create a log pdf (use multi-modal, but with a single mode)
         log_pdf = pints.toy.TwistedGaussianLogPDF(dimension=2, b=0.1)
 
-        # Generate a random start point
-        x0 = np.random.uniform([-20, -20], [20, 15], size=(self._nchains, 2))
+        # Generate a prior
+        log_prior = pints.MultivariateNormalLogPrior(
+            [0, 0], [[10, 0], [0, 10]])
 
-        # Create an optimisation problem
+        # Generate random starting point(s)
+        x0 = log_prior.sample(self._nchains)
+
+        # Set up a sampling routine
         mcmc = pints.MCMCSampling(log_pdf, self._nchains, x0, method=method)
         mcmc.set_parallel(True)
 
@@ -104,8 +108,8 @@ class MCMCBanana(pfunk.FunctionalTest):
         n_window = 500 * self._nchains      # Window size
         n_jump = 20 * self._nchains         # Spacing between windows
         iters = list(range(0, n_samples - n_window + n_jump, n_jump))
-        result['iters2'] = iters
-        result['klds2'] = [
+        result['iters'] = iters
+        result['klds'] = [
             log_pdf.kl_divergence(chain[i:i + n_window]) for i in iters]
 
         # Remove burn-in
@@ -143,8 +147,8 @@ class MCMCBanana(pfunk.FunctionalTest):
         # Figure: KL over time
         figs.append(pfunk.plot.convergence(
             results,
-            'iters2',
-            'klds2',
+            'iters',
+            'klds',
             'Banana w. ' + self._method,
             'Iteration (sliding window)',
             'Kullback-Leibler divergence',
