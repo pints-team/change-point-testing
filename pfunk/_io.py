@@ -566,8 +566,12 @@ def generate_report():
     # Gather the status of every test
     import pfunk.tests
     states = {}
+    failed = set()
     for key in dates.keys():
-        states[key] = pfunk.tests.analyse(key)
+        result = pfunk.tests.analyse(key)
+        states[key] = result
+        if not result:
+            failed.add(key)
 
     # Get a list of available tests and their most recent plots
     plots, plot_dates = find_test_plots()
@@ -584,15 +588,21 @@ def generate_report():
     # Generate markdown report
     eol = '\n'
     with open(filename, 'w') as f:
+
+        # Header
         f.write('# Pints functional testing report' + 3 * eol)
         f.write('Generated on: ' + dfmt() + 3 * eol)
-        f.write('Failed tests:' + eol)
-        for name, result in states.items():
-            if not result:
-                f.write('- [' + name + '](#' + name.lower() + ')' + eol)
 
+        # List of failed tests
+        if failed:
+            f.write('Failed tests:' + eol)
+            for name in failed:
+                f.write('- [' + name + '](#' + name.lower() + ')' + eol)
+        else:
+            f.write('All tests passed.' + eol)
         f.write(eol)
 
+        # Individual tests
         for name, date in sorted(dates.items(), key=lambda x: x[0]):
             f.write('## ' + name + 2 * eol)
             f.write('- Last run on: ' + dfmt(date) + eol)
@@ -609,3 +619,4 @@ def generate_report():
                 f.write(eol)
 
             f.write(eol)
+
