@@ -496,9 +496,12 @@ def gather_statistics_per_commit(
             values[j] += list(scores[i])
 
     # Convert to short commit names
+    def shorten(commit):
+        """ Shorten commit names, possibly multiple separated by '/'. """
+        return '\n'.join([x.strip()[:7] for x in commit.split('/')])
     if short_names:
-        unique = [x[:7] for x in unique]
-        commits = [x[:7] for x in commits]
+        unique = [shorten(x) for x in unique]
+        commits = [shorten(x) for x in commits]
 
     # Remove outliers
     if remove_outliers:
