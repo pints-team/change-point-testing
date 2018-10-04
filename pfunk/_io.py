@@ -566,12 +566,15 @@ def generate_report():
     # Gather the status of every test
     import pfunk.tests
     states = {}
-    failed = set()
-    for key in dates.keys():
+    failed = []
+    passed = []
+    for key in sorted(dates.keys()):
         result = pfunk.tests.analyse(key)
         states[key] = result
-        if not result:
-            failed.add(key)
+        if result:
+            passed.append(key)
+        else:
+            failed.append(key)
 
     # Get a list of available tests and their most recent plots
     plots, plot_dates = find_test_plots()
@@ -601,6 +604,12 @@ def generate_report():
         else:
             f.write('All tests passed.' + eol)
         f.write(eol)
+
+        # List of passed tests
+        if passed:
+            f.write('Passed tests:' + eol)
+            for name in passed:
+                f.write('- [' + name + '](#' + name.lower() + ')' + eol)
 
         # Individual tests
         for name, date in sorted(dates.items(), key=lambda x: x[0]):
