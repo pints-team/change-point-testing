@@ -620,3 +620,71 @@ def generate_report():
 
             f.write(eol)
 
+    # Generate badge
+    generate_badge(len(failed) > 0)
+
+
+def generate_badge(failed=False):
+    """
+    Generates a badge for github.
+    """
+    # Plot location, relative to file
+    filename = os.path.join(pfunk.DIR_RES_REPO, 'badge.svg')
+
+    badge = []
+    badge.append(
+        '<svg xmlns="http://www.w3.org/2000/svg"'
+        ' xmlns:xlink="http://www.w3.org/1999/xlink"'
+        ' width="88" height="20">')
+    badge.append(
+        '<linearGradient id="b" x2="0" y2="100%">'
+        '<stop offset="0" stop-color="#bbb" stop-opacity=".1"/>'
+        '<stop offset="1" stop-opacity=".1"/>'
+        '</linearGradient>'
+    )
+    badge.append(
+        '<clipPath id="a">'
+        '<rect width="88" height="20" rx="3" fill="#fff"/>'
+        '</clipPath>'
+    )
+    colour = '#e05d44' if failed else '#4c1'
+    badge.append(
+        '<g clip-path="url(#a)">'
+        '<path fill="#555" d="M0 0h37v20H0z"/>'
+        '<path fill="' + colour + '" d="M37 0h51v20H37z"/>'
+        '<path fill="url(#b)" d="M0 0h88v20H0z"/>'
+        '</g>'
+    )
+    badge.append(
+        '<g fill="#fff" text-anchor="middle"'
+        ' font-family="DejaVu Sans,Verdana,Geneva,sans-serif"'
+        ' font-size="110">'
+    )
+    title = 'pfunk'
+    badge.append(
+        '<text x="195" y="150" transform="scale(.1)"'
+        ' fill="#010101" fill-opacity=".3"'
+        ' textLength="270">' + title + '</text>'
+    )
+    badge.append(
+        '<text x="195" y="140" transform="scale(.1)"'
+        ' textLength="270">' + title + '</text>'
+    )
+
+    pass_text = 'failing' if failed else 'passing'
+    pass_text_length = str(330 if failed else 410)
+    badge.append(
+        '<text x="615" y="150" transform="scale(.1)"'
+        ' fill="#010101" fill-opacity=".3"'
+        ' textLength="' + pass_text_length + '">' + pass_text + '</text>'
+    )
+    badge.append(
+        '<text x="615" y="140" transform="scale(.1)"'
+        ' textLength="' + pass_text_length + '">' + pass_text + '</text>'
+    )
+    badge.append('</g>')
+    badge.append('</svg>')
+
+    with open(filename, 'w') as f:
+        f.write(''.join(badge))
+
