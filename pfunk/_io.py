@@ -659,7 +659,9 @@ def generate_badge(failed=False):
         '<rect width="88" height="20" rx="3" fill="#fff"/>'
         '</clipPath>'
     )
-    colour = '#e05d44' if failed else '#4c1'
+    #colour = '#e05d44' if failed else '#4c1'
+    colour = '#2a88d0'
+
     badge.append(
         '<g clip-path="url(#a)">'
         '<path fill="#555" d="M0 0h37v20H0z"/>'
@@ -672,6 +674,7 @@ def generate_badge(failed=False):
         ' font-family="DejaVu Sans,Verdana,Geneva,sans-serif"'
         ' font-size="110">'
     )
+
     title = 'pfunk'
     badge.append(
         '<text x="195" y="150" transform="scale(.1)"'
@@ -683,8 +686,11 @@ def generate_badge(failed=False):
         ' textLength="270">' + title + '</text>'
     )
 
-    pass_text = 'failing' if failed else 'passing'
-    pass_text_length = str(330 if failed else 410)
+    #pass_text = 'failing' if failed else 'passing'
+    #pass_text_length = str(330 if failed else 410)
+    pass_text = 'running'
+    pass_text_length = str(410)
+
     badge.append(
         '<text x="615" y="150" transform="scale(.1)"'
         ' fill="#010101" fill-opacity=".3"'
