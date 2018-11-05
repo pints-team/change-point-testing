@@ -613,11 +613,13 @@ def generate_report():
             f.write('Passed tests:' + eol)
             for name in passed:
                 f.write('- [' + name + '](#' + name.lower() + ')' + eol)
+            f.write(eol)
 
         # Note about axis labels
-        f.write('## Note about axis labels')
-        f.write('Labels on the x-axis commonly use the notation')
-        f.write('`<pints commit> <pfunk commit>`.')
+        f.write('### Note about axis labels' + eol)
+        f.write('Labels on the x-axis commonly use the notation ')
+        f.write('`<pints commit> <pfunk commit>`.' + eol)
+        f.write(eol)
 
         # Individual tests
         for name, date in sorted(dates.items(), key=lambda x: x[0]):
