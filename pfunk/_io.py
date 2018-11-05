@@ -614,6 +614,11 @@ def generate_report():
             for name in passed:
                 f.write('- [' + name + '](#' + name.lower() + ')' + eol)
 
+        # Note about axis labels
+        f.write('## Note about axis labels')
+        f.write('Labels on the x-axis commonly use the notation')
+        f.write('`<pints commit> <pfunk commit>`.')
+
         # Individual tests
         for name, date in sorted(dates.items(), key=lambda x: x[0]):
             f.write('## ' + name + 2 * eol)
