@@ -24,6 +24,7 @@ def variable(results, variable, title, ylabel, threshold=None):
 
     r = 0.3
 
+    # Left plot: Variable per commit, all data
     plt.subplot(1, 2, 1)
     plt.ylabel(ylabel)
     plt.xlabel('Commit')
@@ -42,6 +43,8 @@ def variable(results, variable, title, ylabel, threshold=None):
     except ValueError:
         ymax = 1
 
+    # Right plot: Same, but with outliers removed, to achieve a "zoom" on the
+    # most common data.
     plt.subplot(1, 2, 2)
     plt.ylabel(ylabel)
     plt.xlabel('Commit')
@@ -53,7 +56,9 @@ def variable(results, variable, title, ylabel, threshold=None):
     plt.plot(u, m, 'ko-', alpha=0.5)
     plt.plot(x, y, 'x', alpha=0.75)
     if threshold:
-        plt.axhline(threshold)
+        # Show threshold line only if it doesn't change the zoom
+        if threshold <= np.max(y) and threshold >= np.min(y):
+            plt.axhline(threshold)
     y = np.array(y)
     try:
         y = np.array(y)
@@ -81,20 +86,21 @@ def convergence(results, xvar, yvar, title, xlabel, ylabel, ymin, ymax):
         plt.text(0.5, 0.5, 'No data')
         return fig
 
+    # Left plot: All data, full view
     plt.subplot(1, 2, 1)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     for i, x in enumerate(xs):
         plt.plot(x, ys[i])
 
+    # Right plot: Same data, but zoomed in
     plt.subplot(1, 2, 2)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     for i, x in enumerate(xs):
         plt.plot(x, ys[i])
-
-    ymin = max(ymin, min([min(y) for y in ys]))
-    ymax = min(ymax, max([max(y) for y in ys]))
+    ymin = max(ymin, min([np.min(y) for y in ys]))
+    ymax = min(ymax, max([np.max(y) for y in ys]))
     plt.ylim(ymin, ymax)
 
     if ymax > 1000 or ymax < 1.5:
