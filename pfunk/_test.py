@@ -11,6 +11,7 @@ from __future__ import print_function, unicode_literals
 
 import os
 
+import glob
 import pfunk
 import logging
 import numpy as np
@@ -118,9 +119,15 @@ class FunctionalTest(object):
             log.error('Exception in plot: ' + self.name())
             raise
 
+        # Create path (assuming 1 figure; will fix with unique_path if more)
         date = pfunk.date()
         name = self.name()
         path = name + '-' + date + '.png'
+
+        # Store names of generated files and glob mask of pathname to delete
+        # old figures later
+        generated = []
+        mask = name + '-' + '*.png'
 
         try:
             # Assume that the user returns an iterable object containing
@@ -128,17 +135,34 @@ class FunctionalTest(object):
             for i, fig in enumerate(figs):
                 plot_path = pfunk.unique_path(
                     os.path.join(pfunk.DIR_PLOT, path))
+                log.info('Storing plot: ' + plot_path)
                 fig.savefig(plot_path)
+                generated.append(plot_path)
         except TypeError:
             # If not, then assume that the user returns a single figure
             plot_path = pfunk.unique_path(os.path.join(pfunk.DIR_PLOT, path))
+            log.info('Storing plot: ' + plot_path)
             figs.savefig(plot_path)
+            generated.append(plot_path)
 
         # Close all figures
         import matplotlib.pyplot as plt
         if show:
             plt.show()
         plt.close('all')
+
+        # Delete old figures
+        for path in glob.glob(os.path.join(pfunk.DIR_PLOT, mask)):
+            path = os.path.realpath(path)
+            if not path.startswith(pfunk.DIR_PLOT):
+                continue
+            if path in generated:
+                continue
+            try:
+                os.remove(path)
+                log.info('Removed old plot: ' + path)
+            except IOError:
+                log.info('Removal of old plot failed: ' + path)
 
     def _run(self, result_writer, log_path):
         """

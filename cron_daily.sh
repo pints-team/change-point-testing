@@ -2,6 +2,6 @@
 
 # Generate report daily
 
-git pull
-./funk report
-./funk commit
+#git pull
+#./funk report
+#./funk commit
