@@ -44,11 +44,13 @@ add(OptimisationLogistic('XNES', 1.0))
 add(OptimisationLogistic('SNES', 1.0))
 add(OptimisationLogistic('PSO', 1.0))
 
+
 from .optimisation import OptimisationFN
 add(OptimisationFN('CMAES', 1.0))
 add(OptimisationFN('XNES', 1.0))
 add(OptimisationFN('SNES', 1.0))
 add(OptimisationFN('PSO', 1.0))
+
 
 from .optimisation import OptimisationBR
 add(OptimisationBR('CMAES', 2.0))
@@ -56,24 +58,31 @@ add(OptimisationBR('XNES', 2.0))
 add(OptimisationBR('SNES', 4.0))
 add(OptimisationBR('PSO', 2.0))
 
+
 from .mcmc_normal import MCMCNormal
 # Single-chain methods
 add(MCMCNormal('AdaptiveCovarianceMCMC', 1, 0.05))
+add(MCMCNormal('HamiltonianMCMC', 1, 0.05))
 add(MCMCNormal('MetropolisRandomWalkMCMC', 1, 0.2))
 add(MCMCNormal('PopulationMCMC', 1, 1.0))
 # Multi-chain methods
 add(MCMCNormal('DifferentialEvolutionMCMC', 3, 0.1))
 add(MCMCNormal('DreamMCMC', 3, 0.1))
+add(MCMCNormal('EmceeHammerMCMC', 3, 0.1))
+
 
 # issue 518 - turn off banana test for mcmc samplers
 from .mcmc_banana import MCMCBanana
 # Single-chain methods
 add(MCMCBanana('AdaptiveCovarianceMCMC', 1, 1.0))
+add(MCMCBanana('HamiltonianMCMC', 1, 1.0))
 add(MCMCBanana('MetropolisRandomWalkMCMC', 1, 1.0))
 #add(MCMCBanana('PopulationMCMC', 1, 1.0, 50000))
 # Multi-chain methods
 # add(MCMCBanana('DifferentialEvolutionMCMC', 3, 1.0))
 add(MCMCBanana('DreamMCMC', 3, 1.0))
+add(MCMCBanana('EmceeHammerMCMC', 3, 1.0))
+
 
 # issue 516 - turn off egg box test for mcmc samplers
 # due to high difficulty of the problem
@@ -86,14 +95,18 @@ add(MCMCBanana('DreamMCMC', 3, 1.0))
 #add(MCMCEggBox('DifferentialEvolutionMCMC', 6, 1.0))
 #add(MCMCEggBox('DreamMCMC', 6, 1.0))
 
+
 from .nested_normal import NestedNormal
 add(NestedNormal('NestedEllipsoidSampler', 0.16))
 add(NestedNormal('NestedRejectionSampler', 0.16))
+
 
 from .nested_banana import NestedBanana
 add(NestedBanana('NestedEllipsoidSampler', 0.4))
 add(NestedBanana('NestedRejectionSampler', 0.4))
 
+
 from .nested_egg_box import NestedEggBox
 add(NestedEggBox('NestedEllipsoidSampler', 0.12))
 add(NestedEggBox('NestedRejectionSampler', 0.12))
+
