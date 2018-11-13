@@ -59,6 +59,7 @@ add(OptimisationBR('PSO', 2.0))
 from .mcmc_normal import MCMCNormal
 # Single-chain methods
 add(MCMCNormal('AdaptiveCovarianceMCMC', 1, 0.05))
+add(MCMCNormal('HamiltonianMCMC', 1, 0.05))
 add(MCMCNormal('MetropolisRandomWalkMCMC', 1, 0.2))
 add(MCMCNormal('PopulationMCMC', 1, 1.0))
 # Multi-chain methods
@@ -69,6 +70,7 @@ add(MCMCNormal('DreamMCMC', 3, 0.1))
 from .mcmc_banana import MCMCBanana
 # Single-chain methods
 add(MCMCBanana('AdaptiveCovarianceMCMC', 1, 1.0))
+add(MCMCBanana('HamiltonianMCMC', 1, 1.0))
 add(MCMCBanana('MetropolisRandomWalkMCMC', 1, 1.0))
 #add(MCMCBanana('PopulationMCMC', 1, 1.0, 50000))
 # Multi-chain methods
