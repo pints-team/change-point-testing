@@ -41,10 +41,14 @@ class Geweke(pfunk.FunctionalTest):
         self._max_subiter = int(max_subiter)
 
         # Create name and initialise
-        name = 'mcmc_normal_' + self._method + '_' + str(self._nchains)
-        super(MCMCNormal, self).__init__(name)
+        name = 'geweke_mcmc' + self._method + '_' + str(self._nchains)
+        super(Geweke, self).__init__(name)
 
-    def _successive_conditional_simulator(method, model, parameters, times, log_prior):
+    def _successive_conditional_simulator(self, method, model, parameters, times, log_prior):
+
+        import pints
+        import numpy as np
+
         # Create some toy data
         values = model.simulate(parameters[:-1], times)
 
@@ -57,20 +61,17 @@ class Geweke(pfunk.FunctionalTest):
         # Create a log-likelihood function (adds an extra parameter!)
         log_likelihood = pints.UnknownNoiseLogLikelihood(problem)
 
-        # Create a uniform prior over both the parameters and the new noise variable
-        log_prior = pints.UniformLogPrior(
-            [0.01, 400, noise*0.1],
-            [0.02, 600, noise*100]
-        )
-
         # Create a posterior log-likelihood (log(likelihood * prior))
         log_posterior = pints.LogPosterior(log_likelihood, log_prior)
 
         # Create a sampling routine
+        print(method)
         if isinstance(method, pints.SingleChainMCMC):
             mcmc = method(parameters)
         elif isinstance(method, pints.MultiChainMCMC):
             mcmc = method(self._nchains, parameters)
+        else:
+            mcmc = method(parameters)
 
         # get past the initial phase
         while mcmc.in_initial_phase():
@@ -90,7 +91,7 @@ class Geweke(pfunk.FunctionalTest):
     def _run(self, result, log_path):
 
         import pints
-        import pints.toy
+        import pints.toy as toy
         import numpy as np
 
         import logging
@@ -118,13 +119,14 @@ class Geweke(pfunk.FunctionalTest):
         times = np.linspace(0, 1000, 1000)
 
         # Create a uniform prior over both the parameters and the new noise variable
+        noise = 0.1
         log_prior = pints.UniformLogPrior(
             [0.01, 400, noise*0.1],
             [0.02, 600, noise*100]
         )
 
         g_samples = np.empty((model.n_parameters()+1, self._max_iter))
-        for i in range(self_maxiters):
+        for i in range(self._max_iter):
             # implement the marginal-conditional simulator
             # sample from prior
             theta1_samples = log_prior.sample(n=self._max_subiter)
@@ -132,20 +134,20 @@ class Geweke(pfunk.FunctionalTest):
             # run model (TODO: not needed is g = theta)
             # add noise according to sampled noise
 
-            theta1_mean = np.mean(theta1_samples, axis=1)
-            theta1_var = np.mean((theta1_mean-theta1_mean)**2, axis=1)
+            theta1_mean = np.mean(theta1_samples, axis=0)
+            theta1_var = np.mean((theta1_mean-theta1_mean)**2, axis=0)
 
             # implement the successive-conditional simulator
-            theta2_samples = np.empty((model.n_parameters()+1, self._max_subiter))
-            theta2_samples[:, 0] = log_prior.sample(n=1)
+            theta2_samples = np.empty((self._max_subiter, model.n_parameters()+1))
+            theta2_samples[0, :] = log_prior.sample(n=1)
             for j in range(1, self._max_subiter):
-                theta2_samples[:, j] = \
-                    _successive_conditional_simulator(method, model,
-                                                      theta2_samples[:, j-1],
-                                                      times, log_prior)
+                theta2_samples[j, :] = \
+                    self._successive_conditional_simulator(method, model,
+                                                           theta2_samples[j-1, :],
+                                                           times, log_prior)
 
-            theta2_mean = np.mean(theta2_samples, axis=1)
-            theta2_var = np.mean((theta2_mean-theta2_mean)**2, axis=1)
+            theta2_mean = np.mean(theta2_samples, axis=0)
+            theta2_var = np.mean((theta2_mean-theta2_mean)**2, axis=0)
             g_samples[i] = (theta1_mean - theta2_mean) / \
                 np.sqrt(theta1_var / self._max_subiter + theta2_var/self._max_iter)
 

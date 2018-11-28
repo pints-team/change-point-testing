@@ -70,12 +70,16 @@ add(MCMCNormal('DifferentialEvolutionMCMC', 3, 0.1))
 add(MCMCNormal('DreamMCMC', 3, 0.1))
 add(MCMCNormal('EmceeHammerMCMC', 3, 0.1))
 
+from .geweke_mcmc import Geweke
+# Single-chain methods
+add(Geweke('AdaptiveCovarianceMCMC', 1, 0.05))
+
 
 # issue 518 - turn off banana test for mcmc samplers
 from .mcmc_banana import MCMCBanana
 # Single-chain methods
 add(MCMCBanana('AdaptiveCovarianceMCMC', 1, 1.0))
-#add(MCMCBanana('HamiltonianMCMC', 1, 1.0))  # Requires gradient
+# add(MCMCBanana('HamiltonianMCMC', 1, 1.0))  # Requires gradient
 add(MCMCBanana('MetropolisRandomWalkMCMC', 1, 1.0))
 #add(MCMCBanana('PopulationMCMC', 1, 1.0, 50000))
 # Multi-chain methods
@@ -89,7 +93,7 @@ add(MCMCBanana('EmceeHammerMCMC', 3, 1.0))
 #from .mcmc_egg_box import MCMCEggBox
 # Single-chain methods
 #add(MCMCEggBox('AdaptiveCovarianceMCMC', 1, 1.0))
-#add(MCMCEggBox('HamiltonianMCMC', 1, 1.0))  # Requires gradient
+# add(MCMCEggBox('HamiltonianMCMC', 1, 1.0))  # Requires gradient
 #add(MCMCEggBox('MetropolisRandomWalkMCMC', 1, 1.0))
 #add(MCMCEggBox('PopulationMCMC', 1, 1.0))
 # Multi-chain methods
@@ -110,4 +114,3 @@ add(NestedBanana('NestedRejectionSampler', 0.4))
 from .nested_egg_box import NestedEggBox
 add(NestedEggBox('NestedEllipsoidSampler', 0.12))
 add(NestedEggBox('NestedRejectionSampler', 0.12))
-
