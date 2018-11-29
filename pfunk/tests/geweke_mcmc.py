@@ -31,14 +31,14 @@ class Geweke(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, method, nchains, pass_threshold, max_iter=20, max_subiter=100):
+    def __init__(self, method, nchains, pass_threshold, max_iter=200):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
         self._nchains = int(nchains)
         self._pass_threshold = float(pass_threshold)
         self._max_iter = int(max_iter)
-        self._max_subiter = int(max_subiter)
+        self._initial_phase_iter = 200
 
         # Create name and initialise
         name = 'geweke_mcmc' + self._method + '_' + str(self._nchains)
@@ -65,28 +65,28 @@ class Geweke(pfunk.FunctionalTest):
         log_posterior = pints.LogPosterior(log_likelihood, log_prior)
 
         # Create a sampling routine
-        print(method)
-        if isinstance(method, pints.SingleChainMCMC):
-            mcmc = method(parameters)
-        elif isinstance(method, pints.MultiChainMCMC):
+        if issubclass(method, pints.MultiChainMCMC):
             mcmc = method(self._nchains, parameters)
         else:
             mcmc = method(parameters)
 
         # get past the initial phase
-        while mcmc.in_initial_phase():
-            x = mcmc.ask()
-            if isinstance(method, pints.SingleChainMCMC):
-                mcmc.tell(log_posterior(x))
-            else:
-                mcmc.tell([log_posterior(xi) for xi in x])
+        if mcmc.needs_initial_phase():
+            mcmc.set_initial_phase(True)
+            for i in range(self._initial_phase_iter):
+                x = mcmc.ask()
+                if issubclass(method, pints.MultiChainMCMC):
+                    mcmc.tell([log_posterior(xi) for xi in x])
+                else:
+                    mcmc.tell(log_posterior(x))
+            mcmc.set_initial_phase(False)
 
         mcmc.replace(parameters, log_posterior(parameters))
         x = mcmc.ask()
-        if isinstance(method, pints.SingleChainMCMC):
-            return mcmc.tell(log_posterior(x))
-        else:
+        if isinstance(method, pints.MultiChainMCMC):
             return mcmc.tell([log_posterior(xi) for xi in x])
+        else:
+            return mcmc.tell(log_posterior(x))
 
     def _run(self, result, log_path):
 
@@ -125,35 +125,44 @@ class Geweke(pfunk.FunctionalTest):
             [0.02, 600, noise*100]
         )
 
-        g_samples = np.empty((model.n_parameters()+1, self._max_iter))
-        for i in range(self._max_iter):
-            # implement the marginal-conditional simulator
-            # sample from prior
-            theta1_samples = log_prior.sample(n=self._max_subiter)
+        g_samples = np.empty((self._max_iter, model.n_parameters()+1))
 
-            # run model (TODO: not needed is g = theta)
-            # add noise according to sampled noise
+        # implement the marginal-conditional simulator
+        # sample from prior
+        theta1_samples = log_prior.sample(n=self._max_iter)
+        theta1_mean = np.empty((self._max_iter, model.n_parameters()+1))
+        theta1_var = np.empty((self._max_iter, model.n_parameters()+1))
 
-            theta1_mean = np.mean(theta1_samples, axis=0)
-            theta1_var = np.mean((theta1_mean-theta1_mean)**2, axis=0)
+        # run model (TODO: not needed is g = theta)
+        # add noise according to sampled noise
 
+        for i in range(1, self._max_iter):
+            theta1_mean[i, :] = np.mean(theta1_samples[:i, :], axis=0)
+            theta1_var[i, :] = np.mean((theta1_samples[:i, :]-theta1_mean[:i, :])**2, axis=0)
+
+        # implement the successive-conditional simulator
+        theta2_samples = np.empty((self._max_iter, model.n_parameters()+1))
+        theta2_samples[0, :] = log_prior.sample(n=1)
+
+        theta2_mean = np.empty((self._max_iter, model.n_parameters()+1))
+        theta2_var = np.empty((self._max_iter, model.n_parameters()+1))
+        for i in range(1, self._max_iter):
+            print('.', end='', flush=True)
             # implement the successive-conditional simulator
-            theta2_samples = np.empty((self._max_subiter, model.n_parameters()+1))
-            theta2_samples[0, :] = log_prior.sample(n=1)
-            for j in range(1, self._max_subiter):
-                theta2_samples[j, :] = \
-                    self._successive_conditional_simulator(method, model,
-                                                           theta2_samples[j-1, :],
-                                                           times, log_prior)
+            theta2_samples[i, :] = \
+                self._successive_conditional_simulator(method, model,
+                                                       theta2_samples[i-1, :],
+                                                       times, log_prior)
 
-            theta2_mean = np.mean(theta2_samples, axis=0)
-            theta2_var = np.mean((theta2_mean-theta2_mean)**2, axis=0)
-            g_samples[i] = (theta1_mean - theta2_mean) / \
-                np.sqrt(theta1_var / self._max_subiter + theta2_var/self._max_iter)
+            theta2_mean[i, :] = np.mean(theta2_samples[:i+1, :], axis=0)
+            theta2_var[i, :] = np.mean((theta2_samples[:i+1, :]-theta2_mean[i, :])**2, axis=0)
+            g_samples[i, :] = (theta1_mean[i, :] - theta2_mean[i, :]) / \
+                np.sqrt(theta1_var[i, :] / (i+1) + theta2_var[i, :]/(i+1))
 
+        DEBUG = True
         if DEBUG:
             import pints.plot
-            pints.plot.trace(g_samples)
+            pints.plot.trace([g_samples])
             plt.show()
 
         # Store result
