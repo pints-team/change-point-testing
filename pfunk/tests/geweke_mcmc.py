@@ -31,7 +31,7 @@ class Geweke(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, method, nchains, pass_threshold, max_iter=200):
+    def __init__(self, method, nchains, pass_threshold, max_iter=20000):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
@@ -44,49 +44,28 @@ class Geweke(pfunk.FunctionalTest):
         name = 'geweke_mcmc' + self._method + '_' + str(self._nchains)
         super(Geweke, self).__init__(name)
 
-    def _successive_conditional_simulator(self, method, model, parameters, times, log_prior):
+    def _successive_conditional_simulator(self, mcmc, log_posterior, model, parameters, times, noise):
 
         import pints
         import numpy as np
 
         # Create some toy data
-        values = model.simulate(parameters[:-1], times)
+        values = model.simulate(parameters, times)
 
         # Add noise
-        values += np.random.normal(0, parameters[-1], values.shape)
+        values += np.random.normal(0, noise, values.shape)
 
-        # Create an object with links to the model and time series
-        problem = pints.SingleOutputProblem(model, times, values)
+        # replace data in log_posterior
+        log_posterior.log_likelihood()._values = values
 
-        # Create a log-likelihood function (adds an extra parameter!)
-        log_likelihood = pints.UnknownNoiseLogLikelihood(problem)
-
-        # Create a posterior log-likelihood (log(likelihood * prior))
-        log_posterior = pints.LogPosterior(log_likelihood, log_prior)
-
-        # Create a sampling routine
-        if issubclass(method, pints.MultiChainMCMC):
-            mcmc = method(self._nchains, parameters)
-        else:
-            mcmc = method(parameters)
-
-        # get past the initial phase
-        if mcmc.needs_initial_phase():
-            mcmc.set_initial_phase(True)
-            for i in range(self._initial_phase_iter):
-                x = mcmc.ask()
-                if issubclass(method, pints.MultiChainMCMC):
-                    mcmc.tell([log_posterior(xi) for xi in x])
-                else:
-                    mcmc.tell(log_posterior(x))
-            mcmc.set_initial_phase(False)
-
-        mcmc.replace(parameters, log_posterior(parameters))
+        # perform transition kernel
         x = mcmc.ask()
-        if isinstance(method, pints.MultiChainMCMC):
-            return mcmc.tell([log_posterior(xi) for xi in x])
+        # print(parameters, x, log_posterior(parameters), log_posterior(x))
+        if isinstance(mcmc, pints.MultiChainMCMC):
+            new_x = mcmc.tell([log_posterior(xi) for xi in x])
         else:
-            return mcmc.tell(log_posterior(x))
+            new_x = mcmc.tell(log_posterior(x))
+        return new_x
 
     def _run(self, result, log_path):
 
@@ -116,57 +95,99 @@ class Geweke(pfunk.FunctionalTest):
         model = toy.LogisticModel()
 
         # Create some toy data
-        times = np.linspace(0, 1000, 1000)
+        times = np.linspace(0, 1000, 10)
 
         # Create a uniform prior over both the parameters and the new noise variable
-        noise = 0.1
+        noise = 100.0
+        lower_bounds = np.array([0.01, 400])
+        upper_bounds = np.array([0.02, 600])
         log_prior = pints.UniformLogPrior(
-            [0.01, 400, noise*0.1],
-            [0.02, 600, noise*100]
+            lower_bounds,
+            upper_bounds
         )
+        sigma0 = ((upper_bounds-lower_bounds)/10.0)**2
+        print(sigma0)
 
-        g_samples = np.empty((self._max_iter, model.n_parameters()+1))
+        g_samples = np.empty((self._max_iter, model.n_parameters()))
 
         # implement the marginal-conditional simulator
         # sample from prior
         theta1_samples = log_prior.sample(n=self._max_iter)
-        theta1_mean = np.empty((self._max_iter, model.n_parameters()+1))
-        theta1_var = np.empty((self._max_iter, model.n_parameters()+1))
+        theta1_mean = np.empty((self._max_iter, model.n_parameters()))
+        theta1_var = np.empty((self._max_iter, model.n_parameters()))
 
         # run model (TODO: not needed is g = theta)
         # add noise according to sampled noise
 
-        for i in range(1, self._max_iter):
-            theta1_mean[i, :] = np.mean(theta1_samples[:i, :], axis=0)
-            theta1_var[i, :] = np.mean((theta1_samples[:i, :]-theta1_mean[:i, :])**2, axis=0)
+        for i in range(0, self._max_iter):
+            theta1_mean[i, :] = np.mean(theta1_samples[:(i+1), :], axis=0)
+            #theta1_var[i, :] = np.mean((theta1_samples[:(i+1), :]-theta1_mean[i, :])**2, axis=0)
+            theta1_var[i, :] = np.mean(theta1_samples[:(i+1), :]**2, axis=0)-theta1_mean[i, :]**2
 
         # implement the successive-conditional simulator
-        theta2_samples = np.empty((self._max_iter, model.n_parameters()+1))
+
+        theta2_samples = np.empty((self._max_iter, model.n_parameters()))
         theta2_samples[0, :] = log_prior.sample(n=1)
 
-        theta2_mean = np.empty((self._max_iter, model.n_parameters()+1))
-        theta2_var = np.empty((self._max_iter, model.n_parameters()+1))
+        # Create some toy data
+        values = model.simulate(theta2_samples[0, :], times)
+
+        # Add noise
+        values += np.random.normal(0, noise, values.shape)
+
+        # Create an object with links to the model and time series
+        problem = pints.SingleOutputProblem(model, times, values)
+
+        # Create a log-likelihood function
+        log_likelihood = pints.KnownNoiseLogLikelihood(problem, noise)
+
+        # Create a posterior log-likelihood (log(likelihood * prior))
+        log_posterior = pints.LogPosterior(log_likelihood, log_prior)
+
+        # Create a sampling routine
+        if issubclass(method, pints.MultiChainMCMC):
+            mcmc = method(self._nchains, theta2_samples[0, :], sigma0=sigma0)
+        else:
+            mcmc = method(theta2_samples[0, :], sigma0=sigma0)
+
+        # get past the initial phase if there is one
+        if mcmc.needs_initial_phase():
+            mcmc.set_initial_phase(True)
+            for i in range(self._initial_phase_iter):
+                x = mcmc.ask()
+                if issubclass(method, pints.MultiChainMCMC):
+                    theta2_samples[0, :] = mcmc.tell([log_posterior(xi) for xi in x])
+                else:
+                    theta2_samples[0, :] = mcmc.tell(log_posterior(x))
+            mcmc.set_initial_phase(False)
+
+        theta2_mean = np.empty((self._max_iter, model.n_parameters()))
+        theta2_var = np.empty((self._max_iter, model.n_parameters()))
+        g_samples[0, :] = 0
         for i in range(1, self._max_iter):
             print('.', end='', flush=True)
             # implement the successive-conditional simulator
             theta2_samples[i, :] = \
-                self._successive_conditional_simulator(method, model,
+                self._successive_conditional_simulator(mcmc, log_posterior, model,
                                                        theta2_samples[i-1, :],
-                                                       times, log_prior)
+                                                       times, noise)
 
-            theta2_mean[i, :] = np.mean(theta2_samples[:i+1, :], axis=0)
-            theta2_var[i, :] = np.mean((theta2_samples[:i+1, :]-theta2_mean[i, :])**2, axis=0)
+            theta2_mean[i, :] = np.mean(theta2_samples[:(i+1), :], axis=0)
+            #theta2_var[i, :] = np.mean((theta2_samples[:(i+1), :]-theta2_mean[i, :])**2, axis=0)
+            theta2_var[i, :] = np.mean(theta2_samples[:(i+1), :]**2, axis=0)-theta2_mean[i, :]**2
             g_samples[i, :] = (theta1_mean[i, :] - theta2_mean[i, :]) / \
                 np.sqrt(theta1_var[i, :] / (i+1) + theta2_var[i, :]/(i+1))
 
         DEBUG = True
         if DEBUG:
             import pints.plot
-            pints.plot.trace([g_samples])
+            pints.plot.trace([g_samples[int(self._max_iter/2):]])
+            pints.plot.trace([theta1_samples[int(self._max_iter/2):]])
+            pints.plot.trace([theta2_samples[int(self._max_iter/2):]])
             plt.show()
 
         # Store result
-        result['p-value'] = 0
+        result['g-values'] = g_samples[-1, :]
 
         # Store status
         result['status'] = 'done'

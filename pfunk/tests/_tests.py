@@ -72,6 +72,7 @@ add(MCMCNormal('EmceeHammerMCMC', 3, 0.1))
 
 from .geweke_mcmc import Geweke
 # Single-chain methods
+add(Geweke('MetropolisRandomWalkMCMC', 1, 0.05))
 add(Geweke('AdaptiveCovarianceMCMC', 1, 0.05))
 
 
