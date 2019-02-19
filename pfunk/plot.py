@@ -44,13 +44,14 @@ def variable(results, variable, title, ylabel, threshold=None):
         ymax = 1
 
     # Right plot: Same, but with outliers removed, to achieve a "zoom" on the
-    # most common data.
+    # most common, recent data.
     plt.subplot(1, 2, 2)
     plt.ylabel(ylabel)
     plt.xlabel('Commit')
     fig.autofmt_xdate()
     x, y, u, m, s = pfunk.gather_statistics_per_commit(
-        results, variable, remove_outliers=True)
+        results, variable, remove_outliers=True, n=10)
+    xlookup = dict(zip(u, np.arange(len(u))))
     x = np.array([xlookup[i] for i in x], dtype=float)
     x += np.random.uniform(-r, r, x.shape)
     plt.plot(u, m, 'ko-', alpha=0.5)

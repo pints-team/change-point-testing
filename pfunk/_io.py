@@ -448,7 +448,7 @@ def find_test_results(test_name):
 
 
 def gather_statistics_per_commit(
-        results, variable, remove_outliers=False, short_names=True):
+        results, variable, remove_outliers=False, short_names=True, n=None):
     """
     Gathers mean and standard devations of the given variable on a per commit
     basis.
@@ -471,11 +471,14 @@ def gather_statistics_per_commit(
     ``short_names``
         Optional argument. If set to ``False`` the long commit names will be
         returned.
+    ``n``
+        Optional argument. If set, only the last n unique commits will be
+        analysed
 
     """
     # Fetch commits and scores
     commits, scores = results['commit', variable]
-
+    
     # Gather values per commit
     unique = []
     values = []
@@ -494,6 +497,17 @@ def gather_statistics_per_commit(
             values[j].append(scores[i])
         else:
             values[j] += list(scores[i])
+
+    # Keep only last n unique commits
+    if n is not None:
+        unique = unique[-n:]
+        values = values[-n:]
+        cut_off = 0
+        for i, x in enumerate(commits):
+            if x not in unique:
+                cut_off = i
+        commits = commits[cut_off:]
+        scores = scores[cut_off:]
 
     # Convert to short commit names
     def shorten(commit):
