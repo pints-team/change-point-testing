@@ -168,6 +168,7 @@ def main():
     subparsers = parser.add_subparsers(help='commands')
 
     # Show all debug and info logging messages
+    #TODO: Think this can go?
     parser.add_argument(
         '--debug',
         action='store_true',
