@@ -73,9 +73,15 @@ class MCMCNormal(pfunk.FunctionalTest):
 
         # Generate random points
         x0 = log_prior.sample(self._nchains)
+        
+        # Create a realistic sigma - for some methods only!
+        sigma = None
+        if method == pints.HamiltonianMCMC:
+            sigma = np.diag(np.array([1, 3]))
 
         # Create a sampling routine
-        mcmc = pints.MCMCController(log_pdf, self._nchains, x0, method=method)
+        mcmc = pints.MCMCController(
+            log_pdf, self._nchains, x0, sigma0=sigma, method=method)
         mcmc.set_parallel(True)
 
         # Log to file
