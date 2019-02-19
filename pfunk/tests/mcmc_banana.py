@@ -68,14 +68,14 @@ class MCMCBanana(pfunk.FunctionalTest):
         log_pdf = pints.toy.TwistedGaussianLogPDF(dimension=2, b=0.1)
 
         # Generate a prior
-        log_prior = pints.MultivariateNormalLogPrior(
+        log_prior = pints.MultivariateGaussianLogPrior(
             [0, 0], [[10, 0], [0, 10]])
 
         # Generate random starting point(s)
         x0 = log_prior.sample(self._nchains)
 
         # Set up a sampling routine
-        mcmc = pints.MCMCSampling(log_pdf, self._nchains, x0, method=method)
+        mcmc = pints.MCMCController(log_pdf, self._nchains, x0, method=method)
         mcmc.set_parallel(True)
 
         # Log to file

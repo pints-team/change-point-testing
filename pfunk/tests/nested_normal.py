@@ -57,10 +57,10 @@ class NestedNormal(pfunk.FunctionalTest):
         # Create a log pdf
         xtrue = np.array([2, 4])
         sigma = np.diag(np.array([1, 3]))
-        log_pdf = pints.toy.NormalLogPDF(xtrue, sigma)
+        log_pdf = pints.toy.GaussianLogPDF(xtrue, sigma)
 
         # Create a log prior
-        log_prior = pints.MultivariateNormalLogPrior(xtrue + 1, sigma * 2)
+        log_prior = pints.MultivariateGaussianLogPrior(xtrue + 1, sigma * 2)
 
         # Create a nested sampler
         sampler = method(log_pdf, log_prior)

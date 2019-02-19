@@ -70,14 +70,14 @@ class MCMCEggBox(pfunk.FunctionalTest):
 
         # Create a log prior
         d = 2 * 6 * r * sigma
-        log_prior = pints.MultivariateNormalLogPrior(
+        log_prior = pints.MultivariateGaussianLogPrior(
             [0, 0], [[d, 0], [0, d]])
 
         # Generate random starting point(s)
         x0 = log_prior.sample(self._nchains)
 
         # Set up a sampling routine
-        mcmc = pints.MCMCSampling(log_pdf, self._nchains, x0, method=method)
+        mcmc = pints.MCMCController(log_pdf, self._nchains, x0, method=method)
         mcmc.set_parallel(True)
 
         # Log to file
