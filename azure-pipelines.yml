@@ -10,9 +10,6 @@ pool:
   name: 'pints-skip'
 
 steps:
-
-
-steps:
 - checkout: self
   submodules: recursive
 - script: pwd
