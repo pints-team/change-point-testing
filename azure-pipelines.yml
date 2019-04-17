@@ -7,8 +7,9 @@ trigger:
 - master
 
 pool:
-  name: 'skip'
+  name: 'pints-skip'
 
 steps:
 - script: pwd
   displayName: pwd
+- script: echo $(Agent.HomeDirectory)
