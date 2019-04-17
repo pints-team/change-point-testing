@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  nane: 'pints-skip'
+  name: 'skip'
 
 steps:
 - script: pwd
