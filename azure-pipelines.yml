@@ -10,6 +10,11 @@ pool:
   name: 'pints-skip'
 
 steps:
+
+
+steps:
+- checkout: self
+  submodules: recursive
 - script: pwd
   displayName: pwd
 - script: echo $(Agent.HomeDirectory)
