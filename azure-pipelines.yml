@@ -13,3 +13,6 @@ steps:
 - script: pwd
   displayName: pwd
 - script: echo $(Agent.HomeDirectory)
+  displayName: home
+- script: ls -l
+  displayName: ls
