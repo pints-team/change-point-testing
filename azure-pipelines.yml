@@ -3,6 +3,9 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+variables:
+  funkDir: /home/pints/functional-testing
+
 trigger:
 - master
 
@@ -10,10 +13,23 @@ pool:
   name: 'pints-skip'
 
 steps:
-- checkout: none
-- script: pwd
-  displayName: pwd
-- script: echo $(Agent.HomeDirectory)
-  displayName: home
-- script: ls -l
-  displayName: ls
+
+- checkout: none # don't actually check out source - we work on an existing directory
+
+- script: git pull
+  workingDirectory: $(funkDir)
+  displayName: Update pints@skip functional-testing repo
+
+- script: ./funk run --next --plot -r 5
+  workingDirectory: $(funkDir)
+  displayName: Run next test
+
+- script: ./funk report
+  workingDirectory: $(funkDir)
+  displayName: Create report
+
+- script: ./funk commit
+  workingDirectory: $(funkDir)
+  displayName: Commit results
+
+
