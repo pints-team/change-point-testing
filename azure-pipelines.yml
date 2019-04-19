@@ -7,7 +7,7 @@ variables:
   funkDir: /home/pints/functional-testing
 
 trigger:
-- master
+- azure-ci
 
 pool:
   name: 'pints-skip'
@@ -20,21 +20,20 @@ steps:
   workingDirectory: $(funkDir)
   displayName: Update pints@skip functional-testing repo
 
-- script: ./funk run opt_fn_XNES --analyse -r 2
+- script: ./funk run --next --analyse --plot -r 5
   workingDirectory: $(funkDir)
-  displayName: Run specific test
-  failOnStderr: true
+  displayName: Run next test
+  failOnStderr: true # this is what reports a failure, due to printing to stderr in __main__.py
+  timeoutInMinutes: 55
 
-#- script: ./funk run --next --analyse --plot -r 5
-#  workingDirectory: $(funkDir)
-#  displayName: Run next test
-#
-#- script: ./funk report
-#  workingDirectory: $(funkDir)
-#  displayName: Create report
-#
-#- script: ./funk commit
-#  workingDirectory: $(funkDir)
-#  displayName: Commit results
+- script: ./funk report
+  workingDirectory: $(funkDir)
+  displayName: Create report
+  condition: always() # run even if the test fails
+
+- script: ./funk commit
+  workingDirectory: $(funkDir)
+  displayName: Commit results
+  condition: always() # run even if the test fails
 
 
