@@ -7,7 +7,7 @@ variables:
   funkDir: /home/pints/functional-testing
 
 trigger:
-- master
+- azure-ci
 
 pool:
   name: 'pints-skip'
@@ -20,16 +20,20 @@ steps:
   workingDirectory: $(funkDir)
   displayName: Update pints@skip functional-testing repo
 
-- script: ./funk run --next --plot -r 5
+- script: ./funk run opt_fn_XNES --analyse -r 5
   workingDirectory: $(funkDir)
-  displayName: Run next test
+  displayName: Run specific test
 
-- script: ./funk report
-  workingDirectory: $(funkDir)
-  displayName: Create report
-
-- script: ./funk commit
-  workingDirectory: $(funkDir)
-  displayName: Commit results
+#- script: ./funk run --next --analyse --plot -r 5
+#  workingDirectory: $(funkDir)
+#  displayName: Run next test
+#
+#- script: ./funk report
+#  workingDirectory: $(funkDir)
+#  displayName: Create report
+#
+#- script: ./funk commit
+#  workingDirectory: $(funkDir)
+#  displayName: Commit results
 
 

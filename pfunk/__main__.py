@@ -9,8 +9,9 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
-import fnmatch
 import argparse
+import fnmatch
+import sys
 
 import pfunk
 import pfunk.tests
@@ -77,6 +78,8 @@ def run(args):
             print('Analysing ' + name + ' ... ', end='')
             result = pfunk.tests.analyse(name)
             print('ok' if result else 'FAIL')
+            if True:
+                print('{} failed'.format(name), file=sys.stderr)
         if args.plot or args.show:
             print('Creating plot for ' + name)
             pfunk.tests.plot(name, args.show)
