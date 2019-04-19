@@ -10,11 +10,17 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import argparse
+import atexit
 import fnmatch
 import sys
 
 import pfunk
 import pfunk.tests
+
+
+def _failed_test(name):
+    print('{} failed'.format(name), file=sys.stderr)
+    sys.exit(1)
 
 
 def list_tests(args):
@@ -79,7 +85,7 @@ def run(args):
             result = pfunk.tests.analyse(name)
             print('ok' if result else 'FAIL')
             if True:
-                print('{} failed'.format(name), file=sys.stderr)
+                atexit.register(_failed_test, name=name)
         if args.plot or args.show:
             print('Creating plot for ' + name)
             pfunk.tests.plot(name, args.show)
