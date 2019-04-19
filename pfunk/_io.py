@@ -425,6 +425,15 @@ def find_next_test():
     return min(dates, key=dates.get)
 
 
+def find_previous_test():
+    """
+    Scans the results directory, and returns the test that has been run most
+    recently.
+    """
+    dates = find_test_dates()
+    return max(dates, key=dates.get)
+
+
 def find_test_results(test_name):
     """
     Returns a ResultSet for the given ``test_name``.

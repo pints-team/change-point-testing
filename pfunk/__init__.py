@@ -82,6 +82,7 @@ PINTS_COMMIT = PINTS_VERSION = None
 from ._io import (  # noqa
     assert_not_deviated_from,
     find_next_test,
+    find_previous_test,
     find_test_dates,
     find_test_results,
     gather_statistics_per_commit,

@@ -78,8 +78,6 @@ def run(args):
             print('Analysing ' + name + ' ... ', end='')
             result = pfunk.tests.analyse(name)
             print('ok' if result else 'FAIL')
-            if not result:
-                print('{} failed'.format(name), file=sys.stderr)
         if args.plot or args.show:
             print('Creating plot for ' + name)
             pfunk.tests.plot(name, args.show)
@@ -103,13 +101,19 @@ def plot(args):
 
 def analyse(args):
     """
-    Analyses the result for one or all tests.
+    Analyses the result for one, the most recent, or all tests
     """
+
     # Parse test name, or get next test to run
-    if args.name is None:
+    if args.all:
+        names = sorted(pfunk.tests.tests())
+    elif args.last:
+        names = [pfunk.find_previous_test()]
+    elif args.name is None:
         names = [pfunk.find_next_test()]
     else:
         names = _parse_pattern(args.name)
+
     if not names:
         return
 
@@ -119,6 +123,8 @@ def analyse(args):
         result = pfunk.tests.analyse(name)
         failed += 0 if result else 1
         print('ok' if result else 'FAIL')
+        if not result:
+            print('{} failed'.format(name), file=sys.stderr)
 
     print()
     print('-' * 60)
@@ -263,6 +269,11 @@ def main():
         '--all',
         action='store_true',
         help='Analyse all tests',
+    )
+    group.add_argument(
+        '--last',
+        action='store_true',
+        help='Analyse most recently run test. Used for Azure CI.',
     )
     analyse_parser.set_defaults(func=analyse)
 
