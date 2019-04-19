@@ -19,11 +19,11 @@ steps:
 - script: git pull
   workingDirectory: $(funkDir)
   displayName: Update pints@skip functional-testing repo
-  failOnStderr: true
 
-- script: ./funk run opt_fn_XNES --analyse -r 5
+- script: ./funk run opt_fn_XNES --analyse -r 2
   workingDirectory: $(funkDir)
   displayName: Run specific test
+  failOnStderr: true
 
 #- script: ./funk run --next --analyse --plot -r 5
 #  workingDirectory: $(funkDir)
