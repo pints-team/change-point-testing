@@ -7,7 +7,7 @@ variables:
   funkDir: /home/pints/functional-testing
 
 trigger:
-- azure-ci
+- master
 
 pool:
   name: 'pints-skip'
