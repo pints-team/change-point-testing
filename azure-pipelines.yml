@@ -19,6 +19,7 @@ steps:
 - script: git pull
   workingDirectory: $(funkDir)
   displayName: Update pints@skip functional-testing repo
+  failOnStderr: true
 
 - script: ./funk run opt_fn_XNES --analyse -r 5
   workingDirectory: $(funkDir)
