@@ -58,7 +58,7 @@ class NestedBanana(pfunk.FunctionalTest):
         log_pdf = pints.toy.TwistedGaussianLogPDF(dimension=2, b=0.1)
 
         # Create a log prior
-        log_prior = pints.MultivariateNormalLogPrior(
+        log_prior = pints.MultivariateGaussianLogPrior(
             [0, 0], [[10, 0], [0, 10]])
 
         # Create a nested sampler

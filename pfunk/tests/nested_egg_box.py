@@ -62,7 +62,7 @@ class NestedEggBox(pfunk.FunctionalTest):
 
         # Create a log prior
         d = 2 * 6 * r * sigma
-        log_prior = pints.MultivariateNormalLogPrior(
+        log_prior = pints.MultivariateGaussianLogPrior(
             [0, 0], [[d, 0], [0, d]])
 
         # Create a nested sampler
