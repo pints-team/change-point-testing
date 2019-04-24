@@ -2,15 +2,15 @@
 # Git functions for the Pints repository.
 #
 # This file is part of Pints Functional Testing.
-#  Copyright (c) 2017-2018, University of Oxford.
+#  Copyright (c) 2017-2019, University of Oxford.
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
-import git
 import importlib
+import git
 import logging
 import sys
 
@@ -57,19 +57,29 @@ def prepare_module():
     """
     Prepares the Pints module for import (reloading if necessary).
     """
+    log = logging.getLogger(__name__)
+
     # Add the repo version of python to the system path, ensuring this is
     # preferred over a globally installed Pints.
     if pfunk.DIR_PINTS_REPO not in sys.path:
         sys.path.insert(0, pfunk.DIR_PINTS_REPO)
 
     # Make sure pints can be loaded
-    log = logging.getLogger(__name__)
     try:
         import pints
         importlib.reload(pints)
     except ImportError as e:
         log.info('Pints reload failed, performing deep reload')
-        deepreload.reload(pints)
+        deepreload.reload(pints, exclude=(
+            'sys',
+            'os.path',
+            'builtins',
+            '__main__',
+            'numpy',
+            'numpy._globals',
+            'scipy',
+            'cma',
+        ))
 
     # Check that we're using the local version of Pints, not an installed one
     assert list(pints.__path__)[0] == pfunk.DIR_PINTS_MODULE

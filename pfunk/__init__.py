@@ -84,7 +84,7 @@ PINTS_COMMIT = PINTS_VERSION = None
 #
 # Start importing sub modules
 #
-from . import (
+from . import (  # noqa
     pfunkrepo,
     pintsrepo,
     resultsrepo,
