@@ -34,7 +34,8 @@ DIR_PINTS_MODULE = os.path.join(DIR_PINTS_REPO, 'pints')
 # The root of the results repo (submodule) and subdirectoroes
 DIR_RES_REPO = os.path.join(DIR_PFUNK, 'res')
 DIR_LOG = os.path.join(DIR_RES_REPO, 'logs')
-DIR_RESULT = os.path.join(DIR_RES_REPO, 'results')
+_DIR_RESULT_DEFAULT = os.path.join(DIR_RES_REPO, 'results')
+DIR_RESULT = _DIR_RESULT_DEFAULT
 DIR_PLOT = os.path.join(DIR_RES_REPO, 'plots')
 
 
@@ -97,6 +98,7 @@ from ._io import (  # noqa
 )
 from ._git import (  # noqa
     commit_results,
+    pints_checkout,
     pints_hash,
     pints_refresh,
     prepare_pints_repo,

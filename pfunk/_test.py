@@ -102,8 +102,8 @@ class FunctionalTest(object):
         Generates the plots defined for this test
 
         All plots returned by the test are written out to a filename defined
-        by the test name and current date. If `show==True` then the figures are
-        shown on the current display
+        by the test name and current date. If ``show==True`` then the figures
+        are also shown on the current display.
         """
         # Create logger for _global_ console/file output
         log = logging.getLogger(__name__)

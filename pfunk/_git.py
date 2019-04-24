@@ -50,24 +50,46 @@ def prepare_pints_repo(force_refresh=False):
     """
     Makes sure Pints is up to date. Should be run before importing pints.
     """
-    # Ensure pints is up to date
+    # Ensure pints is up to date, and set PINTS_COMMIT to current hash
     if pfunk.PINTS_COMMIT is None or force_refresh:
         pfunk.pints_refresh()
         pfunk.PINTS_COMMIT = pfunk.pints_hash()
 
-    # Get Pints version from local repo
-    if pfunk.PINTS_VERSION is None:
+    # Set PINTS_VERSION to version indicated in the Pints module
+    if pfunk.PINTS_VERSION is None or force_refresh:
+        _set_pints_version_variable()
+
+
+def _set_pints_version_variable():
+    """
+    Sets the PINTS_VERSION variable.
+    """
+    if pfunk.DIR_PINTS_REPO not in sys.path:
         sys.path.insert(0, pfunk.DIR_PINTS_REPO)
-        import pints
-        import importlib
-        importlib.reload(pints)
-        assert list(pints.__path__)[0] == pfunk.DIR_PINTS_MODULE
-        pfunk.PINTS_VERSION = pints.version(formatted=True)
-    elif force_refresh:
-        import pints
-        import importlib
-        importlib.reload(pints)
-        pfunk.PINTS_VERSION = pints.version(formatted=True)
+
+    import pints
+    import importlib
+    importlib.reload(pints)
+    assert list(pints.__path__)[0] == pfunk.DIR_PINTS_MODULE
+    pfunk.PINTS_VERSION = pints.version(formatted=True)
+
+
+def pints_checkout(checkout):
+    """
+    Check out a specific commit, branch, or tree.
+    """
+    log = logging.getLogger(__name__)
+    log.info('Checking out ' + str(checkout))
+
+    # Check out requested commit, branch or tree
+    repo = git.Repo(pfunk.DIR_PINTS_REPO)
+    repo.git.checkout(checkout)
+
+    # Set commit and version variables (will also reload Pints)
+    pfunk.PINTS_COMMIT = pfunk.pints_hash()
+    _set_pints_version_variable()
+
+    log.info('Now at Pints commit ' + pfunk.PINTS_COMMIT)
 
 
 def commit_results():

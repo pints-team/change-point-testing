@@ -11,6 +11,7 @@ from __future__ import print_function, unicode_literals
 
 import argparse
 import fnmatch
+import os
 import sys
 
 import pfunk
@@ -71,6 +72,27 @@ def run(args):
 
     # Update pints
     pfunk.prepare_pints_repo()
+
+    # Allow testing of older pints versions
+    if args.t:
+        pints_checkout, results_dir = args.t
+
+        # Check analysing and plotting is disabled
+        if args.analyse or args.plot or args.show:
+            print('When testing specific commits or branches, plots and/or'
+                  ' analysis cannot be run.')
+            sys.exit(1)
+
+        # Change result directory
+        results_dir = os.path.abspath(results_dir)
+        if results_dir == pfunk._DIR_RESULT_DEFAULT:
+            print('When testing specific commits or branches, an alternative'
+                  ' results directory must be specified.')
+            sys.exit(1)
+        pfunk.DIR_RESULT = results_dir
+
+        # Check out alternative pints version
+        pfunk.pints_checkout(pints_checkout)
 
     # Run tests
     for name in names:
@@ -227,6 +249,11 @@ def main():
     run_parser.add_argument(
         '-r', default=1, type=int,
         help='Number of test repeats to run.',
+    )
+    run_parser.add_argument(
+        '-t', nargs=2, metavar=('commit', 'result_dir'),
+        help='Test a specific Pints commit (or branch) and store results in'
+             ' a non-standard output directory.',
     )
     run_parser.set_defaults(func=run)
 
