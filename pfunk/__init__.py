@@ -77,15 +77,19 @@ if not sys.version_info >= (3, 4):
 
 
 # Pints version and commit
-# These are set using _git's function "prepare_pints_repo"
+# These are set using PintsRepo.prepare_module
 PINTS_COMMIT = PINTS_VERSION = None
 
 
 #
 # Start importing sub modules
 #
+from . import (
+    pfunkrepo,
+    pintsrepo,
+    resultsrepo,
+)
 
-# Always import io and git
 from ._io import (  # noqa
     assert_not_deviated_from,
     find_next_test,
@@ -97,25 +101,15 @@ from ._io import (  # noqa
     ResultWriter,
     unique_path,
 )
-from ._git import (  # noqa
-    commit_results,
-    pints_checkout,
-    pints_commits_since,
-    pints_hash,
-    pints_last_commits,
-    pints_refresh,
-    prepare_pints_repo,
-    pfunk_hash,
-)
+
 from ._util import (  # noqa
     weave,
 )
 
-# Import test class
 from ._test import (    # noqa
     FunctionalTest,
 )
 
 
 # PFunk commit
-PFUNK_COMMIT = pfunk_hash()
+PFUNK_COMMIT = pfunkrepo.hash()

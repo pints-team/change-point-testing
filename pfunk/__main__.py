@@ -70,8 +70,8 @@ def run(args):
     if not names:
         return
 
-    # Update pints
-    pfunk.prepare_pints_repo()
+    # Update pints repository
+    pfunk.pintsrepo.pull()
 
     # Allow testing of older pints versions
     if args.t:
@@ -92,7 +92,10 @@ def run(args):
         pfunk.DIR_RESULT = results_dir
 
         # Check out alternative pints version
-        pfunk.pints_checkout(pints_checkout)
+        pfunk.pintsrepo.checkout(pints_checkout)
+
+    # Prepare module
+    pfunk.pintsrepo.prepare_module()
 
     # Run tests
     for name in names:
@@ -192,7 +195,7 @@ def commit_results(args):
     Commits any new results.
     """
     print('Committing new test results')
-    pfunk.commit_results()
+    pfunk.resultsrepo.commit_results()
     print('Done')
 
 
@@ -201,16 +204,16 @@ def weekend(args):
     Keep running tests, generating reports, and committing results.
     """
     while True:
-        pfunk.prepare_pints_repo(force_refresh=True)
+        pfunk.pfunkrepo.pull()
+        pfunk.pfunkrepo.prepare_module()
         for i in range(10):
             name = pfunk.find_next_test()
             print('Running test ' + name)
             pfunk.tests.run(name)
             pfunk.tests.plot(name)
             print('Done')
-            #pfunk.commit_results()
         pfunk.generate_report()
-        pfunk.commit_results()
+        pfunk.resultsrepo.commit_results()
 
 
 def investigate(args):
@@ -247,17 +250,17 @@ def investigate(args):
     pfunk.DIR_RESULT = temp_dir
     pfunk.DIR_PLOT = temp_dir
 
-    # Update pints
-    pfunk.prepare_pints_repo()
+    # Update pints repo
+    pfunk.pintsrepo.pull()
 
     # Get commits to look at
     if args.n:
         if args.n < 1:
             print('Number of commits must be 1 or more.')
             sys.exit(1)
-        commits = pfunk.pints_last_commits(args.n)
+        commits = pfunk.pintsrepo.latest_commits(args.n)
     else:
-        commits = pfunk.pints_commits_since(args.c)
+        commits = pfunk.pintsrepo.commits_since(args.c)
 
     # Get number of repeats
     repeats = args.r
@@ -268,11 +271,8 @@ def investigate(args):
     # Run tests
     for commit in commits:
         print('Checking out ' + commit)
-        try:
-            pfunk.pints_checkout(commit)
-        except Exception as e:
-            print('  Failed to check out commit: ' + str(e))
-            continue
+        pfunk.pintsrepo.checkout(commit)
+        pfunk.pintsrepo.prepare_module()
 
         for name in names:
             for i in range(repeats):
@@ -285,7 +285,6 @@ def investigate(args):
     # Analyse results
     for name in names:
         pfunk.tests.plot(name, args.show)
-
 
 
 def main():
