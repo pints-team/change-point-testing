@@ -272,7 +272,10 @@ def investigate(args):
         for name in names:
             for i in range(repeats):
                 print('Running test ' + name)
-                pfunk.tests.run(name)
+                try:
+                    pfunk.tests.run(name)
+                except Exception as e:
+                    print('FAIL: ' + str(e))
 
     # Analyse results
     for name in names:
