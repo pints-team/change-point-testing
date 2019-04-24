@@ -69,6 +69,11 @@ NAME_FORMAT = re.compile(r'^[a-zA-Z]\w*$')
 PYTHON_VERSION = sys.version.replace('\n', '')
 
 
+# Require at least Python 3.4 (for importlib.reload)
+if not sys.version_info >= (3, 4):
+    raise RuntimeError('Functional testing requires Python 3.4+')
+
+
 # Pints version and commit
 # These are set using _git's function "prepare_pints_repo"
 PINTS_COMMIT = PINTS_VERSION = None
