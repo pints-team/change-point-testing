@@ -280,7 +280,6 @@ def investigate(args):
         'run', args.name[0],
         '-r', str(repeats),
         '--no-refresh',
-        '--debug',
     ]
 
     for commit in commits:
