@@ -213,20 +213,79 @@ def weekend(args):
         pfunk.commit_results()
 
 
+def investigate(args):
+    """
+    Systematically check out all commits, starting from a given minimum commit,
+    perform N runs of a given test, and plot the results.
+    """
+    # TODO Unfortunately can't use bisection or something clever at the moment
+    # because the results are ordered by the date the test was run.
+
+    # Get test names
+    names = _parse_pattern(args.name[0])
+
+    # Get directory to store everything in
+    temp_dir = args.temp_dir[0]
+    if os.path.exists(temp_dir):
+        if not os.path.isdir(temp_dir):
+            print('Given temp_dir already exists and is not a directory.')
+            sys.exit(1)
+        if os.listdir(temp_dir):
+            print('Given temp_dir already exists and is not empty.')
+            sys.exit(1)
+    else:
+        os.makedirs(temp_dir)
+
+    # Change result and plot directory
+    temp_dir = os.path.abspath(temp_dir)
+    if temp_dir == pfunk._DIR_RESULT_DEFAULT:
+        print('Temporary directory cannot be the results directory.')
+        sys.exit(1)
+    if temp_dir == pfunk._DIR_PLOT_DEFAULT:
+        print('Temporary directory cannot be the plot directory.')
+        sys.exit(1)
+    pfunk.DIR_RESULT = temp_dir
+    pfunk.DIR_PLOT = temp_dir
+
+    # Update pints
+    pfunk.prepare_pints_repo()
+
+    # Get commits to look at
+    if args.n:
+        if args.n < 1:
+            print('Number of commits must be 1 or more.')
+            sys.exit(1)
+        commits = pfunk.pints_last_commits(args.n)
+    else:
+        commits = pfunk.pints_commits_since(args.c)
+
+    # Get number of repeats
+    repeats = args.r
+    if repeats < 1:
+        print('Number of repeats must be 1 or more.')
+        sys.exit(1)
+
+    # Run tests
+    for commit in commits:
+        print('Checking out ' + commit)
+        pfunk.pints_checkout(commit)
+        for name in names:
+            for i in range(repeats):
+                print('Running test ' + name)
+                pfunk.tests.run(name)
+
+    # Analyse results
+    for name in names:
+        pfunk.tests.plot(name, args.show)
+
+
+
 def main():
     # Set up argument parsing
     parser = argparse.ArgumentParser(
         description='Run functional tests for Pints.',
     )
     subparsers = parser.add_subparsers(help='commands')
-
-    # Show all debug and info logging messages
-    #TODO: Think this can go?
-    parser.add_argument(
-        '--debug',
-        action='store_true',
-        help='Show debug and info output',
-    )
 
     # Show a list of all available tests
     list_parser = subparsers.add_parser('list', help='List tests')
@@ -351,6 +410,53 @@ def main():
     )
     weekend_parser.set_defaults(func=weekend)
 
+    # Investigate when a specific change happened
+    investigate_parser = subparsers.add_parser(
+        'investigate',
+        help='Find out when a specific change happened, by running tests on'
+             ' the last N commits, and storing the results in a custom'
+             ' directory.'
+    )
+    investigate_parser.add_argument(
+        'name',
+        metavar='<name>',
+        nargs=1,
+        action='store',
+        help='The test to investigate',
+    )
+    investigate_parser.add_argument(
+        'temp_dir',
+        metavar='<temp_dir>',
+        nargs=1,
+        action='store',
+        help='A path to store results and plots in.',
+    )
+    group = investigate_parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        '-c',
+        metavar='<commit>',
+        type=str,
+        action='store',
+        help='The first commit to test',
+    )
+    group.add_argument(
+        '-n',
+        metavar='<n>',
+        type=int,
+        action='store',
+        help='The number of commits to look back',
+    )
+    investigate_parser.add_argument(
+        '-r', default=3, type=int,
+        help='Number of test repeats to run (default 3).',
+    )
+    investigate_parser.add_argument(
+        '--show',
+        action='store_true',
+        help='Show plots on screen',
+    )
+    investigate_parser.set_defaults(func=investigate)
+
     # Parse!
     args = parser.parse_args()
     if 'func' in args:
@@ -360,4 +466,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+
     main()

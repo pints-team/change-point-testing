@@ -100,7 +100,9 @@ from ._io import (  # noqa
 from ._git import (  # noqa
     commit_results,
     pints_checkout,
+    pints_commits_since,
     pints_hash,
+    pints_last_commits,
     pints_refresh,
     prepare_pints_repo,
     pfunk_hash,

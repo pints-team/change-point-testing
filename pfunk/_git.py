@@ -89,7 +89,49 @@ def pints_checkout(checkout):
     pfunk.PINTS_COMMIT = pfunk.pints_hash()
     _set_pints_version_variable()
 
+    # Show some nice info
+    import time
+    date = pfunk.date(time.gmtime(repo.head.commit.committed_date))
     log.info('Now at Pints commit ' + pfunk.PINTS_COMMIT)
+    log.info('  Author: ' + repo.head.commit.author.name)
+    log.info('  Date:   ' + date)
+    log.info(repo.head.commit.message)
+
+
+def pints_last_commits(n):
+    """
+    Returns the hashes of the last ``n`` commits in the Pints repo (master
+    branch), sorted old-to-new.
+    """
+    n = int(n)
+    assert n > 0
+    repo = git.Repo(pfunk.DIR_PINTS_REPO)
+    repo.git.checkout('master')
+    commits = list(repo.iter_commits('master', max_count=n))
+    commits.reverse()
+    return [c.hexsha for c in commits]
+
+
+def pints_commits_since(commit):
+    """
+    Returns the hashes of all commits since (and including) the given commit
+    (specified as a hash) in the Pitns repo (master branch), sorted old-to-new.
+    """
+    repo = git.Repo(pfunk.DIR_PINTS_REPO)
+    repo.git.checkout('master')
+
+    found = False
+    commits = []
+    for c in repo.iter_commits('master'):
+        commits.append(c.hexsha)
+        if c.hexsha == commit:
+            found = True
+            break
+    if not found:
+        raise ValueError('Commit not found: ' + str(commit))
+
+    commits.reverse()
+    return commits
 
 
 def commit_results():
