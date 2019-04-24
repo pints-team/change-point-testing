@@ -13,6 +13,8 @@ import importlib
 import git
 import logging
 import sys
+import textwrap
+import time
 
 import pfunk
 
@@ -23,6 +25,24 @@ def hash():
     """
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
     return str(repo.head.commit.hexsha)
+
+
+def info():
+    """
+    Returns a multi-line string with information about the currently selected
+    pints commit.
+    """
+    c = git.Repo(pfunk.DIR_PINTS_REPO).head.commit
+    lines = []
+    lines.append('commit ' + str(c.hexsha))
+    lines.append('Author: ' + c.author.name)
+    lines.append('Date:   ' + pfunk.date(time.gmtime(c.authored_date)))
+    lines.append('')
+    w = textwrap.TextWrapper()
+    w.initial_indent = w.subsequent_indent = '    '
+    lines.extend(w.wrap(c.message))
+    lines.append('')
+    return '\n'.join(lines)
 
 
 def pull():

@@ -97,6 +97,7 @@ def run(args):
         # Check out alternative pints version
         print('Checking out ' + pints_checkout)
         pfunk.pintsrepo.checkout(pints_checkout)
+        print(pfunk.pintsrepo.info())
 
     # Prepare module
     pfunk.pintsrepo.prepare_module()
