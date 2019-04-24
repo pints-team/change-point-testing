@@ -48,6 +48,21 @@ class MCMCBanana(pfunk.FunctionalTest):
         import pints.toy
         log = logging.getLogger(__name__)
 
+        # Allow slightly older pints versions to be tested
+        try:
+            from pints.toy import TwistedGaussianLogPDF
+        except ImportError:
+            from pints.toy import TwistedNormalLogPDF as TwistedGaussianLogPDF
+        try:
+            from pints import MultivariateGaussianLogPrior
+        except ImportError:
+            from pints import MultivariateNormalLogPrior \
+                as MultivariateGaussianLogPrior
+        try:
+            from pints import MCMCController
+        except ImportError:
+            from pints import MCMCSampling as MCMCController
+
         DEBUG = False
 
         # Store method name
@@ -64,17 +79,16 @@ class MCMCBanana(pfunk.FunctionalTest):
             log.warn('MultiChainMCMC run with only 1 chain.')
 
         # Create a log pdf (use multi-modal, but with a single mode)
-        log_pdf = pints.toy.TwistedGaussianLogPDF(dimension=2, b=0.1)
+        log_pdf = TwistedGaussianLogPDF(dimension=2, b=0.1)
 
         # Generate a prior
-        log_prior = pints.MultivariateGaussianLogPrior(
-            [0, 0], [[10, 0], [0, 10]])
+        log_prior = MultivariateGaussianLogPrior([0, 0], [[10, 0], [0, 10]])
 
         # Generate random starting point(s)
         x0 = log_prior.sample(self._nchains)
 
         # Set up a sampling routine
-        mcmc = pints.MCMCController(log_pdf, self._nchains, x0, method=method)
+        mcmc = MCMCController(log_pdf, self._nchains, x0, method=method)
         mcmc.set_parallel(True)
 
         # Log to file

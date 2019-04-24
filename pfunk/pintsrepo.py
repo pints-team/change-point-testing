@@ -14,8 +14,6 @@ import git
 import logging
 import sys
 
-from IPython.lib import deepreload
-
 import pfunk
 
 
@@ -65,23 +63,8 @@ def prepare_module():
         sys.path.insert(0, pfunk.DIR_PINTS_REPO)
 
     # Make sure pints can be loaded
-    try:
-        import pints
-        importlib.reload(pints)
-    except ImportError as e:
-        log.info('Pints reload failed, performing deep reload')
-        deepreload.reload(pints, exclude=(
-            'sys',
-            'os.path',
-            'builtins',
-            '__main__',
-            'numpy',
-            'numpy._globals',
-            'scipy',
-            'cma',
-            'importlib',
-            'importlib._bootstrap',
-        ))
+    import pints
+    importlib.reload(pints)
 
     # Check that we're using the local version of Pints, not an installed one
     assert list(pints.__path__)[0] == pfunk.DIR_PINTS_MODULE

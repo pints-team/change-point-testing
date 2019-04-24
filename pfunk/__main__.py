@@ -12,6 +12,7 @@ from __future__ import print_function, unicode_literals
 import argparse
 import fnmatch
 import os
+import subprocess
 import sys
 
 import pfunk
@@ -71,7 +72,9 @@ def run(args):
         return
 
     # Update pints repository
-    pfunk.pintsrepo.pull()
+    if not args.no_refresh:
+        print('Refreshing Pints repository')
+        pfunk.pintsrepo.pull()
 
     # Allow testing of older pints versions
     if args.t:
@@ -92,6 +95,7 @@ def run(args):
         pfunk.DIR_RESULT = results_dir
 
         # Check out alternative pints version
+        print('Checking out ' + pints_checkout)
         pfunk.pintsrepo.checkout(pints_checkout)
 
     # Prepare module
@@ -268,19 +272,24 @@ def investigate(args):
         print('Number of repeats must be 1 or more.')
         sys.exit(1)
 
-    # Run tests
-    for commit in commits:
-        print('Checking out ' + commit)
-        pfunk.pintsrepo.checkout(commit)
-        pfunk.pintsrepo.prepare_module()
+    # Run tests in subprocesses
+    base = [
+        sys.executable,
+        sys.argv[0],
+        'run', args.name[0],
+        '-r', str(repeats),
+        '--no-refresh',
+    ]
 
-        for name in names:
-            for i in range(repeats):
-                print('Running test ' + name)
-                try:
-                    pfunk.tests.run(name)
-                except Exception as e:
-                    print('FAIL: ' + str(e))
+    for commit in commits:
+        cmd = base + ['-t', commit, temp_dir]
+        try:
+            p = subprocess.Popen(cmd)
+            p.wait()
+        except KeyboardInterrupt:
+            p.terminate()
+            print('ABORTED')
+            return
 
     # Analyse results
     for name in names:
@@ -339,6 +348,11 @@ def main():
         '-t', nargs=2, metavar=('commit', 'result_dir'),
         help='Test a specific Pints commit (or branch) and store results in'
              ' a non-standard output directory.',
+    )
+    run_parser.add_argument(
+        '--no-refresh',
+        action='store_true',
+        help='Don\'t attempt to refresh (pull) the pints repository',
     )
     run_parser.set_defaults(func=run)
 
