@@ -36,7 +36,8 @@ DIR_RES_REPO = os.path.join(DIR_PFUNK, 'res')
 DIR_LOG = os.path.join(DIR_RES_REPO, 'logs')
 _DIR_RESULT_DEFAULT = os.path.join(DIR_RES_REPO, 'results')
 DIR_RESULT = _DIR_RESULT_DEFAULT
-DIR_PLOT = os.path.join(DIR_RES_REPO, 'plots')
+_DIR_PLOT_DEFAULT = os.path.join(DIR_RES_REPO, 'plots')
+DIR_PLOT = _DIR_PLOT_DEFAULT
 
 
 # Ensure log- and result directories exist

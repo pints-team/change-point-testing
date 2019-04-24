@@ -114,6 +114,25 @@ def plot(args):
     """
     Creates a plot for one or all tests.
     """
+    # Set alternative directories, if required
+    if args.t:
+        results_dir, plot_dir = args.t
+
+        # Change result directory
+        results_dir = os.path.abspath(results_dir)
+        if results_dir == pfunk._DIR_RESULT_DEFAULT:
+            print('Alternative results directory cannot be the default one.')
+            sys.exit(1)
+        pfunk.DIR_RESULT = results_dir
+
+        # Change plot directory
+        plot_dir = os.path.abspath(plot_dir)
+        if plot_dir == pfunk._DIR_PLOT_DEFAULT:
+            print('Alternative plot directory cannot be the default one.')
+            sys.exit(1)
+        pfunk.DIR_PLOT = plot_dir
+
+    # Make plots
     if args.name:
         for name in _parse_pattern(args.name):
             pfunk.tests.plot(name, args.show)
@@ -279,6 +298,10 @@ def main():
         '--show',
         action='store_true',
         help='Show plots on screen',
+    )
+    plot_parser.add_argument(
+        '-t', nargs=2, metavar=('result_dir', 'plot_dir'),
+        help='Load results and store plots in custom directories',
     )
     plot_parser.set_defaults(func=plot)
 
