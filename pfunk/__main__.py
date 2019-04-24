@@ -69,6 +69,9 @@ def run(args):
     if not names:
         return
 
+    # Update pints
+    pfunk.prepare_pints_repo()
+
     # Run tests
     for name in names:
         for i in range(args.r):

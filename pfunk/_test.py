@@ -180,16 +180,13 @@ class FunctionalTest(object):
         """
         raise NotImplementedError
 
-    def run(self, date=None):
+    def run(self):
         """
         Runs this test and logs the output.
         """
         # Create logger for _global_ console/file output
         log = logging.getLogger(__name__)
         log.info('Running test: ' + self.name())
-
-        # Prepare to run
-        pfunk.prepare_pints_repo()
 
         # Seed numpy random generator, so that we know the value
         seed = np.random.randint(2**32)    # Numpy says max seed is 2**32 - 1
