@@ -67,7 +67,12 @@ def _set_pints_version_variable():
     if pfunk.DIR_PINTS_REPO not in sys.path:
         sys.path.insert(0, pfunk.DIR_PINTS_REPO)
 
-    import pints
+    try:
+        import pints
+    except ImportError:
+        log = logging.getLogger(__name__)
+        log.info('Importing Pints failed, now trying to reload')
+
     import importlib
     importlib.reload(pints)
     assert list(pints.__path__)[0] == pfunk.DIR_PINTS_MODULE
