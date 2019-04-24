@@ -193,7 +193,7 @@ class FunctionalTest(object):
         np.random.seed(seed)
 
         # Create test name
-        date = date or pfunk.date()
+        date = pfunk.date()
         name = self.name()
 
         # Get path to log and result files
