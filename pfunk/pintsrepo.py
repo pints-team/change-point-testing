@@ -79,6 +79,8 @@ def prepare_module():
             'numpy._globals',
             'scipy',
             'cma',
+            'importlib',
+            'importlib._bootstrap',
         ))
 
     # Check that we're using the local version of Pints, not an installed one
