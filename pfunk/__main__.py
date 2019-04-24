@@ -268,7 +268,12 @@ def investigate(args):
     # Run tests
     for commit in commits:
         print('Checking out ' + commit)
-        pfunk.pints_checkout(commit)
+        try:
+            pfunk.pints_checkout(commit)
+        except Exception as e:
+            print('  Failed to check out commit: ' + str(e))
+            continue
+
         for name in names:
             for i in range(repeats):
                 print('Running test ' + name)
