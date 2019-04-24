@@ -73,7 +73,7 @@ class MCMCNormal(pfunk.FunctionalTest):
 
         # Generate random points
         x0 = log_prior.sample(self._nchains)
-        
+
         # Create a realistic sigma - for some methods only!
         sigma = None
         if method == pints.HamiltonianMCMC:
