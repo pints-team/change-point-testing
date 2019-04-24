@@ -10,7 +10,6 @@ from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
 import pfunk
-import matplotlib.pyplot as plt
 
 
 class MCMCNormal(pfunk.FunctionalTest):
@@ -101,6 +100,7 @@ class MCMCNormal(pfunk.FunctionalTest):
         chains = mcmc.run()
 
         if DEBUG:
+            import matplotlib.pyplot as plt
             import pints.plot
             pints.plot.trace(chains)
             plt.show()
