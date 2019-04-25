@@ -344,6 +344,9 @@ def find_test_dates():
 
         # Attempt to read filename as test result
         base, ext = os.path.splitext(path)
+        if ext != '.txt':
+            log.info('Skipping file in results dir ' + path)
+            continue
         parts = base.split('-', 1)
         if len(parts) != 2:
             log.info('Skipping file in results dir ' + path)
@@ -444,6 +447,8 @@ def find_test_results(test_name):
 
         # Attempt to read filename as test result
         base, ext = os.path.splitext(path)
+        if ext != '.txt':
+            continue
         parts = base.split('-', 1)
         if len(parts) != 2:
             continue
