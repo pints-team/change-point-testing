@@ -112,7 +112,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
         iters = list(range(0, n_samples - n_window + n_jump, n_jump))
         result['iters'] = iters
         result['klds'] = [
-            log_pdf.kl_score(chain[i:i + n_window]) for i in iters]
+            log_pdf.kl_divergence(chain[i:i + n_window]) for i in iters]
 
         # Remove burn-in
         # For multi-chain, multiply by n_chains because we wove the chains
@@ -122,7 +122,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
         log.info('Chain mean: ' + str(np.mean(chain, axis=0)))
 
         # Store kullback-leibler-based score after burn-in
-        result['kld'] = log_pdf.kl_score(chain)
+        result['kld'] = log_pdf.kl_divergence(chain)
 
         # Store effective sample size
         result['ess'] = pints.effective_sample_size(chain)
