@@ -23,7 +23,7 @@ steps:
 - script: ./funk run --next --plot -r 5
   workingDirectory: $(funkDir)
   displayName: Run next test
-  timeoutInMinutes: 55 # in case test takes a long time, prevent clash with next run
+  timeoutInMinutes: 115 # in case test takes a long time, prevent clash with next run
 
 - script: ./funk analyse --last
   workingDirectory: $(funkDir)
