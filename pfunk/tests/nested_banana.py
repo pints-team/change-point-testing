@@ -43,6 +43,17 @@ class NestedBanana(pfunk.FunctionalTest):
         import pints
         import pints.toy
 
+        # Allow slightly older pints versions to be tested
+        try:
+            from pints.toy import TwistedGaussianLogPDF
+        except ImportError:
+            from pints.toy import TwistedNormalLogPDF as TwistedGaussianLogPDF
+        try:
+            from pints import MultivariateGaussianLogPrior
+        except ImportError:
+            from pints import MultivariateNormalLogPrior \
+                as MultivariateGaussianLogPrior
+
         log = logging.getLogger(__name__)
 
         DEBUG = False
@@ -55,10 +66,10 @@ class NestedBanana(pfunk.FunctionalTest):
         method = getattr(pints, self._method)
 
         # Create a log pdf (use multi-modal, but with a single mode)
-        log_pdf = pints.toy.TwistedGaussianLogPDF(dimension=2, b=0.1)
+        log_pdf = TwistedGaussianLogPDF(dimension=2, b=0.1)
 
         # Create a log prior
-        log_prior = pints.MultivariateGaussianLogPrior(
+        log_prior = MultivariateGaussianLogPrior(
             [0, 0], [[10, 0], [0, 10]])
 
         # Create a nested sampler
