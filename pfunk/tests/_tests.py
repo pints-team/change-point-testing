@@ -76,11 +76,11 @@ from .mcmc_banana import MCMCBanana
 # Single-chain methods
 add(MCMCBanana('AdaptiveCovarianceMCMC', 1, 1.0))
 #add(MCMCBanana('HamiltonianMCMC', 1, 1.0))  # Requires gradient
-add(MCMCBanana('MetropolisRandomWalkMCMC', 1, 1.0))
+add(MCMCBanana('MetropolisRandomWalkMCMC', 5, 1.0))
 #add(MCMCBanana('PopulationMCMC', 1, 1.0, 50000))
 # Multi-chain methods
 # add(MCMCBanana('DifferentialEvolutionMCMC', 3, 1.0))
-add(MCMCBanana('DreamMCMC', 3, 1.0))
+add(MCMCBanana('DreamMCMC', 4, 1.0))
 add(MCMCBanana('EmceeHammerMCMC', 3, 1.0))
 
 
