@@ -33,17 +33,13 @@ DIR_PINTS_REPO = os.path.join(DIR_PFUNK, 'pints')
 DIR_PINTS_MODULE = os.path.join(DIR_PINTS_REPO, 'pints')
 # The root of the results repo (submodule) and subdirectoroes
 DIR_RES_REPO = os.path.join(DIR_PFUNK, 'res')
-DIR_LOG = os.path.join(DIR_RES_REPO, 'logs')
 _DIR_RESULT_DEFAULT = os.path.join(DIR_RES_REPO, 'results')
 DIR_RESULT = _DIR_RESULT_DEFAULT
 _DIR_PLOT_DEFAULT = os.path.join(DIR_RES_REPO, 'plots')
 DIR_PLOT = _DIR_PLOT_DEFAULT
 
 
-# Ensure log- and result directories exist
-if not os.path.isdir(DIR_LOG):
-    log.info('Creating log dir: ' + DIR_LOG)
-    os.makedirs(DIR_LOG)
+# Ensure result and plot directories exist
 if not os.path.isdir(DIR_RESULT):
     log.info('Creating result dir: ' + DIR_RESULT)
     os.makedirs(DIR_RESULT)

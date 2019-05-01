@@ -38,7 +38,7 @@ class NestedBanana(pfunk.FunctionalTest):
         name = 'nested_banana_' + self._method
         super(NestedBanana, self).__init__(name)
 
-    def _run(self, result, log_path):
+    def _run(self, result):
 
         import pints
         import pints.toy
@@ -78,7 +78,6 @@ class NestedBanana(pfunk.FunctionalTest):
         # Log to file
         if not DEBUG:
             sampler.set_log_to_screen(False)
-        sampler.set_log_to_file(log_path)
 
         # Set max iterations
         sampler.set_iterations(8000)

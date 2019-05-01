@@ -164,18 +164,14 @@ class FunctionalTest(object):
             except IOError:
                 log.info('Removal of old plot failed: ' + path)
 
-    def _run(self, result_writer, log_path):
+    def _run(self, result_writer):
         """
         This will be defined for an individual test. It will run the test,
-        store any test results using ``result_writer`` and perform logging
-        using ``log_path``.
-
+        store any test results using ``result_writer``.
         Args:
 
         result_writer -- the test can use this to write any test outputs as
         ``result_writer[output_name] = output_value``
-        ``log_path`` -- a path that the test can write any additional logging
-        information
 
         """
         raise NotImplementedError
@@ -198,7 +194,6 @@ class FunctionalTest(object):
 
         # Get path to log and result files
         base = name + '-' + date + '.txt'
-        log_path = pfunk.unique_path(os.path.join(pfunk.DIR_LOG, base))
         res_path = pfunk.unique_path(os.path.join(pfunk.DIR_RESULT, base))
 
         # Create result writer
@@ -215,7 +210,7 @@ class FunctionalTest(object):
 
         # Run test
         try:
-            self._run(w, log_path)
+            self._run(w)
         except Exception:
             log.error('Exception in test: ' + self.name())
             w['status'] = 'failed'

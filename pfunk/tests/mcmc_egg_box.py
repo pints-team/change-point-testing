@@ -38,7 +38,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
         name = 'mcmc_egg_box_' + self._method + '_' + str(self._nchains)
         super(MCMCEggBox, self).__init__(name)
 
-    def _run(self, result, log_path):
+    def _run(self, result):
 
         import pints
         import pints.toy
@@ -82,7 +82,6 @@ class MCMCEggBox(pfunk.FunctionalTest):
         # Log to file
         if not DEBUG:
             mcmc.set_log_to_screen(False)
-        mcmc.set_log_to_file(log_path)
 
         # Set max iterations
         n_iter = 50000

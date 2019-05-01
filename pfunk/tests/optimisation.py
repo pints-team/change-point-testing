@@ -43,7 +43,7 @@ class Optimisation(pfunk.FunctionalTest):
         """
         raise NotImplementedError
 
-    def _run(self, result, log_path):
+    def _run(self, result):
 
         import pints
         import numpy as np

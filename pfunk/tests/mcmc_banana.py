@@ -42,7 +42,7 @@ class MCMCBanana(pfunk.FunctionalTest):
         name = 'mcmc_banana_' + self._method + '_' + str(self._nchains)
         super(MCMCBanana, self).__init__(name)
 
-    def _run(self, result, log_path):
+    def _run(self, result):
 
         import pints
         import pints.toy
@@ -94,7 +94,6 @@ class MCMCBanana(pfunk.FunctionalTest):
         # Log to file
         if not DEBUG:
             mcmc.set_log_to_screen(False)
-        mcmc.set_log_to_file(log_path)
 
         # Set max iterations
         n_iter = self._max_iter
