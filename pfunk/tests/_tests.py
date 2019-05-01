@@ -103,8 +103,8 @@ add(NestedNormal('NestedRejectionSampler', 0.16))
 
 
 from .nested_banana import NestedBanana
-add(NestedBanana('NestedEllipsoidSampler', 0.4))
-add(NestedBanana('NestedRejectionSampler', 0.4))
+add(NestedBanana('NestedEllipsoidSampler', 0.1))
+add(NestedBanana('NestedRejectionSampler', 1.0))
 
 
 from .nested_egg_box import NestedEggBox
