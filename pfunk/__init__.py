@@ -74,7 +74,7 @@ if not sys.version_info >= (3, 4):
 
 # Pints version and commit
 # These are set using PintsRepo.prepare_module
-PINTS_COMMIT = PINTS_VERSION = None
+PINTS_COMMIT = PINTS_VERSION = PINTS_COMMIT_AUTHORED = PINTS_COMMIT_COMMITTED = PINTS_COMMIT_MESSAGE = None
 
 
 #

@@ -19,6 +19,11 @@ import time
 import pfunk
 
 
+def head():
+    repo = git.Repo(pfunk.DIR_PINTS_REPO)
+    return repo.head.commit
+
+
 def hash():
     """
     Returns the current pints commit hash.
@@ -71,6 +76,10 @@ def checkout(checkout):
     repo.git.checkout(checkout)
 
 
+def format_date(seconds_since_epoch):
+    return time.strftime("%a, %d %b %Y %H:%M", time.gmtime(seconds_since_epoch))
+
+
 def prepare_module():
     """
     Prepares the Pints module for import (reloading if necessary).
@@ -91,6 +100,9 @@ def prepare_module():
 
     # Set identifying variables
     pfunk.PINTS_COMMIT = pfunk.pintsrepo.hash()
+    pfunk.PINTS_COMMIT_AUTHORED = format_date(pfunk.pintsrepo.head().authored_date)
+    pfunk.PINTS_COMMIT_COMMITTED = format_date(pfunk.pintsrepo.head().committed_date)
+    pfunk.PINTS_COMMIT_MESSAGE = pfunk.pintsrepo.head().message
     pfunk.PINTS_VERSION = pints.version(formatted=True)
 
 
