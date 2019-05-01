@@ -8,6 +8,7 @@
 #
 
 from __future__ import print_function
+from collections import defaultdict
 import sqlite3
 import json
 
@@ -67,12 +68,7 @@ class ResultsDatabase(object):
                                     (value, self._name, self._date))
             self._connection.commit()
         else:
-            result = self._connection.execute("select json from test_results where name like ? and date = ?",
-                                              (self._name, self._date))
-            json_field = result.fetchone()[0]
-            dictionary = {}
-            if json_field is not None:
-                dictionary = json.loads(json_field)
+            dictionary = self.json_values()
             # workaround: if we're given a numpy array, make a Python list
             if getattr(value, "tolist", None) is not None:
                 value = value.tolist()
@@ -82,6 +78,15 @@ class ResultsDatabase(object):
                                      (json_field, self._name, self._date))
             self._connection.commit()
 
+    def json_values(self):
+        result = self._connection.execute("select json from test_results where name like ? and date = ?",
+                                          (self._name, self._date))
+        json_field = result.fetchone()[0]
+        dictionary = {}
+        if json_field is not None:
+            dictionary = json.loads(json_field)
+        return dictionary
+
     def write(self):
         pass
 
@@ -89,5 +94,11 @@ class ResultsDatabase(object):
         return self._filename
 
     def __getitem__(self, item):
-        print("Unknown item {}".format(item))
-        return None
+        if item in self.primary_columns or item in self.columns:
+            result = self._connection.execute("select {} from test_results where name like ? and date = ?".format(item),
+                                              (self._name, self._date))
+            return result.fetchone()[0]
+        if item in self.mapped_columns.keys():
+            return self[self.mapped_columns[item]]
+        dictionary = defaultdict(lambda x: None, self.json_values())
+        return dictionary[item]
