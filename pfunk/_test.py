@@ -196,7 +196,7 @@ class FunctionalTest(object):
         # Create result writer
 
         w = self._writer_generator(name, date, file)
-        w['status'] = 'unitialised'
+        w['status'] = 'uninitialised'
         w['date'] = date
         w['name'] = name
         w['python'] = pfunk.PYTHON_VERSION
