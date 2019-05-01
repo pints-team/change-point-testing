@@ -19,6 +19,8 @@ class NestedNormal(pfunk.FunctionalTest):
 
     Arguments:
 
+    ``writer_generator``
+        A callable that will return a key-value store for test results.
     ``method``
         A *string* indicating the method to use, e.g. 'AdaptiveCovarianceMCMC'.
         (Must be a string, because we shouldn't import pints before we start
@@ -26,7 +28,7 @@ class NestedNormal(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, method, pass_threshold):
+    def __init__(self, writer_generator, method, pass_threshold):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
@@ -34,7 +36,7 @@ class NestedNormal(pfunk.FunctionalTest):
 
         # Create name and initialise
         name = 'nested_normal_' + self._method
-        super(NestedNormal, self).__init__(name)
+        super(NestedNormal, self).__init__(name, writer_generator)
 
     def _run(self, result):
 

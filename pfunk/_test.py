@@ -21,11 +21,12 @@ class FunctionalTest(object):
     """
     Abstract base class for single functional tests.
     """
-    def __init__(self, name):
+    def __init__(self, name, writer_generator):
         name = str(name)
         if pfunk.NAME_FORMAT.match(name) is None:
             raise ValueError('Invalid test name: ' + name)
         self._name = name
+        self._writer_generator = writer_generator
 
     def _analyse(self, results):
         """
@@ -194,10 +195,11 @@ class FunctionalTest(object):
 
         # Get path to log and result files
         base = name + '-' + date + '.txt'
-        res_path = pfunk.unique_path(os.path.join(pfunk.DIR_RESULT, base))
+        log_path = pfunk.unique_path(os.path.join(pfunk.DIR_LOG, base))
 
         # Create result writer
-        w = pfunk.ResultWriter(res_path)
+
+        w = self._writer_generator(name, date)
         w['status'] = 'unitialised'
         w['date'] = date
         w['name'] = name

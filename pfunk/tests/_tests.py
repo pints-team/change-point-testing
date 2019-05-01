@@ -6,7 +6,7 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
-import pfunk
+import pfunk, os
 
 _tests = {}
 
@@ -39,76 +39,82 @@ def analyse(name):
     return _tests[name].analyse()
 
 
+def results_writer_generator(name, date):
+    base = name + '-' + date + '.txt'
+    res_path = pfunk.unique_path(os.path.join(pfunk.DIR_RESULT, base))
+    return pfunk.ResultWriter(res_path)
+
+
 from .optimisation import OptimisationLogistic
-add(OptimisationLogistic('CMAES', 1.0))
-add(OptimisationLogistic('XNES', 1.0))
-add(OptimisationLogistic('SNES', 1.0))
-add(OptimisationLogistic('PSO', 1.0))
+add(OptimisationLogistic(results_writer_generator, 'CMAES', 1.0))
+add(OptimisationLogistic(results_writer_generator, 'XNES', 1.0))
+add(OptimisationLogistic(results_writer_generator, 'SNES', 1.0))
+add(OptimisationLogistic(results_writer_generator, 'PSO', 1.0))
 
 
 from .optimisation import OptimisationFN
-add(OptimisationFN('CMAES', 1.0))
-add(OptimisationFN('XNES', 1.0))
-add(OptimisationFN('SNES', 1.0))
-add(OptimisationFN('PSO', 1.0))
+add(OptimisationFN(results_writer_generator, 'CMAES', 1.0))
+add(OptimisationFN(results_writer_generator, 'XNES', 1.0))
+add(OptimisationFN(results_writer_generator, 'SNES', 1.0))
+add(OptimisationFN(results_writer_generator, 'PSO', 1.0))
 
 
 from .optimisation import OptimisationBR
-add(OptimisationBR('CMAES', 2.0))
-add(OptimisationBR('XNES', 2.0))
-add(OptimisationBR('SNES', 4.0))
-add(OptimisationBR('PSO', 2.0))
+add(OptimisationBR(results_writer_generator, 'CMAES', 2.0))
+add(OptimisationBR(results_writer_generator, 'XNES', 2.0))
+add(OptimisationBR(results_writer_generator, 'SNES', 4.0))
+add(OptimisationBR(results_writer_generator, 'PSO', 2.0))
 
 
 from .mcmc_normal import MCMCNormal
 # Single-chain methods
-add(MCMCNormal('AdaptiveCovarianceMCMC', 1, 0.05))
-add(MCMCNormal('HamiltonianMCMC', 1, 0.05, max_iter=1000))
-add(MCMCNormal('MetropolisRandomWalkMCMC', 1, 0.2))
-add(MCMCNormal('PopulationMCMC', 1, 1.0))
+add(MCMCNormal(results_writer_generator, 'AdaptiveCovarianceMCMC', 1, 0.05))
+add(MCMCNormal(results_writer_generator, 'HamiltonianMCMC', 1, 0.05, max_iter=1000))
+add(MCMCNormal(results_writer_generator, 'MetropolisRandomWalkMCMC', 1, 0.2))
+add(MCMCNormal(results_writer_generator, 'PopulationMCMC', 1, 1.0))
 # Multi-chain methods
-add(MCMCNormal('DifferentialEvolutionMCMC', 3, 0.1))
-add(MCMCNormal('DreamMCMC', 3, 0.1))
-add(MCMCNormal('EmceeHammerMCMC', 3, 0.1))
+add(MCMCNormal(results_writer_generator, 'DifferentialEvolutionMCMC', 3, 0.1))
+add(MCMCNormal(results_writer_generator, 'DreamMCMC', 3, 0.1))
+add(MCMCNormal(results_writer_generator, 'EmceeHammerMCMC', 3, 0.1))
 
 
 # issue 518 - turn off banana test for mcmc samplers
 from .mcmc_banana import MCMCBanana
 # Single-chain methods
-add(MCMCBanana('AdaptiveCovarianceMCMC', 1, 1.0))
-#add(MCMCBanana('HamiltonianMCMC', 1, 1.0))  # Requires gradient
-add(MCMCBanana('MetropolisRandomWalkMCMC', 5, 1.0))
-#add(MCMCBanana('PopulationMCMC', 1, 1.0, 50000))
+add(MCMCBanana(results_writer_generator, 'AdaptiveCovarianceMCMC', 1, 1.0))
+#add(MCMCBanana(results_writer_generator, 'HamiltonianMCMC', 1, 1.0))  # Requires gradient
+add(MCMCBanana(results_writer_generator, 'MetropolisRandomWalkMCMC', 5, 1.0))
+#add(MCMCBanana(results_writer_generator, 'PopulationMCMC', 1, 1.0, 50000))
 # Multi-chain methods
-# add(MCMCBanana('DifferentialEvolutionMCMC', 3, 1.0))
-add(MCMCBanana('DreamMCMC', 4, 1.0))
-add(MCMCBanana('EmceeHammerMCMC', 3, 1.0))
+# add(MCMCBanana(results_writer_generator, 'DifferentialEvolutionMCMC', 3, 1.0))
+add(MCMCBanana(results_writer_generator, 'DreamMCMC', 4, 1.0))
+add(MCMCBanana(results_writer_generator, 'EmceeHammerMCMC', 3, 1.0))
 
 
 # issue 516 - turn off egg box test for mcmc samplers
 # due to high difficulty of the problem
 #from .mcmc_egg_box import MCMCEggBox
 # Single-chain methods
-#add(MCMCEggBox('AdaptiveCovarianceMCMC', 1, 1.0))
-#add(MCMCEggBox('HamiltonianMCMC', 1, 1.0))  # Requires gradient
-#add(MCMCEggBox('MetropolisRandomWalkMCMC', 1, 1.0))
-#add(MCMCEggBox('PopulationMCMC', 1, 1.0))
+#add(MCMCEggBox(results_writer_generator, 'AdaptiveCovarianceMCMC', 1, 1.0))
+#add(MCMCEggBox(results_writer_generator, 'HamiltonianMCMC', 1, 1.0))  # Requires gradient
+#add(MCMCEggBox(results_writer_generator, 'MetropolisRandomWalkMCMC', 1, 1.0))
+#add(MCMCEggBox(results_writer_generator, 'PopulationMCMC', 1, 1.0))
 # Multi-chain methods
-#add(MCMCEggBox('DifferentialEvolutionMCMC', 6, 1.0))
-#add(MCMCEggBox('DreamMCMC', 6, 1.0))
+#add(MCMCEggBox(results_writer_generator, 'DifferentialEvolutionMCMC', 6, 1.0))
+#add(MCMCEggBox(results_writer_generator, 'DreamMCMC', 6, 1.0))
 
 
 from .nested_normal import NestedNormal
-add(NestedNormal('NestedEllipsoidSampler', 0.16))
-add(NestedNormal('NestedRejectionSampler', 0.16))
+add(NestedNormal(results_writer_generator, 'NestedEllipsoidSampler', 0.16))
+add(NestedNormal(results_writer_generator, 'NestedRejectionSampler', 0.16))
 
 
 from .nested_banana import NestedBanana
-add(NestedBanana('NestedEllipsoidSampler', 0.1))
-add(NestedBanana('NestedRejectionSampler', 1.0))
+add(NestedBanana(results_writer_generator, 'NestedEllipsoidSampler', 0.1))
+add(NestedBanana(results_writer_generator, 'NestedRejectionSampler', 1.0))
 
 
 from .nested_egg_box import NestedEggBox
-add(NestedEggBox('NestedEllipsoidSampler', 0.12))
-add(NestedEggBox('NestedRejectionSampler', 0.12))
+add(NestedEggBox(results_writer_generator, 'NestedEllipsoidSampler', 0.12))
+add(NestedEggBox(results_writer_generator, 'NestedRejectionSampler', 0.12))
 

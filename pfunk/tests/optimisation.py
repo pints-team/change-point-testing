@@ -24,10 +24,11 @@ class Optimisation(pfunk.FunctionalTest):
         string, because we shouldn't import pints before we start testing.)
     ``max_iterations``
         The maximum number of iterations to run (> 0).
-
+    ``writer_generator``
+        A callable that will return a key-value store for the test result details.
     """
 
-    def __init__(self, method, pass_threshold):
+    def __init__(self, writer_generator, method, pass_threshold):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
@@ -35,7 +36,7 @@ class Optimisation(pfunk.FunctionalTest):
 
         # Create name and initialise
         name = 'opt_' + self._problem_name() + '_' + method
-        super(Optimisation, self).__init__(name)
+        super(Optimisation, self).__init__(name, writer_generator)
 
     def _problem(self):
         """
