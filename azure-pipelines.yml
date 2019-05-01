@@ -9,6 +9,8 @@ variables:
 trigger:
 - azure-ci
 
+pr: none
+
 pool:
   name: 'pints-skip'
 
