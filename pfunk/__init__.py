@@ -93,7 +93,6 @@ from ._io import (  # noqa
     find_test_dates,
     gather_statistics_per_commit,
     generate_report,
-    ResultWriter,
     unique_path,
 )
 
