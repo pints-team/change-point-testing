@@ -177,7 +177,7 @@ class FunctionalTest(object):
         """
         raise NotImplementedError
 
-    def run(self):
+    def run(self, file):
         """
         Runs this test and logs the output.
         """
@@ -195,7 +195,7 @@ class FunctionalTest(object):
 
         # Create result writer
 
-        w = self._writer_generator(name, date)
+        w = self._writer_generator(name, date, file)
         w['status'] = 'unitialised'
         w['date'] = date
         w['name'] = name

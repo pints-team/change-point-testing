@@ -23,10 +23,10 @@ def tests():
     return sorted(_tests.keys())
 
 
-def run(name, run_number=0):
+def run(name, database, run_number=0,):
     """ Runs a selected test. """
     print('Running test {} run {}'.format(name, run_number), flush=True)
-    _tests[name].run()
+    _tests[name].run(database)
 
 
 def plot(name, show=False):
@@ -39,14 +39,8 @@ def analyse(name):
     return _tests[name].analyse()
 
 
-def file_writer_generator(name, date):
-    base = name + '-' + date + '.txt'
-    res_path = pfunk.unique_path(os.path.join(pfunk.DIR_RESULT, base))
-    return pfunk.ResultWriter(res_path)
-
-
-def results_writer_generator(name, date):
-    return pfunk.ResultsDatabase('/tmp/results.db', name, date)
+def results_writer_generator(name, date, file):
+    return pfunk.ResultsDatabase(file, name, date)
 
 
 from .optimisation import OptimisationLogistic

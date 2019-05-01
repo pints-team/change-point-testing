@@ -116,7 +116,6 @@ def run(args):
 
     # Run tests
     for name in names:
-
         # Run the test args.r times in parallel
         if multi:
             with multiprocessing.Pool(processes=nproc) as pool:
@@ -125,10 +124,10 @@ def run(args):
 
             # Starmap with product of name and
             # range: -> [(name, 0), (name, 1), ...]
-            pool.starmap(pfunk.tests.run, product([name], range(args.r)))
+            pool.starmap(pfunk.tests.run, product([name], args.database, range(args.r)))
         else:
             print('Running without multiprocessing')
-            pfunk.tests.run(name)
+            pfunk.tests.run(name, args.database)
 
         if args.analyse:
             print('Analysing ' + name + ' ... ', end='')
@@ -364,6 +363,12 @@ def main():
         '--analyse',
         action='store_true',
         help='Analyse the test result after running.',
+    )
+    run_parser.add_argument(
+        '--database',
+        action='store',
+        default='/tmp/results.db',
+        help="A SQLite database in which to store run results. Will be created if it doesn't exist.",
     )
     run_parser.add_argument(
         '-r', default=1, type=int,
