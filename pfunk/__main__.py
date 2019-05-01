@@ -15,6 +15,8 @@ import os
 import subprocess
 import sys
 
+import multiprocessing as mp
+
 import pfunk
 import pfunk.tests
 
@@ -104,13 +106,17 @@ def run(args):
 
     # Run tests
     for name in names:
-        for i in range(args.r):
-            print('Running test ' + name)
-            pfunk.tests.run(name)
+
+        # Run the test args.r times in parallel
+        print('Running test {} {} times'.format(name, args.r)
+        pool = mp.Pool(min(args.r, mp.cpu_count() - 2))
+        pool.map(pfunk.tests.run, [name] * args.r)
+
         if args.analyse:
             print('Analysing ' + name + ' ... ', end='')
             result = pfunk.tests.analyse(name)
             print('ok' if result else 'FAIL')
+
         if args.plot or args.show:
             print('Creating plot for ' + name)
             pfunk.tests.plot(name, args.show)
