@@ -39,10 +39,14 @@ def analyse(name):
     return _tests[name].analyse()
 
 
-def results_writer_generator(name, date):
+def file_writer_generator(name, date):
     base = name + '-' + date + '.txt'
     res_path = pfunk.unique_path(os.path.join(pfunk.DIR_RESULT, base))
     return pfunk.ResultWriter(res_path)
+
+
+def results_writer_generator(name, date):
+    return pfunk.ResultsDatabase('/tmp/results.db', name, date)
 
 
 from .optimisation import OptimisationLogistic

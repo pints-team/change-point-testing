@@ -98,6 +98,10 @@ from ._io import (  # noqa
     unique_path,
 )
 
+from ._resultsdb import (  # noqa
+    ResultsDatabase,
+)
+
 from ._util import (  # noqa
     weave,
 )
