@@ -108,7 +108,7 @@ def run(args):
     for name in names:
 
         # Run the test args.r times in parallel
-        print('Running test {} {} times'.format(name, args.r)
+        print('Running test {} {} times'.format(name, args.r))
         pool = mp.Pool(min(args.r, mp.cpu_count() - 2))
         pool.map(pfunk.tests.run, [name] * args.r)
 
