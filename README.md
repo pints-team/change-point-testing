@@ -14,7 +14,7 @@ GitHub project management features (e.g. issues) have been disabled for this rep
 
 - To see a list of available tests, use `./funk list`.
 - Use `./funk run test_name` to run a test.
-- This will create a result file in `results`, and possibly a log file in `logs`.
+  - This will store results in a database (default `/tmp/results.db`).
 - Use `./funk run --next` to run the next test in line. This is determined by looking at the result files and seeing which test hasn't been run for the longest time.
 - Use `./funk run test_name --show` to show the resulting plot as well
 
