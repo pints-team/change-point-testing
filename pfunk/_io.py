@@ -437,30 +437,6 @@ def find_previous_test():
     return max(dates, key=dates.get)
 
 
-def find_test_results(test_name):
-    """
-    Returns a ResultSet for the given ``test_name``.
-    """
-    # Find all result files
-    results = []
-    for path in os.listdir(pfunk.DIR_RESULT):
-
-        # Attempt to read filename as test result
-        base, ext = os.path.splitext(path)
-        if ext != '.txt':
-            continue
-        parts = base.split('-', 1)
-        if len(parts) != 2:
-            continue
-        name, date = parts
-
-        # Skip other tests
-        if name == test_name:
-            results.append(os.path.join(pfunk.DIR_RESULT, path))
-
-    return ResultSet(results)
-
-
 def gather_statistics_per_commit(
         results, variable, remove_outliers=False, short_names=True, n=None):
     """

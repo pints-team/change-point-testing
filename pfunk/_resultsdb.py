@@ -13,17 +13,28 @@ import sqlite3
 import json
 
 
-class ResultsDatabase(object):
+class ResultsDatabaseSchemaClient(object):
+    primary_columns = ["name", "date"]
+    mapped_columns = {"commit": "commit_hashes"}
+    columns = ["status", "python", "pints", "pints_commit", "pfunk_commit", "commit_hashes", "seed", "method"]
+
+    def json_values(self):
+        result = self._connection.execute("select json from test_results where name like ? and date = ?",
+                                          (self._name, self._date))
+        json_field = result.fetchone()[0]
+        dictionary = {}
+        if json_field is not None:
+            dictionary = json.loads(json_field)
+        return dictionary
+
+
+class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
     """
     Provides read-write access to a SQLite3 database containing test results.
     For compatibility with the interfaces supplied by ResultsWriter/ResultsReader,
     the flat-file equivalents, instances of this class accept a test name and date,
     and provide access to the values in the row matching those properties only.
     """
-
-    primary_columns = ["name", "date"]
-    mapped_columns = {"commit":"commit_hashes"}
-    columns = ["status", "python", "pints", "pints_commit", "pfunk_commit", "commit_hashes", "seed", "method"]
 
     def __init__(self, filename, test_name, date):
         self._connection = sqlite3.connect(filename)
@@ -78,20 +89,18 @@ class ResultsDatabase(object):
                                      (json_field, self._name, self._date))
             self._connection.commit()
 
-    def json_values(self):
-        result = self._connection.execute("select json from test_results where name like ? and date = ?",
-                                          (self._name, self._date))
-        json_field = result.fetchone()[0]
-        dictionary = {}
-        if json_field is not None:
-            dictionary = json.loads(json_field)
-        return dictionary
-
     def write(self):
         pass
 
     def filename(self):
         return self._filename
+
+
+class ResultsDatabaseReader(ResultsDatabaseSchemaClient):
+    def __init__(self, connection, testname, date):
+        self._connection = connection
+        self._name = testname
+        self._date = date
 
     def __getitem__(self, item):
         if item in self.primary_columns or item in self.columns:
@@ -100,5 +109,29 @@ class ResultsDatabase(object):
             return result.fetchone()[0]
         if item in self.mapped_columns.keys():
             return self[self.mapped_columns[item]]
-        dictionary = defaultdict(lambda x: None, self.json_values())
+        dictionary = defaultdict(lambda: None, self.json_values())
         return dictionary[item]
+
+
+class ResultsDatabaseResultsSet(object):
+    def __init__(self, result_rows):
+        self._rows = result_rows
+
+    def get_single_item(self, item):
+        return [r[item] for r in self._rows]
+
+    def __getitem__(self, item):
+        # Treat single-value case like multi-value case
+        single_value = (type(item) != tuple)
+        if single_value:
+            item = (item,)
+        return [self.get_single_item(i) for i in item]
+
+
+def find_test_results(name, database):
+    connection = sqlite3.connect(database)
+    connection.row_factory = sqlite3.Row
+    results = connection.execute("select date from test_results where name like ?", [name])
+    dates = [r[0] for r in results.fetchall()]
+    row_readers = [ResultsDatabaseReader(connection, name, date) for date in dates]
+    return ResultsDatabaseResultsSet(row_readers)

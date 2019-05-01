@@ -195,7 +195,7 @@ def analyse(args):
     failed = 0
     for name in names:
         print('Analysing ' + name + ' ... ', end='')
-        result = pfunk.tests.analyse(name)
+        result = pfunk.tests.analyse(name, args.database)
         failed += 0 if result else 1
         print('ok' if result else 'FAIL')
         if not result:
@@ -437,6 +437,12 @@ def main():
         '--last',
         action='store_true',
         help='Analyse most recently run test. Used for Azure CI.',
+    )
+    analyse_parser.add_argument(
+        '--database',
+        action='store',
+        default='/tmp/results.db',
+        help='Test results database for analysis',
     )
     analyse_parser.set_defaults(func=analyse)
 

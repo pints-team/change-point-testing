@@ -34,13 +34,13 @@ def plot(name, show=False):
     _tests[name].plot(show)
 
 
-def analyse(name):
+def analyse(name, database):
     """ Analyse results for a selected test. """
-    return _tests[name].analyse()
+    return _tests[name].analyse(database)
 
 
 def results_writer_generator(name, date, file):
-    return pfunk.ResultsDatabase(file, name, date)
+    return pfunk.ResultsDatabaseWriter(file, name, date)
 
 
 from .optimisation import OptimisationLogistic

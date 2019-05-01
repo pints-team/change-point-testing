@@ -91,7 +91,6 @@ from ._io import (  # noqa
     find_next_test,
     find_previous_test,
     find_test_dates,
-    find_test_results,
     gather_statistics_per_commit,
     generate_report,
     ResultWriter,
@@ -99,7 +98,8 @@ from ._io import (  # noqa
 )
 
 from ._resultsdb import (  # noqa
-    ResultsDatabase,
+    ResultsDatabaseWriter,
+    find_test_results,
 )
 
 from ._util import (  # noqa

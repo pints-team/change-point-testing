@@ -44,7 +44,7 @@ class FunctionalTest(object):
         """
         raise NotImplementedError
 
-    def analyse(self):
+    def analyse(self, database):
         """
         Checks if the test passed or failed
 
@@ -57,7 +57,7 @@ class FunctionalTest(object):
         log.info('Running analyse: ' + self.name())
 
         # Load test results
-        results = pfunk.find_test_results(self._name)
+        results = pfunk.find_test_results(self._name, database)
 
         # Analyse
         result = False
