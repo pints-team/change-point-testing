@@ -193,10 +193,6 @@ class FunctionalTest(object):
         date = pfunk.date()
         name = self.name()
 
-        # Get path to log and result files
-        base = name + '-' + date + '.txt'
-        log_path = pfunk.unique_path(os.path.join(pfunk.DIR_LOG, base))
-
         # Create result writer
 
         w = self._writer_generator(name, date)
