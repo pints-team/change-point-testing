@@ -9,6 +9,7 @@
 
 from __future__ import print_function
 import sqlite3
+import json
 
 # String types in Python 2 and 3
 try:
@@ -39,7 +40,6 @@ class ResultsDatabase(object):
         self.__ensure_row()
 
     def __ensure_schema(self):
-        cursor = self._connection.cursor()
         query = """ create table if not exists test_results(
         name varchar,
         date date,
@@ -54,8 +54,8 @@ class ResultsDatabase(object):
         json varchar,
         primary key (name, date)
         )"""
-        cursor.execute(query)
-        cursor.close()
+        self._connection.execute(query)
+        self._connection.commit()
 
     def __ensure_row(self):
         # ensure the row exists
@@ -73,7 +73,20 @@ class ResultsDatabase(object):
                                     (value, self._name, self._date))
             self._connection.commit()
         else:
-            print("Silently ignoring {}:{}".format(key, value))
+            result = self._connection.execute("select json from test_results where name like ? and date = ?",
+                                              (self._name, self._date))
+            json_field = result.fetchone()[0]
+            dictionary = {}
+            if json_field is not None:
+                dictionary = json.loads(json_field)
+            # workaround: if we're given a numpy array, make a Python list
+            if getattr(value, "tolist", None) is not None:
+                value = value.tolist()
+            dictionary[key] = value
+            json_field = json.dumps(dictionary)
+            self._connection.execute("update test_results set json = ? where name like ? and date = ?",
+                                     (json_field, self._name, self._date))
+            self._connection.commit()
 
     def write(self):
         pass
