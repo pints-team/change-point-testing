@@ -11,12 +11,6 @@ from __future__ import print_function
 import sqlite3
 import json
 
-# String types in Python 2 and 3
-try:
-    basestring
-except NameError:
-    basestring = str
-
 
 class ResultsDatabase(object):
     """
