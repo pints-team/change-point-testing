@@ -31,7 +31,7 @@ def list_tests(args):
     """
     Shows all available tests and the date they were last run.
     """
-    dates = pfunk.find_test_dates()
+    dates = pfunk.find_test_dates(args.database)
     w = max(4, max([len(k) for k in dates.keys()]))
     print('| Name' + ' ' * (w - 4) + ' | Last run            |')
     print('-' * (w + 26))
@@ -73,7 +73,7 @@ def run(args):
     """
     # Parse test name, or get next test to run
     if args.name is None:
-        names = [pfunk.find_next_test()]
+        names = [pfunk.find_next_test(args.database)]
     else:
         names = _parse_pattern(args.name)
     if not names:
@@ -132,7 +132,7 @@ def run(args):
 
         if args.analyse:
             print('Analysing ' + name + ' ... ', end='')
-            result = pfunk.tests.analyse(name)
+            result = pfunk.tests.analyse(name, args.database)
             print('ok' if result else 'FAIL')
 
         if args.plot or args.show:
@@ -184,9 +184,9 @@ def analyse(args):
     if args.all:
         names = sorted(pfunk.tests.tests())
     elif args.last:
-        names = [pfunk.find_previous_test()]
+        names = [pfunk.find_previous_test(args.database)]
     elif args.name is None:
-        names = [pfunk.find_next_test()]
+        names = [pfunk.find_next_test(args.database)]
     else:
         names = _parse_pattern(args.name)
 
@@ -215,7 +215,7 @@ def generate_report(args):
     Generates a report in Markdown format.
     """
     print('Generating test report')
-    pfunk.generate_report()
+    pfunk.generate_report(args.database)
     print('Done')
 
 
@@ -452,6 +452,12 @@ def main():
     report_parser = subparsers.add_parser(
         'report',
         help='Generate a test report',
+    )
+    report_parser.add_argument(
+        '--database',
+        action='store',
+        default=default_database_path,
+        help='Test results database for report',
     )
     report_parser.set_defaults(func=generate_report)
 

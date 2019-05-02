@@ -17,6 +17,7 @@ import numpy as np
 from scipy import stats
 
 import pfunk
+from ._resultsdb import find_test_dates
 
 # String types in Python 2 and 3
 try:
@@ -51,65 +52,6 @@ def clean_filename(filename):
     """ Tidies up a filename and returns it. """
     filename = str(filename)  # Separate line for nicer debugging if this fails
     return os.path.abspath(os.path.expanduser(filename))
-
-
-def can_write_file(filename, allow_overwrite=False):
-    """ Checks if we can write to the given filename. """
-    # Check if path exists
-    if os.path.exists(filename):
-        if not allow_overwrite:
-            return False
-        # Explicitly exclude links and directories
-        if os.path.islink(filename) or os.path.isdir(filename):
-            return False
-        # Check for write access
-        return os.access(filename, os.W_OK)
-
-    # Check parent directory is writable
-    return os.access(os.path.dirname(filename) or '.', os.W_OK)
-
-
-def find_test_dates():
-    """
-    Scans the results directory, and returns a dict mapping test names to the
-    time (a ``time.struct_time``) when they were last run.
-    """
-    # Get logger
-    log = logging.getLogger(__name__)
-
-    # Get a list of available tests and the date they were last run
-    import pfunk.tests
-    dates = {}
-    for name in pfunk.tests.tests():
-        dates[name] = time.struct_time([0] * 9)
-
-    # Find all result files
-    for path in os.listdir(pfunk.DIR_RESULT):
-
-        # Attempt to read filename as test result
-        base, ext = os.path.splitext(path)
-        if ext != '.txt':
-            log.info('Skipping file in results dir ' + path)
-            continue
-        parts = base.split('-', 1)
-        if len(parts) != 2:
-            log.info('Skipping file in results dir ' + path)
-            continue
-        name, date = parts
-
-        # Skip unknown tests
-        if name not in dates:
-            continue
-
-        # Attempt to parse date
-        # remember to clean off trailing '-2.txt' if there
-        cleaned_to_date_format = re.sub(r'''-[0-9]+$''', '', date)
-        date = time.strptime(cleaned_to_date_format, pfunk.DATE_FORMAT)
-        last = dates[name]
-        if last is None or date > last:
-            dates[name] = date
-
-    return dates
 
 
 def find_test_plots():
@@ -163,21 +105,21 @@ def find_test_plots():
     return plots, dates
 
 
-def find_next_test():
+def find_next_test(database):
     """
     Scans the results directory, and returns the test that hasn't been run for
     the longest.
     """
-    dates = find_test_dates()
+    dates = find_test_dates(database)
     return min(dates, key=dates.get)
 
 
-def find_previous_test():
+def find_previous_test(database):
     """
     Scans the results directory, and returns the test that has been run most
     recently.
     """
-    dates = find_test_dates()
+    dates = find_test_dates(database)
     return max(dates, key=dates.get)
 
 
@@ -306,13 +248,13 @@ def assert_not_deviated_from(mean, sigma, results, variable):
     return np.allclose(np.array(m[-3:]), mean, atol=3 * sigma)
 
 
-def generate_report():
+def generate_report(database):
     """
     Generates a markdown file containing information about all tests, including
     links to the most recent plots.
     """
     # Get a list of available tests and the date they were last run
-    dates = find_test_dates()
+    dates = find_test_dates(database)
 
     # Gather the status of every test
     import pfunk.tests
@@ -320,7 +262,7 @@ def generate_report():
     failed = []
     passed = []
     for key in sorted(dates.keys()):
-        result = pfunk.tests.analyse(key)
+        result = pfunk.tests.analyse(key, database)
         states[key] = result
         if result:
             passed.append(key)

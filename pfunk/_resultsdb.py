@@ -11,6 +11,8 @@ from __future__ import print_function
 from collections import defaultdict
 import sqlite3
 import json
+import time
+import pfunk
 
 
 class ResultsDatabaseSchemaClient(object):
@@ -37,8 +39,7 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
     """
 
     def __init__(self, filename, test_name, date):
-        self._connection = sqlite3.connect(filename)
-        self._connection.row_factory = sqlite3.Row
+        self._connection = connect_to_database(filename)
         self.__ensure_schema()
         self._filename = filename
         self._name = test_name
@@ -129,9 +130,30 @@ class ResultsDatabaseResultsSet(object):
 
 
 def find_test_results(name, database):
-    connection = sqlite3.connect(database)
-    connection.row_factory = sqlite3.Row
+    connection = connect_to_database(database)
     results = connection.execute("select date from test_results where name like ?", [name])
     dates = [r[0] for r in results.fetchall()]
     row_readers = [ResultsDatabaseReader(connection, name, date) for date in dates]
     return ResultsDatabaseResultsSet(row_readers)
+
+
+def connect_to_database(database):
+    connection = sqlite3.connect(database)
+    connection.row_factory = sqlite3.Row
+    return connection
+
+
+def find_test_dates(database):
+    """
+    Returns a dict mapping test names to the time (a ``time.struct_time``) when they were last run.
+    If a test has not been run, then a default time (Jan 1 1970 00:00:00 UTC) is set.
+    """
+    connection = connect_to_database(database)
+    names_and_dates = connection.execute('select name, max(date) as "most_recent" from test_results group by name')\
+        .fetchall()
+    connection.close()
+    name_date_map = {t[0]: time.strptime(t[1], "%Y-%m-%d-%H:%M:%S") for t in names_and_dates}
+    for test in pfunk.tests.tests():
+        if test not in name_date_map.keys():
+            name_date_map[test] = time.struct_time([0] * 9)
+    return name_date_map

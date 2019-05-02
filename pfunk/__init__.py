@@ -91,7 +91,6 @@ from ._io import (  # noqa
     assert_not_deviated_from,
     find_next_test,
     find_previous_test,
-    find_test_dates,
     gather_statistics_per_commit,
     generate_report,
     unique_path,
@@ -100,6 +99,7 @@ from ._io import (  # noqa
 from ._resultsdb import (  # noqa
     ResultsDatabaseWriter,
     find_test_results,
+    find_test_dates,
 )
 
 from ._util import (  # noqa
