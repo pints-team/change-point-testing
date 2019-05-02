@@ -321,6 +321,11 @@ def investigate(args):
         pfunk.tests.plot(name, args.show)
 
 
+class CleanFileAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, pfunk.clean_filename(values))
+
+
 def main():
     default_database_path = "./test_results.db"
     # Set up argument parsing
@@ -368,7 +373,7 @@ def main():
     )
     run_parser.add_argument(
         '--database',
-        action='store',
+        action=CleanFileAction,
         default=default_database_path,
         help="A SQLite database in which to store run results. Will be created if it doesn't exist.",
     )
@@ -442,7 +447,7 @@ def main():
     )
     analyse_parser.add_argument(
         '--database',
-        action='store',
+        action=CleanFileAction,
         default=default_database_path,
         help='Test results database for analysis',
     )
@@ -455,7 +460,7 @@ def main():
     )
     report_parser.add_argument(
         '--database',
-        action='store',
+        action=CleanFileAction,
         default=default_database_path,
         help='Test results database for report',
     )
@@ -524,6 +529,7 @@ def main():
 
     # Parse!
     args = parser.parse_args()
+
     if 'func' in args:
         args.func(args)
     else:

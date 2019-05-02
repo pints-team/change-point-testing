@@ -89,6 +89,7 @@ from . import (  # noqa
 
 from ._io import (  # noqa
     assert_not_deviated_from,
+    clean_filename,
     find_next_test,
     find_previous_test,
     gather_statistics_per_commit,
