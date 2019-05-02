@@ -322,6 +322,7 @@ def investigate(args):
 
 
 def main():
+    default_database_path = "./test_results.db"
     # Set up argument parsing
     parser = argparse.ArgumentParser(
         description='Run functional tests for Pints.',
@@ -368,7 +369,7 @@ def main():
     run_parser.add_argument(
         '--database',
         action='store',
-        default='/tmp/results.db',
+        default=default_database_path,
         help="A SQLite database in which to store run results. Will be created if it doesn't exist.",
     )
     run_parser.add_argument(
@@ -442,7 +443,7 @@ def main():
     analyse_parser.add_argument(
         '--database',
         action='store',
-        default='/tmp/results.db',
+        default=default_database_path,
         help='Test results database for analysis',
     )
     analyse_parser.set_defaults(func=analyse)
