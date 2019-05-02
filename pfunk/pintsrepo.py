@@ -17,7 +17,7 @@ import textwrap
 import time
 
 import pfunk
-
+from ._repotools import format_date
 
 def head():
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
@@ -74,10 +74,6 @@ def checkout(checkout):
     # Check out requested commit, branch or tree
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
     repo.git.checkout(checkout)
-
-
-def format_date(seconds_since_epoch):
-    return time.strftime("%a, %d %b %Y %H:%M", time.gmtime(seconds_since_epoch))
 
 
 def prepare_module():

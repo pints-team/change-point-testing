@@ -109,6 +109,7 @@ def run(args):
 
     # Prepare module
     pfunk.pintsrepo.prepare_module()
+    pfunk.pfunkrepo.prepare_module()
 
     # Multi-processing?
     multi = len(names) > 1

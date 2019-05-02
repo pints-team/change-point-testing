@@ -72,9 +72,10 @@ if not sys.version_info >= (3, 4):
     raise RuntimeError('Functional testing requires Python 3.4+')
 
 
-# Pints version and commit
-# These are set using PintsRepo.prepare_module
+# Pints version and pints/pfunk commits
+# These are set using (repo).prepare_module
 PINTS_COMMIT = PINTS_VERSION = PINTS_COMMIT_AUTHORED = PINTS_COMMIT_COMMITTED = PINTS_COMMIT_MESSAGE = None
+PFUNK_COMMIT = PFUNK_COMMIT_AUTHORED = PFUNK_COMMIT_COMMITTED = PFUNK_COMMIT_MESSAGE = None
 
 
 #
@@ -109,6 +110,3 @@ from ._test import (    # noqa
     FunctionalTest,
 )
 
-
-# PFunk commit
-PFUNK_COMMIT = pfunkrepo.hash()
