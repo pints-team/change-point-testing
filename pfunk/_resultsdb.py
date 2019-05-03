@@ -16,13 +16,14 @@ import pfunk
 
 
 class ResultsDatabaseSchemaClient(object):
-    primary_columns = ["name", "date"]
+    primary_columns = ["identifier"]
     mapped_columns = {"commit": "commit_hashes"}
-    columns = ["status", "python", "pints", "pints_commit", "pfunk_commit", "commit_hashes", "seed", "method"]
+    columns = ["name", "date", "status", "python", "pints", "pints_commit", "pfunk_commit", "commit_hashes", "seed",
+               "method"]
 
     def json_values(self):
-        result = self._connection.execute("select json from test_results where name like ? and date = ?",
-                                          (self._name, self._date))
+        result = self._connection.execute("select json from test_results where identifier = ?",
+                                          [self._row])
         json_field = result.fetchone()[0]
         dictionary = {}
         if json_field is not None:
@@ -48,6 +49,7 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
 
     def __ensure_schema(self):
         query = """ create table if not exists test_results(
+        identifier integer primary key asc,
         name varchar,
         date date,
         status varchar,
@@ -58,8 +60,7 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         commit_hashes varchar,
         seed integer,
         method varchar,
-        json varchar,
-        primary key (name, date)
+        json varchar
         )"""
         self._connection.execute(query)
         self._connection.commit()
@@ -68,6 +69,9 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         # ensure the row exists
         self._connection.execute("insert into test_results(name,date) values (?,?)", (self._name, self._date))
         self._connection.commit()
+        rowID = self._connection.execute("select identifier from test_results where name like ? and date = ?",
+                                        (self._name, self._date))
+        self._row = rowID.fetchone()[0]
 
     def __setitem__(self, key, value):
         if key in self.primary_columns:
@@ -76,8 +80,8 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         elif key in self.mapped_columns.keys():
             self[self.mapped_columns[key]] = value
         elif key in self.columns:
-            self._connection.execute("update test_results set {} = ? where name like ? and date = ?".format(key),
-                                    (value, self._name, self._date))
+            self._connection.execute("update test_results set {} = ? where identifier = ?".format(key),
+                                    (value, self._row))
             self._connection.commit()
         else:
             dictionary = self.json_values()
@@ -86,8 +90,8 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
                 value = value.tolist()
             dictionary[key] = value
             json_field = json.dumps(dictionary)
-            self._connection.execute("update test_results set json = ? where name like ? and date = ?",
-                                     (json_field, self._name, self._date))
+            self._connection.execute("update test_results set json = ? where identifier = ?",
+                                     (json_field, self._row))
             self._connection.commit()
 
     def write(self):
@@ -98,15 +102,14 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
 
 
 class ResultsDatabaseReader(ResultsDatabaseSchemaClient):
-    def __init__(self, connection, testname, date):
+    def __init__(self, connection, rowID):
         self._connection = connection
-        self._name = testname
-        self._date = date
+        self._row = rowID
 
     def __getitem__(self, item):
         if item in self.primary_columns or item in self.columns:
-            result = self._connection.execute("select {} from test_results where name like ? and date = ?".format(item),
-                                              (self._name, self._date))
+            result = self._connection.execute("select {} from test_results where identifier = ?".format(item),
+                                              [self._row])
             return result.fetchone()[0]
         if item in self.mapped_columns.keys():
             return self[self.mapped_columns[item]]
@@ -131,9 +134,9 @@ class ResultsDatabaseResultsSet(object):
 
 def find_test_results(name, database):
     connection = connect_to_database(database)
-    results = connection.execute("select date from test_results where name like ?", [name])
-    dates = [r[0] for r in results.fetchall()]
-    row_readers = [ResultsDatabaseReader(connection, name, date) for date in dates]
+    results = connection.execute("select identifier from test_results where name like ?", [name])
+    row_ids = [r[0] for r in results.fetchall()]
+    row_readers = [ResultsDatabaseReader(connection, row_id) for row_id in row_ids]
     return ResultsDatabaseResultsSet(row_readers)
 
 
