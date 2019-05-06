@@ -11,6 +11,9 @@ trigger:
 
 pr: none
 
+job: RunEverything
+timeoutInMinutes: 0 # run forever (on self-hosted agents like pints-skip)
+
 pool:
   name: 'pints-skip'
 
