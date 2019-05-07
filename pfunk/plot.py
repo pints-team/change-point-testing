@@ -17,6 +17,73 @@ import matplotlib.pyplot as plt
 import pfunk
 
 
+def histogram(results, variable, title, xlabel, threshold=None):
+    """
+    Creates and returns a histogram plot for a variable (over commits).
+    """
+    fig = plt.figure(figsize=(11, 4.5))
+    plt.suptitle(title + ' : ' + pfunk.date())
+
+    # Left plot: Variable per commit for all data as 1 histogram
+    plt.subplot(1, 2, 1)
+    plt.ylabel('Frequency')
+    plt.xlabel(xlabel)
+    fig.autofmt_xdate()
+    x, y, u, m, s = pfunk.gather_statistics_per_commit(results, variable)
+    if len(x) == 0:
+        plt.text(0.5, 0.5, 'No data')
+    else:
+        last_commit = [i for i, k in enumerate(x) if k == u[-1]]
+        y = np.asarray(y)
+        mask_lc = np.ones(y.shape, dtype=bool)
+        mask_lc[last_commit] = False
+
+        n, _, _ = plt.hist(y[mask_lc], bins='auto', color='#607c8e', alpha=0.7)
+
+        if len(last_commit) > 25:
+            plt.hist(y[last_commit], bins='auto', color='#0504aa', alpha=0.5,
+                    label=u[-1])
+        else:
+            stem_height = [np.max(n)] * len(last_commit)
+            ml, sl, bl = plt.stem(y[last_commit], stem_height, label=u[-1])
+            plt.setp(ml, color='#0504aa', alpha=0.5)
+            plt.setp(sl, color='#0504aa', alpha=0.5)
+            plt.setp(bl, visible=False)
+
+
+    # Right plot: Same, to most recent data.
+    plt.subplot(1, 2, 2)
+    plt.ylabel('Frequency')
+    plt.xlabel(xlabel)
+    fig.autofmt_xdate()
+    x, y, u, m, s = pfunk.gather_statistics_per_commit(
+        results, variable, remove_outliers=False, n=12)
+    if len(x) == 0:
+        plt.text(0.5, 0.5, 'No data')
+    else:
+        last_commit = [i for i, k in enumerate(x) if k == u[-1]]
+        y = np.asarray(y)
+        mask_lc = np.ones(y.shape, dtype=bool)
+        mask_lc[last_commit] = False
+        
+        n, _, _ = plt.hist(y[mask_lc], bins='auto', color='#607c8e', alpha=0.7)
+
+        if len(last_commit) > 10:
+            plt.hist(y[last_commit], bins='auto', color='#0504aa', alpha=0.5,
+                    label=u[-1])
+        else:
+            stem_height = [np.max(n)] * len(last_commit)
+            ml, sl, bl = plt.stem(y[last_commit], stem_height, label=u[-1])
+            plt.setp(ml, color='#0504aa', alpha=0.5)
+            plt.setp(sl, color='#0504aa', alpha=0.5)
+            plt.setp(bl, visible=False)
+
+    plt.legend()
+        
+    # raise NotImplementedError
+    return fig
+
+
 def variable(results, variable, title, ylabel, threshold=None):
     """
     Creates and returns a default plot for a variable vs commits.
