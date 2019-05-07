@@ -68,11 +68,8 @@ class Optimisation(pfunk.FunctionalTest):
         evaluations = 0
         unchanged_iterations = 0
 
-        # Create parallel evaluator
-        n_workers = pints.ParallelEvaluator.cpu_count()
-        if isinstance(optimiser, pints.PopulationBasedOptimiser):
-            n_workers = min(n_workers, optimiser.population_size())
-        evaluator = pints.ParallelEvaluator(score, n_workers=n_workers)
+        # Create sequential evaluator (functional testing defaults to 5 runs in parallel)
+        evaluator = pints.SequentialEvaluator(score)
 
         # Keep track of best position and score
         fbest = float('inf')
