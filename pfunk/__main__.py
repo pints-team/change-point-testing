@@ -2,7 +2,7 @@
 # Pints functional testing command line utility.
 #
 # This file is part of Pints Functional Testing.
-#  Copyright (c) 2017-2018, University of Oxford.
+#  Copyright (c) 2017-2019, University of Oxford.
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
