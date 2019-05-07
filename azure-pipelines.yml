@@ -24,7 +24,7 @@ jobs:
   pool:
     name: 'pints-skip'
 
-  timeoutInMinutes: 0 # run forever (on self-hosted agents like pints-skip)
+  timeoutInMinutes: 150 # 2.5 hour failsafe on entire job
 
   steps:
 
@@ -37,7 +37,7 @@ jobs:
   - script: ./funk run --next --plot -r 5
     workingDirectory: $(funkDir)
     displayName: Run next test
-    timeoutInMinutes: 115 # in case test takes a long time, prevent clash with next run
+    timeoutInMinutes: 150 # 2.5 hour failsafe on script
 
   - script: ./funk analyse --last
     workingDirectory: $(funkDir)
