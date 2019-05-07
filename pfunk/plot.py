@@ -33,8 +33,8 @@ def histogram(results, variable, title, xlabel, threshold=None):
     if len(x) == 0:
         plt.text(0.5, 0.5, 'No data')
     else:
-        last_commit = [i for i, k in enumerate(x) if k == u[-1]]
         y = np.asarray(y)
+        last_commit = [i for i, k in enumerate(x) if k == u[-1]]
         mask_lc = np.ones(y.shape, dtype=bool)
         mask_lc[last_commit] = False
 
@@ -50,19 +50,19 @@ def histogram(results, variable, title, xlabel, threshold=None):
             plt.setp(sl, color='#0504aa', alpha=0.5)
             plt.setp(bl, visible=False)
 
-
     # Right plot: Same, to most recent data.
     plt.subplot(1, 2, 2)
-    plt.ylabel('Frequency')
+    n_commits = 12
+    plt.ylabel('Frequency (last %s commits)' % n_commits)
     plt.xlabel(xlabel)
     fig.autofmt_xdate()
-    x, y, u, m, s = pfunk.gather_statistics_per_commit(
-        results, variable, remove_outliers=False, n=12)
+    x, y, u, m, s = pfunk.gather_statistics_per_commit(results, variable,
+            n=n_commits)
     if len(x) == 0:
         plt.text(0.5, 0.5, 'No data')
     else:
-        last_commit = [i for i, k in enumerate(x) if k == u[-1]]
         y = np.asarray(y)
+        last_commit = [i for i, k in enumerate(x) if k == u[-1]]
         mask_lc = np.ones(y.shape, dtype=bool)
         mask_lc[last_commit] = False
         
@@ -77,10 +77,8 @@ def histogram(results, variable, title, xlabel, threshold=None):
             plt.setp(ml, color='#0504aa', alpha=0.5)
             plt.setp(sl, color='#0504aa', alpha=0.5)
             plt.setp(bl, visible=False)
-
     plt.legend()
         
-    # raise NotImplementedError
     return fig
 
 
