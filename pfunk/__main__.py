@@ -108,9 +108,9 @@ def run(args):
     for name in names:
 
         # Run the test args.r times in parallel
-        print('Running test {} {} times'.format(name, args.r))
-        pool = mp.Pool(min(args.r, mp.cpu_count() - 2))
-        pool.map(pfunk.tests.run, [name] * args.r)
+        with mp.Pool(processes=min(args.r, mp.cpu_count() - 2)) as pool:
+            print('Running test {} {} times with {} processes'.format(name, args.r, pool._processes))
+            pool.map(pfunk.tests.run, [name] * args.r)
 
         if args.analyse:
             print('Analysing ' + name + ' ... ', end='')

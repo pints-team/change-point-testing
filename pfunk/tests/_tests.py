@@ -25,6 +25,7 @@ def tests():
 
 def run(name):
     """ Runs a selected test. """
+    print('Running test {}'.format(name))
     _tests[name].run()
 
 
