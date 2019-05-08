@@ -111,7 +111,7 @@ def run(args):
 
         # Run the test args.r times in parallel
         with multiprocessing.Pool(processes=min(args.r, multiprocessing.cpu_count() - 2)) as pool:
-            print('Running {} {} times with {} processes:'.format(name, args.r, pool._processes))
+            print('Running {} {} times with {} processes:'.format(name, args.r, pool._processes), flush=True)
 
             # Starmap with product of name and range: -> [(name, 0), (name, 1), ...]
             pool.starmap(pfunk.tests.run, product([name], range(args.r)))
