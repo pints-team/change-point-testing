@@ -31,12 +31,12 @@ Some details:
 
 ### Creating plots, running analysis
 
-- Use `./funk plot test_name` to run a plot, or `./funk plot --all` to run all plots
-- Use `./funk analyse test_name` to check if a test passed or failed, or `./funk analyse --all` to check all tests
+- Use `./funk plot test_name` to run a plot, or `./funk plot --all` to run all plots.
+- Use `./funk analyse test_name` to check if a test passed or failed, or `./funk analyse --all` to check all tests.
 
 
 ### Installing
 
-- Functional testing requires Python 3.4 or later
-- When cloning, make sure to add the `--recursive` switch
+- Functional testing requires Python 3.4 or later.
+- When cloning, make sure to add the `--recursive` switch; `git reset --hard` within each submodule might be needed to get it working.
 - To install, use `python3 -m pip install -r requirements.txt`. This makes sure you have all the dependencies you know.
