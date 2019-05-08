@@ -26,8 +26,6 @@ def histogram(results, variable, title, xlabel, threshold=None):
 
     # Left plot: Variable per commit for all data as 1 histogram
     plt.subplot(1, 2, 1)
-    plt.ylabel('Frequency')
-    plt.xlabel(xlabel)
     fig.autofmt_xdate()
     x, y, u, m, s = pfunk.gather_statistics_per_commit(results, variable)
     if len(x) == 0:
@@ -39,24 +37,25 @@ def histogram(results, variable, title, xlabel, threshold=None):
         mask_lc[last_commit] = False
 
         n, _, _ = plt.hist(y[mask_lc], bins='auto', color='#607c8e', alpha=0.7,
-                label='All commits')
+                label='All %s commits' % len(u))
 
         if len(last_commit) > 25:
             plt.hist(y[last_commit], bins='auto', color='#0504aa', alpha=0.5,
-                    label=u[-1])
+                    label='Last commit')
         else:
             stem_height = [np.max(n)] * len(last_commit)
-            ml, sl, bl = plt.stem(y[last_commit], stem_height, label=u[-1])
+            ml, sl, bl = plt.stem(y[last_commit], stem_height,
+                    label='Last commit')
             plt.setp(ml, color='#0504aa', alpha=0.5)
             plt.setp(sl, color='#0504aa', alpha=0.5)
             plt.setp(bl, visible=False)
+    plt.ylabel('Frequency (total %s runs)' % len(y))
+    plt.xlabel(xlabel)
     plt.legend()
 
     # Right plot: Same, to most recent data.
     plt.subplot(1, 2, 2)
     n_commits = 12
-    plt.ylabel('Frequency (last %s commits)' % n_commits)
-    plt.xlabel(xlabel)
     fig.autofmt_xdate()
     x, y, u, m, s = pfunk.gather_statistics_per_commit(results, variable,
             n=n_commits)
@@ -68,21 +67,21 @@ def histogram(results, variable, title, xlabel, threshold=None):
         mask_lc = np.ones(y.shape, dtype=bool)
         mask_lc[last_commit] = False
         
-        legend_hist = u[0].split('\n')[0] + ' to ' + u[-2].split('\n')[0] \
-                + '\n' \
-                + u[0].split('\n')[1] + '     ' + u[-2].split('\n')[1]
         n, _, _ = plt.hist(y[mask_lc], bins='auto', color='#607c8e', alpha=0.7,
-                label=legend_hist)
+                label='Last %s commits' % n_commits)
 
         if len(last_commit) > 10:
             plt.hist(y[last_commit], bins='auto', color='#0504aa', alpha=0.5,
-                    label=u[-1])
+                    label='Last commit')
         else:
             stem_height = [np.max(n)] * len(last_commit)
-            ml, sl, bl = plt.stem(y[last_commit], stem_height, label=u[-1])
+            ml, sl, bl = plt.stem(y[last_commit], stem_height,
+                    label='Last commit')
             plt.setp(ml, color='#0504aa', alpha=0.5)
             plt.setp(sl, color='#0504aa', alpha=0.5)
             plt.setp(bl, visible=False)
+    plt.ylabel('Frequency (total %s runs)' % len(y))
+    plt.xlabel(xlabel)
     plt.legend()
         
     return fig
