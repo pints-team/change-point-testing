@@ -23,9 +23,9 @@ def tests():
     return sorted(_tests.keys())
 
 
-def run(name):
+def run(name, run_number=0):
     """ Runs a selected test. """
-    print('Running test {}'.format(name))
+    print('Running test {} run {}'.format(name, run_number))
     _tests[name].run()
 
 

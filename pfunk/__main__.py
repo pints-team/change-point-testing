@@ -9,6 +9,8 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
+from itertools import product
+
 import argparse
 import fnmatch
 import os
@@ -109,8 +111,10 @@ def run(args):
 
         # Run the test args.r times in parallel
         with mp.Pool(processes=min(args.r, mp.cpu_count() - 2)) as pool:
-            print('Running test {} {} times with {} processes'.format(name, args.r, pool._processes))
-            pool.map(pfunk.tests.run, [name] * args.r)
+            print('Running {} {} times with {} processes:'.format(name, args.r, pool._processes))
+
+            # Starmap with product of name and range: -> [(name, 0), (name, 1), ...]
+            pool.starmapmap(pfunk.tests.run, product([name], range(args.r)))
 
         if args.analyse:
             print('Analysing ' + name + ' ... ', end='')
