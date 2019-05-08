@@ -114,7 +114,7 @@ def run(args):
             print('Running {} {} times with {} processes:'.format(name, args.r, pool._processes))
 
             # Starmap with product of name and range: -> [(name, 0), (name, 1), ...]
-            pool.starmapmap(pfunk.tests.run, product([name], range(args.r)))
+            pool.starmap(pfunk.tests.run, product([name], range(args.r)))
 
         if args.analyse:
             print('Analysing ' + name + ' ... ', end='')
