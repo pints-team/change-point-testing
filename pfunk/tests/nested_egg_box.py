@@ -73,7 +73,7 @@ class NestedEggBox(pfunk.FunctionalTest):
             sampler.set_log_to_screen(False)
 
         # Set max iterations
-        sampler.set_iterations(8000)
+        sampler.set_iterations(4000)
         sampler.set_posterior_samples(2000)
 
         # Run
