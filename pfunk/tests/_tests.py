@@ -25,7 +25,7 @@ def tests():
 
 def run(name, run_number=0):
     """ Runs a selected test. """
-    print('Running test {} run {}'.format(name, run_number))
+    print('Running test {} run {}'.format(name, run_number), flush=True)
     _tests[name].run()
 
 
