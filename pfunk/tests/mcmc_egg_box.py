@@ -77,7 +77,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
 
         # Set up a sampling routine
         mcmc = pints.MCMCController(log_pdf, self._nchains, x0, method=method)
-        mcmc.set_parallel(True)
+        mcmc.set_parallel(False) # functional testing defaults to 5 runs in parallel
 
         # Log to file
         if not DEBUG:

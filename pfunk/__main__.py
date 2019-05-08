@@ -9,11 +9,15 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
+from itertools import product
+
 import argparse
 import fnmatch
+import multiprocessing
 import os
 import subprocess
 import sys
+
 
 import pfunk
 import pfunk.tests
@@ -104,13 +108,19 @@ def run(args):
 
     # Run tests
     for name in names:
-        for i in range(args.r):
-            print('Running test ' + name)
-            pfunk.tests.run(name)
+
+        # Run the test args.r times in parallel
+        with multiprocessing.Pool(processes=min(args.r, multiprocessing.cpu_count() - 2)) as pool:
+            print('Running {} {} times with {} processes:'.format(name, args.r, pool._processes))
+
+            # Starmap with product of name and range: -> [(name, 0), (name, 1), ...]
+            pool.starmap(pfunk.tests.run, product([name], range(args.r)))
+
         if args.analyse:
             print('Analysing ' + name + ' ... ', end='')
             result = pfunk.tests.analyse(name)
             print('ok' if result else 'FAIL')
+
         if args.plot or args.show:
             print('Creating plot for ' + name)
             pfunk.tests.plot(name, args.show)
