@@ -13,11 +13,11 @@ from itertools import product
 
 import argparse
 import fnmatch
+import multiprocessing
 import os
 import subprocess
 import sys
 
-import multiprocessing as mp
 
 import pfunk
 import pfunk.tests
@@ -110,7 +110,7 @@ def run(args):
     for name in names:
 
         # Run the test args.r times in parallel
-        with mp.Pool(processes=min(args.r, mp.cpu_count() - 2)) as pool:
+        with multiprocessing.Pool(processes=min(args.r, multiprocessing.cpu_count() - 2)) as pool:
             print('Running {} {} times with {} processes:'.format(name, args.r, pool._processes))
 
             # Starmap with product of name and range: -> [(name, 0), (name, 1), ...]
