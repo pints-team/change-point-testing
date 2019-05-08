@@ -38,7 +38,8 @@ def histogram(results, variable, title, xlabel, threshold=None):
         mask_lc = np.ones(y.shape, dtype=bool)
         mask_lc[last_commit] = False
 
-        n, _, _ = plt.hist(y[mask_lc], bins='auto', color='#607c8e', alpha=0.7)
+        n, _, _ = plt.hist(y[mask_lc], bins='auto', color='#607c8e', alpha=0.7,
+                label='All commits')
 
         if len(last_commit) > 25:
             plt.hist(y[last_commit], bins='auto', color='#0504aa', alpha=0.5,
@@ -49,6 +50,7 @@ def histogram(results, variable, title, xlabel, threshold=None):
             plt.setp(ml, color='#0504aa', alpha=0.5)
             plt.setp(sl, color='#0504aa', alpha=0.5)
             plt.setp(bl, visible=False)
+    plt.legend()
 
     # Right plot: Same, to most recent data.
     plt.subplot(1, 2, 2)
@@ -66,7 +68,11 @@ def histogram(results, variable, title, xlabel, threshold=None):
         mask_lc = np.ones(y.shape, dtype=bool)
         mask_lc[last_commit] = False
         
-        n, _, _ = plt.hist(y[mask_lc], bins='auto', color='#607c8e', alpha=0.7)
+        legend_hist = u[0].split('\n')[0] + ' to ' + u[-2].split('\n')[0] \
+                + '\n' \
+                + u[0].split('\n')[1] + '     ' + u[-2].split('\n')[1]
+        n, _, _ = plt.hist(y[mask_lc], bins='auto', color='#607c8e', alpha=0.7,
+                label=legend_hist)
 
         if len(last_commit) > 10:
             plt.hist(y[last_commit], bins='auto', color='#0504aa', alpha=0.5,
