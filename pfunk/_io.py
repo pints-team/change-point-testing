@@ -107,7 +107,7 @@ def find_test_plots():
 
 def find_next_test(database):
     """
-    Scans the results directory, and returns the test that hasn't been run for
+    Scans the results database, and returns the test that hasn't been run for
     the longest.
     """
     dates = find_test_dates(database)
@@ -116,7 +116,7 @@ def find_next_test(database):
 
 def find_previous_test(database):
     """
-    Scans the results directory, and returns the test that has been run most
+    Scans the results database, and returns the test that has been run most
     recently.
     """
     dates = find_test_dates(database)
@@ -126,7 +126,7 @@ def find_previous_test(database):
 def gather_statistics_per_commit(
         results, variable, remove_outliers=False, short_names=True, n=None):
     """
-    Gathers mean and standard devations of the given variable on a per commit
+    Gathers mean and standard deviations of the given variable on a per commit
     basis.
 
     Returns a tuple ``(commits, values, unique, mean, std)``, where ``commits``
