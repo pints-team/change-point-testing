@@ -72,6 +72,10 @@ if not sys.version_info >= (3, 4):
     raise RuntimeError('Functional testing requires Python 3.4+')
 
 
+# Default test results database path
+# Used to store or retrieve test results, but can be overridden with the --database argument.
+DEFAULT_RESULTS_DB = "./test_results.db"
+
 # Pints version and pints/pfunk commits
 # These are set using (repo).prepare_module
 

@@ -327,7 +327,6 @@ class CleanFileAction(argparse.Action):
 
 
 def main():
-    default_database_path = "./test_results.db"
     # Set up argument parsing
     parser = argparse.ArgumentParser(
         description='Run functional tests for Pints.',
@@ -374,7 +373,7 @@ def main():
     run_parser.add_argument(
         '--database',
         action=CleanFileAction,
-        default=default_database_path,
+        default=pfunk.DEFAULT_RESULTS_DB,
         help="A SQLite database in which to store run results. Will be created if it doesn't exist.",
     )
     run_parser.add_argument(
@@ -448,7 +447,7 @@ def main():
     analyse_parser.add_argument(
         '--database',
         action=CleanFileAction,
-        default=default_database_path,
+        default=pfunk.DEFAULT_RESULTS_DB,
         help='Test results database for analysis',
     )
     analyse_parser.set_defaults(func=analyse)
@@ -461,7 +460,7 @@ def main():
     report_parser.add_argument(
         '--database',
         action=CleanFileAction,
-        default=default_database_path,
+        default=pfunk.DEFAULT_RESULTS_DB,
         help='Test results database for report',
     )
     report_parser.set_defaults(func=generate_report)
