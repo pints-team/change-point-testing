@@ -16,6 +16,10 @@ import pfunk
 
 
 class ResultsDatabaseSchemaClient(object):
+    """
+    Abstract parent for database readers and writers, keeping track of the database columns and how to interpret
+    the JSON column.
+    """
     primary_columns = ["identifier"]
     mapped_columns = {"commit": "commit_hashes"}
     columns = ["name", "date", "status", "python", "pints", "pints_commit", "pfunk_commit", "commit_hashes", "seed",
@@ -33,7 +37,7 @@ class ResultsDatabaseSchemaClient(object):
 
 class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
     """
-    Provides read-write access to a SQLite3 database containing test results.
+    Provides write access to a SQLite3 database containing test results.
     For compatibility with the interfaces supplied by ResultsWriter/ResultsReader,
     the flat-file equivalents, instances of this class accept a test name and date,
     and provide access to the values in the row matching those properties only.
@@ -102,6 +106,9 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
 
 
 class ResultsDatabaseReader(ResultsDatabaseSchemaClient):
+    """
+    Provides read access to a row in the test results database.
+    """
     def __init__(self, connection, rowID):
         self._connection = connection
         self._row = rowID
@@ -118,6 +125,10 @@ class ResultsDatabaseReader(ResultsDatabaseSchemaClient):
 
 
 class ResultsDatabaseResultsSet(object):
+    """
+    Represents a collection of rows in the test results database. Provides keyed access to the fields in the
+    results, so set["foo"] gives you a list of the "foo" fields for all of the results in the set.
+    """
     def __init__(self, result_rows):
         self._rows = result_rows
 
@@ -133,6 +144,12 @@ class ResultsDatabaseResultsSet(object):
 
 
 def find_test_results(name, database):
+    """
+    Fetches a set of all results for a test with the given name in the database.
+    :param name: The name of the test to find results for.
+    :param database: A path to a pfunk test results database.
+    :return: A ResultsDatabaseResultsSet with all of the relevant test results.
+    """
     connection = connect_to_database(database)
     results = connection.execute("select identifier from test_results where name like ?", [name])
     row_ids = [r[0] for r in results.fetchall()]
@@ -141,6 +158,11 @@ def find_test_results(name, database):
 
 
 def connect_to_database(database):
+    """
+    Establishes a connection to a test results database.
+    :param database: A path to a pfunk test results database.
+    :return: An open sqlite3 connection to the database.
+    """
     connection = sqlite3.connect(database)
     connection.row_factory = sqlite3.Row
     return connection
