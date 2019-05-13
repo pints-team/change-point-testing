@@ -17,7 +17,7 @@ import textwrap
 import time
 
 import pfunk
-from ._repotools import format_date
+from ._util import format_date
 
 def head():
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
