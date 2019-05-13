@@ -29,6 +29,10 @@ class ResultsDatabaseSchemaClient(object):
                "method"]
 
     def json_values(self):
+        """
+        Interpret the json column in the test results table as a dictionary and return it.
+        :return: The dictionary retrieved from the json, or the empty dict if the field is empty.
+        """
         result = self._connection.execute("select json from test_results where identifier = ?",
                                           [self._row])
         json_field = result.fetchone()[0]
@@ -52,9 +56,13 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         self._filename = filename
         self._name = test_name
         self._date = date
-        self.__ensure_row()
+        self.__ensure_row_exists()
 
     def __ensure_schema(self):
+        """
+        Establish that a test_results table exists, and if it didn't before, that it has the correct schema.
+        :return: None.
+        """
         query = """ create table if not exists test_results(
         identifier integer primary key asc,
         name varchar,
@@ -72,13 +80,17 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         self._connection.execute(query)
         self._connection.commit()
 
-    def __ensure_row(self):
+    def __ensure_row_exists(self):
+        """
+        Create a row in the table to represent the current result, and store its primary key.
+        :return: None
+        """
         # ensure the row exists
         self._connection.execute("insert into test_results(name,date) values (?,?)", (self._name, self._date))
         self._connection.commit()
-        rowID = self._connection.execute("select identifier from test_results where name like ? and date = ?",
+        row_id = self._connection.execute("select identifier from test_results where name like ? and date = ?",
                                         (self._name, self._date))
-        self._row = rowID.fetchone()[0]
+        self._row = row_id.fetchone()[0]
 
     def __setitem__(self, key, value):
         if key in self.primary_columns:
@@ -102,9 +114,17 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
             self._connection.commit()
 
     def write(self):
+        """
+        Provides compatibility with the file-writer interface for writing test results.
+        :return: None.
+        """
         pass
 
     def filename(self):
+        """
+        Provides compatibility with the file-writer interface for writing test results.
+        :return: The path to the database.
+        """
         return self._filename
 
 
@@ -112,15 +132,18 @@ class ResultsDatabaseReader(ResultsDatabaseSchemaClient):
     """
     Provides read access to a row in the test results database.
     """
-    def __init__(self, connection, rowID):
+    def __init__(self, connection, row_id):
         self._connection = connection
-        self._row = rowID
+        self._row = row_id
 
     def __getitem__(self, item):
         if item in self.primary_columns or item in self.columns:
             result = self._connection.execute("select {} from test_results where identifier = ?".format(item),
                                               [self._row])
-            return result.fetchone()[0]
+            database_row = result.fetchone()
+            if database_row is None:
+                raise KeyError("row_id {} is not present in the database".format(self._row))
+            return database_row[0]
         if item in self.mapped_columns.keys():
             return self[self.mapped_columns[item]]
         dictionary = defaultdict(lambda: None, self.json_values())
