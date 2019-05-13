@@ -74,8 +74,26 @@ if not sys.version_info >= (3, 4):
 
 # Pints version and pints/pfunk commits
 # These are set using (repo).prepare_module
-PINTS_COMMIT = PINTS_VERSION = PINTS_COMMIT_AUTHORED = PINTS_COMMIT_COMMITTED = PINTS_COMMIT_MESSAGE = None
-PFUNK_COMMIT = PFUNK_COMMIT_AUTHORED = PFUNK_COMMIT_COMMITTED = PFUNK_COMMIT_MESSAGE = None
+
+# Pints version string
+PINTS_VERSION = None
+
+# Commit hashes
+PINTS_COMMIT = None
+PFUNK_COMMIT = None
+
+# Date commit was authored (patch or original commit was created)
+PINTS_COMMIT_AUTHORED = None
+PFUNK_COMMIT_AUTHORED = None
+
+# Date commit was committed (the last time the commit was edited)
+PINTS_COMMIT_COMMITTED = None
+PFUNK_COMMIT_COMMITTED = None
+
+# Commit message. We keep this because merges can change commit hashes, but the authored date and message will survive
+# those. Of course, if you choose to interactive rebase and edit or squash the original commit, that's your choice.
+PINTS_COMMIT_MESSAGE = None
+PFUNK_COMMIT_MESSAGE = None
 
 
 #
