@@ -126,13 +126,10 @@ from ._resultsdb import (  # noqa
 )
 
 from ._util import (  # noqa
+    format_date,
     weave,
 )
 
 from ._test import (    # noqa
     FunctionalTest,
-)
-
-from ._repotools import (    # noqa
-    format_date,
 )
