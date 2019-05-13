@@ -133,3 +133,6 @@ from ._test import (    # noqa
     FunctionalTest,
 )
 
+from ._repotools import (    # noqa
+    format_date,
+)

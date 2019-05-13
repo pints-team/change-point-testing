@@ -12,12 +12,10 @@ from __future__ import print_function, unicode_literals
 import git
 import pfunk
 
-from ._repotools import format_date
-
 
 def headcommit():
     """
-    Returns the current pfunk commit hash.
+    Returns the current pfunk commit object.
     """
     repo = git.Repo(pfunk.DIR_PFUNK)
     return repo.head.commit
@@ -26,6 +24,6 @@ def headcommit():
 def prepare_module():
     head = headcommit()
     pfunk.PFUNK_COMMIT = head.hexsha
-    pfunk.PFUNK_COMMIT_COMMITTED = format_date(head.committed_date)
-    pfunk.PFUNK_COMMIT_AUTHORED = format_date(head.authored_date)
+    pfunk.PFUNK_COMMIT_COMMITTED = pfunk.format_date(head.committed_date)
+    pfunk.PFUNK_COMMIT_AUTHORED = pfunk.format_date(head.authored_date)
     pfunk.PFUNK_COMMIT_MESSAGE = head.message
