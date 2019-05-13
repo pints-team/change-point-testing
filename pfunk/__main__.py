@@ -125,7 +125,7 @@ def run(args):
 
             # Starmap with product of name and
             # range: -> [(name, 0), (name, 1), ...]
-            pool.starmap(pfunk.tests.run, product([name], args.database, range(args.r)))
+            pool.starmap(pfunk.tests.run, product([name], [args.database], range(args.r)))
         else:
             print('Running without multiprocessing')
             pfunk.tests.run(name, args.database)
