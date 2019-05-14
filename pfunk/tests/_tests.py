@@ -29,9 +29,9 @@ def run(name, database, run_number=0,):
     _tests[name].run(database)
 
 
-def plot(name, show=False):
+def plot(name, database, show=False):
     """ Generates a selected test's plots. """
-    _tests[name].plot(show)
+    _tests[name].plot(database, show)
 
 
 def analyse(name, database):

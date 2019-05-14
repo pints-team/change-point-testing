@@ -167,11 +167,11 @@ def plot(args):
     # Make plots
     if args.name:
         for name in _parse_pattern(args.name):
-            pfunk.tests.plot(name, args.show)
+            pfunk.tests.plot(name, args.database, args.show)
     elif args.all:
         for name in pfunk.tests.tests():
             print('Creating plot for ' + name)
-            pfunk.tests.plot(name, args.show)
+            pfunk.tests.plot(name, args.database, args.show)
         print('Done!')
 
 
@@ -429,6 +429,12 @@ def main():
     plot_parser.add_argument(
         '-t', nargs=2, metavar=('result_dir', 'plot_dir'),
         help='Load results and store plots in custom directories',
+    )
+    plot_parser.add_argument(
+        '--database',
+        action=CleanFileAction,
+        default=pfunk.DEFAULT_RESULTS_DB,
+        help="A SQLite database in which to find previous test results.",
     )
     plot_parser.set_defaults(func=plot)
 
