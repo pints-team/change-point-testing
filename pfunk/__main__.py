@@ -137,7 +137,7 @@ def run(args):
 
         if args.plot or args.show:
             print('Creating plot for ' + name)
-            pfunk.tests.plot(name, args.show)
+            pfunk.tests.plot(name, args.database, args.show)
 
     print('Done')
 
