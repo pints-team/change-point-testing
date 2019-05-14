@@ -18,6 +18,27 @@ import time
 import pfunk
 
 
+def _ensure_database_schema(connection):
+    """Given a connection to a sqlite3 database, create a table (if needed) containing the appropriate columns
+    for our test results."""
+    query = """ create table if not exists test_results(
+    identifier integer primary key asc,
+    name varchar,
+    date date,
+    status varchar,
+    python varchar,
+    pints varchar,
+    pints_commit varchar,
+    pfunk_commit varchar,
+    commit_hashes varchar,
+    seed integer,
+    method varchar,
+    json varchar
+    )"""
+    connection.execute(query)
+    connection.commit()
+
+
 class ResultsDatabaseSchemaClient(object):
     """
     Abstract parent for database readers and writers, keeping track of the database columns and how to interpret
@@ -63,22 +84,7 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         Establish that a test_results table exists, and if it didn't before, that it has the correct schema.
         :return: None.
         """
-        query = """ create table if not exists test_results(
-        identifier integer primary key asc,
-        name varchar,
-        date date,
-        status varchar,
-        python varchar,
-        pints varchar,
-        pints_commit varchar,
-        pfunk_commit varchar,
-        commit_hashes varchar,
-        seed integer,
-        method varchar,
-        json varchar
-        )"""
-        self._connection.execute(query)
-        self._connection.commit()
+        _ensure_database_schema(self._connection)
 
     def __ensure_row_exists(self):
         """
@@ -200,6 +206,7 @@ def find_test_dates(database):
     If a test has not been run, then a default time (Jan 1 1970 00:00:00 UTC) is set.
     """
     connection = connect_to_database(database)
+    _ensure_database_schema(connection)
     names_and_dates = connection.execute('select name, max(date) as "most_recent" from test_results group by name')\
         .fetchall()
     connection.close()
