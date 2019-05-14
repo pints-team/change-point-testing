@@ -340,6 +340,12 @@ def main():
 
     # Show a list of all available tests
     list_parser = subparsers.add_parser('list', help='List tests')
+    list_parser.add_argument(
+        '--database',
+        action=CleanFileAction,
+        default=pfunk.DEFAULT_RESULTS_DB,
+        help="A SQLite database in which to find previous test results.",
+    )
     list_parser.set_defaults(func=list_tests)
 
     # Run a test
