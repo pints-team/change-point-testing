@@ -19,7 +19,11 @@ import time
 import pfunk
 from ._util import format_date
 
+
 def head():
+    """
+    Returns the current pints commit object.
+    """
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
     return repo.head.commit
 

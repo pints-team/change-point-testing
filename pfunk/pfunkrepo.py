@@ -13,7 +13,7 @@ import git
 import pfunk
 
 
-def headcommit():
+def head():
     """
     Returns the current pfunk commit object.
     """
@@ -22,8 +22,8 @@ def headcommit():
 
 
 def prepare_module():
-    head = headcommit()
-    pfunk.PFUNK_COMMIT = head.hexsha
-    pfunk.PFUNK_COMMIT_COMMITTED = pfunk.format_date(head.committed_date)
-    pfunk.PFUNK_COMMIT_AUTHORED = pfunk.format_date(head.authored_date)
-    pfunk.PFUNK_COMMIT_MESSAGE = head.message
+    headcommit = head()
+    pfunk.PFUNK_COMMIT = headcommit.hexsha
+    pfunk.PFUNK_COMMIT_COMMITTED = pfunk.format_date(headcommit.committed_date)
+    pfunk.PFUNK_COMMIT_AUTHORED = pfunk.format_date(headcommit.authored_date)
+    pfunk.PFUNK_COMMIT_MESSAGE = headcommit.message
