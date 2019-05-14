@@ -111,24 +111,26 @@ def run(args):
     pfunk.pintsrepo.prepare_module()
     pfunk.pfunkrepo.prepare_module()
 
-    # Multi-processing?
-    multi = len(names) > 1
+    # Multi-processing
     nproc = min(args.r, multiprocessing.cpu_count() - 2)
 
     # Run tests
     for name in names:
-        # Run the test args.r times in parallel
-        if multi:
+        # Run the test args.r times
+        if nproc > 1:
+            # Run in parallel
             with multiprocessing.Pool(processes=nproc) as pool:
                 print('Running {} {} times with {} processes:'.format(
-                    name, args.r, pool._processes), flush=True)
+                    name, args.r, nproc), flush=True)
 
             # Starmap with product of name and
             # range: -> [(name, 0), (name, 1), ...]
             pool.starmap(pfunk.tests.run, product([name], [args.database], range(args.r)))
         else:
+            # Run without multiprocessing
             print('Running without multiprocessing')
-            pfunk.tests.run(name, args.database)
+            for i in range(args.r):
+                pfunk.tests.run(name, args.database, i)
 
         if args.analyse:
             print('Analysing ' + name + ' ... ', end='')
