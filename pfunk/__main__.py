@@ -18,9 +18,13 @@ import os
 import subprocess
 import sys
 
-
 import pfunk
 import pfunk.tests
+
+
+# Debug warnings
+#import warnings
+#warnings.filterwarnings('error', category=FutureWarning)
 
 
 def list_tests(args):
@@ -106,15 +110,25 @@ def run(args):
     # Prepare module
     pfunk.pintsrepo.prepare_module()
 
+    # Multi-processing?
+    multi = len(names) > 1
+    nproc = min(args.r, multiprocessing.cpu_count() - 2)
+
     # Run tests
     for name in names:
 
         # Run the test args.r times in parallel
-        with multiprocessing.Pool(processes=min(args.r, multiprocessing.cpu_count() - 2)) as pool:
-            print('Running {} {} times with {} processes:'.format(name, args.r, pool._processes), flush=True)
+        if multi:
+            with multiprocessing.Pool(processes=nproc) as pool:
+                print('Running {} {} times with {} processes:'.format(
+                    name, args.r, pool._processes), flush=True)
 
-            # Starmap with product of name and range: -> [(name, 0), (name, 1), ...]
+            # Starmap with product of name and
+            # range: -> [(name, 0), (name, 1), ...]
             pool.starmap(pfunk.tests.run, product([name], range(args.r)))
+        else:
+            print('Running without multiprocessing')
+            pfunk.tests.run(name)
 
         if args.analyse:
             print('Analysing ' + name + ' ... ', end='')
