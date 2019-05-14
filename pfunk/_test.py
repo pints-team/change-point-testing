@@ -98,7 +98,7 @@ class FunctionalTest(object):
         """
         raise NotImplementedError
 
-    def plot(self, show=False):
+    def plot(self, database, show=False):
         """
         Generates the plots defined for this test
 
@@ -111,7 +111,7 @@ class FunctionalTest(object):
         log.info('Running plot: ' + self.name())
 
         # Load test results
-        results = pfunk.find_test_results(self._name)
+        results = pfunk.find_test_results(self._name, database)
 
         # Plot
         try:
