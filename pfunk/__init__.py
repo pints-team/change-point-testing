@@ -72,9 +72,32 @@ if not sys.version_info >= (3, 4):
     raise RuntimeError('Functional testing requires Python 3.4+')
 
 
-# Pints version and commit
-# These are set using PintsRepo.prepare_module
-PINTS_COMMIT = PINTS_VERSION = None
+# Default test results database path
+# Used to store or retrieve test results, but can be overridden with the --database argument.
+DEFAULT_RESULTS_DB = "./test_results.db"
+
+# Pints version and pints/pfunk commits
+# These are set using (repo).prepare_module
+
+# Pints version string
+PINTS_VERSION = None
+
+# Commit hashes
+PINTS_COMMIT = None
+PFUNK_COMMIT = None
+
+# Date commit was authored (patch or original commit was created)
+PINTS_COMMIT_AUTHORED = None
+PFUNK_COMMIT_AUTHORED = None
+
+# Date commit was committed (the last time the commit was edited)
+PINTS_COMMIT_COMMITTED = None
+PFUNK_COMMIT_COMMITTED = None
+
+# Commit message. We keep this because merges can change commit hashes, but the authored date and message will survive
+# those. Of course, if you choose to interactive rebase and edit or squash the original commit, that's your choice.
+PINTS_COMMIT_MESSAGE = None
+PFUNK_COMMIT_MESSAGE = None
 
 
 #
@@ -88,24 +111,25 @@ from . import (  # noqa
 
 from ._io import (  # noqa
     assert_not_deviated_from,
+    clean_filename,
     find_next_test,
     find_previous_test,
-    find_test_dates,
-    find_test_results,
     gather_statistics_per_commit,
     generate_report,
-    ResultWriter,
     unique_path,
 )
 
+from ._resultsdb import (  # noqa
+    ResultsDatabaseWriter,
+    find_test_results,
+    find_test_dates,
+)
+
 from ._util import (  # noqa
+    format_date,
     weave,
 )
 
 from ._test import (    # noqa
     FunctionalTest,
 )
-
-
-# PFunk commit
-PFUNK_COMMIT = pfunkrepo.hash()

@@ -17,6 +17,15 @@ import textwrap
 import time
 
 import pfunk
+from ._util import format_date
+
+
+def head():
+    """
+    Returns the current pints commit object.
+    """
+    repo = git.Repo(pfunk.DIR_PINTS_REPO)
+    return repo.head.commit
 
 
 def hash():
@@ -91,6 +100,9 @@ def prepare_module():
 
     # Set identifying variables
     pfunk.PINTS_COMMIT = pfunk.pintsrepo.hash()
+    pfunk.PINTS_COMMIT_AUTHORED = format_date(pfunk.pintsrepo.head().authored_date)
+    pfunk.PINTS_COMMIT_COMMITTED = format_date(pfunk.pintsrepo.head().committed_date)
+    pfunk.PINTS_COMMIT_MESSAGE = pfunk.pintsrepo.head().message
     pfunk.PINTS_VERSION = pints.version(formatted=True)
 
 

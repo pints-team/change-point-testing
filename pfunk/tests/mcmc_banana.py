@@ -23,6 +23,8 @@ class MCMCBanana(pfunk.FunctionalTest):
 
     Arguments:
 
+    ``writer_generator``
+        A callable that will return a key-value store for test results.
     ``method``
         A *string* indicating the method to use, e.g. 'AdaptiveCovarianceMCMC'.
         (Must be a string, because we shouldn't import pints before we start
@@ -30,7 +32,7 @@ class MCMCBanana(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, method, nchains, pass_threshold, max_iter=10000):
+    def __init__(self, writer_generator, method, nchains, pass_threshold, max_iter=10000):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
@@ -40,7 +42,7 @@ class MCMCBanana(pfunk.FunctionalTest):
 
         # Create name and initialise
         name = 'mcmc_banana_' + self._method + '_' + str(self._nchains)
-        super(MCMCBanana, self).__init__(name)
+        super(MCMCBanana, self).__init__(name, writer_generator)
 
     def _run(self, result):
 

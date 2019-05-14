@@ -31,7 +31,7 @@ def list_tests(args):
     """
     Shows all available tests and the date they were last run.
     """
-    dates = pfunk.find_test_dates()
+    dates = pfunk.find_test_dates(args.database)
     w = max(4, max([len(k) for k in dates.keys()]))
     print('| Name' + ' ' * (w - 4) + ' | Last run            |')
     print('-' * (w + 26))
@@ -73,7 +73,7 @@ def run(args):
     """
     # Parse test name, or get next test to run
     if args.name is None:
-        names = [pfunk.find_next_test()]
+        names = [pfunk.find_next_test(args.database)]
     else:
         names = _parse_pattern(args.name)
     if not names:
@@ -109,6 +109,7 @@ def run(args):
 
     # Prepare module
     pfunk.pintsrepo.prepare_module()
+    pfunk.pfunkrepo.prepare_module()
 
     # Multi-processing?
     multi = len(names) > 1
@@ -116,7 +117,6 @@ def run(args):
 
     # Run tests
     for name in names:
-
         # Run the test args.r times in parallel
         if multi:
             with multiprocessing.Pool(processes=nproc) as pool:
@@ -125,14 +125,14 @@ def run(args):
 
             # Starmap with product of name and
             # range: -> [(name, 0), (name, 1), ...]
-            pool.starmap(pfunk.tests.run, product([name], range(args.r)))
+            pool.starmap(pfunk.tests.run, product([name], [args.database], range(args.r)))
         else:
             print('Running without multiprocessing')
-            pfunk.tests.run(name)
+            pfunk.tests.run(name, args.database)
 
         if args.analyse:
             print('Analysing ' + name + ' ... ', end='')
-            result = pfunk.tests.analyse(name)
+            result = pfunk.tests.analyse(name, args.database)
             print('ok' if result else 'FAIL')
 
         if args.plot or args.show:
@@ -184,9 +184,9 @@ def analyse(args):
     if args.all:
         names = sorted(pfunk.tests.tests())
     elif args.last:
-        names = [pfunk.find_previous_test()]
+        names = [pfunk.find_previous_test(args.database)]
     elif args.name is None:
-        names = [pfunk.find_next_test()]
+        names = [pfunk.find_next_test(args.database)]
     else:
         names = _parse_pattern(args.name)
 
@@ -196,7 +196,7 @@ def analyse(args):
     failed = 0
     for name in names:
         print('Analysing ' + name + ' ... ', end='')
-        result = pfunk.tests.analyse(name)
+        result = pfunk.tests.analyse(name, args.database)
         failed += 0 if result else 1
         print('ok' if result else 'FAIL')
         if not result:
@@ -215,7 +215,7 @@ def generate_report(args):
     Generates a report in Markdown format.
     """
     print('Generating test report')
-    pfunk.generate_report()
+    pfunk.generate_report(args.database)
     print('Done')
 
 
@@ -321,6 +321,16 @@ def investigate(args):
         pfunk.tests.plot(name, args.show)
 
 
+class CleanFileAction(argparse.Action):
+    """
+    Turn a path in a command-line argument into a "clean" (absolute, with ~ expanded) path.
+    Examples: ./foo -> /wherever/pwd/is/foo
+    ~/foo -> /home/pints-user/foo
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, pfunk.clean_filename(values))
+
+
 def main():
     # Set up argument parsing
     parser = argparse.ArgumentParser(
@@ -364,6 +374,12 @@ def main():
         '--analyse',
         action='store_true',
         help='Analyse the test result after running.',
+    )
+    run_parser.add_argument(
+        '--database',
+        action=CleanFileAction,
+        default=pfunk.DEFAULT_RESULTS_DB,
+        help="A SQLite database in which to store run results. Will be created if it doesn't exist.",
     )
     run_parser.add_argument(
         '-r', default=1, type=int,
@@ -433,12 +449,24 @@ def main():
         action='store_true',
         help='Analyse most recently run test. Used for Azure CI.',
     )
+    analyse_parser.add_argument(
+        '--database',
+        action=CleanFileAction,
+        default=pfunk.DEFAULT_RESULTS_DB,
+        help='Test results database for analysis',
+    )
     analyse_parser.set_defaults(func=analyse)
 
     # Compile a report of test results
     report_parser = subparsers.add_parser(
         'report',
         help='Generate a test report',
+    )
+    report_parser.add_argument(
+        '--database',
+        action=CleanFileAction,
+        default=pfunk.DEFAULT_RESULTS_DB,
+        help='Test results database for report',
     )
     report_parser.set_defaults(func=generate_report)
 
@@ -505,6 +533,7 @@ def main():
 
     # Parse!
     args = parser.parse_args()
+
     if 'func' in args:
         args.func(args)
     else:

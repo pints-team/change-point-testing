@@ -21,11 +21,12 @@ class FunctionalTest(object):
     """
     Abstract base class for single functional tests.
     """
-    def __init__(self, name):
+    def __init__(self, name, writer_generator):
         name = str(name)
         if pfunk.NAME_FORMAT.match(name) is None:
             raise ValueError('Invalid test name: ' + name)
         self._name = name
+        self._writer_generator = writer_generator
 
     def _analyse(self, results):
         """
@@ -43,7 +44,7 @@ class FunctionalTest(object):
         """
         raise NotImplementedError
 
-    def analyse(self):
+    def analyse(self, database):
         """
         Checks if the test passed or failed
 
@@ -56,7 +57,7 @@ class FunctionalTest(object):
         log.info('Running analyse: ' + self.name())
 
         # Load test results
-        results = pfunk.find_test_results(self._name)
+        results = pfunk.find_test_results(self._name, database)
 
         # Analyse
         result = False
@@ -176,7 +177,7 @@ class FunctionalTest(object):
         """
         raise NotImplementedError
 
-    def run(self):
+    def run(self, file):
         """
         Runs this test and logs the output.
         """
@@ -192,19 +193,22 @@ class FunctionalTest(object):
         date = pfunk.date()
         name = self.name()
 
-        # Get path to log and result files
-        base = name + '-' + date + '.txt'
-        res_path = pfunk.unique_path(os.path.join(pfunk.DIR_RESULT, base))
-
         # Create result writer
-        w = pfunk.ResultWriter(res_path)
-        w['status'] = 'unitialised'
+
+        w = self._writer_generator(name, date, file)
+        w['status'] = 'uninitialised'
         w['date'] = date
         w['name'] = name
         w['python'] = pfunk.PYTHON_VERSION
         w['pints'] = pfunk.PINTS_VERSION
         w['pints_commit'] = pfunk.PINTS_COMMIT
+        w['pints_authored_date'] = pfunk.PINTS_COMMIT_AUTHORED
+        w['pints_committed_date'] = pfunk.PINTS_COMMIT_COMMITTED
+        w['pints_commit_msg'] = pfunk.PINTS_COMMIT_MESSAGE
         w['pfunk_commit'] = pfunk.PFUNK_COMMIT
+        w['pfunk_authored_date'] = pfunk.PFUNK_COMMIT_AUTHORED
+        w['pfunk_committed_date'] = pfunk.PFUNK_COMMIT_COMMITTED
+        w['pfunk_commit_msg'] = pfunk.PFUNK_COMMIT_MESSAGE
         w['commit'] = pfunk.PFUNK_COMMIT + '/' + pfunk.PINTS_COMMIT
         w['seed'] = seed
 
