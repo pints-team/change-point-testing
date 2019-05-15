@@ -13,3 +13,4 @@ date >> poke-azure.log
 git add poke-azure.log
 git commit -m "Preparing to run ${NEXT}"
 git push
+git checkout master
