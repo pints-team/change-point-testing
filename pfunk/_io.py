@@ -162,7 +162,7 @@ def gather_statistics_per_commit(
         # Flatten lists (i.e. ess)
         if isinstance(scores[i], (float, int)):
             values[j].append(scores[i])
-        else:
+        elif scores[i] is not None:
             values[j] += list(scores[i])
 
     # Keep only last n unique commits
