@@ -48,8 +48,8 @@ class Optimisation(pfunk.FunctionalTest):
         import pints
         import numpy as np
 
-        # Store method and iterations
-        result['method'] = self._method
+        # Show method name
+        #log.info('Using method: ' + self._method)
 
         # Get method class
         method = getattr(pints, self._method)

@@ -30,9 +30,14 @@ def _ensure_database_schema(connection):
     pints_commit varchar,
     pfunk_commit varchar,
     commit_hashes varchar,
+    pints_authored_date date,
+    pints_committed_date date,
+    pints_commit_msg varchar,
+    pfunk_authored_date date,
+    pfunk_committed_date date,
+    pfunk_commit_msg varchar,
     seed_1 integer,
     seed_2 integer,
-    method varchar,
     json varchar
     )"""
     connection.execute(query)
@@ -55,9 +60,14 @@ class ResultsDatabaseSchemaClient(object):
         'pints_commit',
         'pfunk_commit',
         'commit_hashes',
+        'pints_authored_date',
+        'pints_committed_date',
+        'pints_commit_msg',
+        'pfunk_authored_date',
+        'pfunk_committed_date',
+        'pfunk_commit_msg',
         'seed_1',
         'seed_2',
-        'method',
     ]
 
     def json_values(self):

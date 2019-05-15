@@ -47,8 +47,7 @@ class NestedEggBox(pfunk.FunctionalTest):
 
         DEBUG = False
 
-        # Store method name
-        result['method'] = self._method
+        # Show method name
         log.info('Using method: ' + self._method)
 
         # Get method class

@@ -215,10 +215,10 @@ class FunctionalTest(object):
         try:
             self._run(w)
         except Exception:
-            log.error('Exception in test: ' + self.name())
+            log.error(f'Exception in test {self.name()}')
             w['status'] = 'failed'
             raise
         finally:
-            log.info('Writing result to ' + w.filename())
+            log.info(f'Writing result to {w.filename()}')
             w.write()
 
