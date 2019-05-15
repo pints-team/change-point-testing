@@ -99,12 +99,15 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         self._connection.execute(
             'insert into test_results(name,date) values (?,?)',
             (self._name, self._date))
-        self._connection.commit()
-        row_id = self._connection.execute(
-            'select identifier from test_results'
-            ' where name like ? and date = ?',
-            (self._name, self._date))
+        row_id = self._connection.execute('select last_insert_rowid()')
         self._row = row_id.fetchone()[0]
+        self._connection.commit()
+
+    def row_id(self):
+        """
+        Return the primary key for this writer's table row. Mostly for debugging.
+        """
+        return self._row
 
     def __setitem__(self, key, value):
         if key in self.primary_columns:
