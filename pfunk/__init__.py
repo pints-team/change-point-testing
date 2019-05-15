@@ -6,9 +6,6 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
-from __future__ import absolute_import, division
-from __future__ import print_function, unicode_literals
-
 import os
 import re
 import sys
@@ -67,9 +64,9 @@ NAME_FORMAT = re.compile(r'^[a-zA-Z]\w*$')
 PYTHON_VERSION = sys.version.replace('\n', '')
 
 
-# Require at least Python 3.4 (for importlib.reload)
-if not sys.version_info >= (3, 4):
-    raise RuntimeError('Functional testing requires Python 3.4+')
+# Require at least Python 3.6 (for importlib.reload and f-strings)
+if not sys.version_info >= (3, 6):
+    raise RuntimeError('Functional testing requires Python 3.6+')
 
 
 # Default test results database path
