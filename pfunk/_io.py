@@ -14,7 +14,6 @@ import time
 from scipy import stats
 
 import pfunk
-from ._resultsdb import find_test_dates
 
 
 # High-precision floats
@@ -101,7 +100,7 @@ def find_next_test(database):
     Scans the results database, and returns the test that hasn't been run for
     the longest.
     """
-    dates = find_test_dates(database)
+    dates = pfunk.find_test_dates(database)
     return min(dates, key=dates.get)
 
 
@@ -110,7 +109,7 @@ def find_previous_test(database):
     Scans the results database, and returns the test that has been run most
     recently.
     """
-    dates = find_test_dates(database)
+    dates = pfunk.find_test_dates(database)
     return max(dates, key=dates.get)
 
 
@@ -244,11 +243,12 @@ def generate_report(database):
     Generates a markdown file containing information about all tests, including
     links to the most recent plots.
     """
+    import pfunk.tests
+
     # Get a list of available tests and the date they were last run
-    dates = find_test_dates(database)
+    dates = pfunk.find_test_dates(database)
 
     # Gather the status of every test
-    import pfunk.tests
     states = {}
     failed = []
     passed = []
