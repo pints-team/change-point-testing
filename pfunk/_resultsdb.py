@@ -19,8 +19,10 @@ import pfunk
 
 
 def _ensure_database_schema(connection):
-    """Given a connection to a sqlite3 database, create a table (if needed) containing the appropriate columns
-    for our test results."""
+    """
+    Given a connection to a sqlite3 database, create a table (if needed)
+    containing the appropriate columns for our test results.
+    """
     query = """ create table if not exists test_results(
     identifier integer primary key asc,
     name varchar,
@@ -41,21 +43,23 @@ def _ensure_database_schema(connection):
 
 class ResultsDatabaseSchemaClient(object):
     """
-    Abstract parent for database readers and writers, keeping track of the database columns and how to interpret
-    the JSON column.
+    Abstract parent for database readers and writers, keeping track of the
+    database columns and how to interpret the JSON column.
     """
-    primary_columns = ["identifier"]
-    mapped_columns = {"commit": "commit_hashes"}
-    columns = ["name", "date", "status", "python", "pints", "pints_commit", "pfunk_commit", "commit_hashes", "seed",
-               "method"]
+    primary_columns = ['identifier']
+    mapped_columns = {'commit': 'commit_hashes'}
+    columns = ['name', 'date', 'status', 'python', 'pints', 'pints_commit',
+               'pfunk_commit', 'commit_hashes', 'seed', 'method']
 
     def json_values(self):
         """
-        Interpret the json column in the test results table as a dictionary and return it.
-        :return: The dictionary retrieved from the json, or the empty dict if the field is empty.
+        Interpret the json column in the test results table as a dictionary and
+        return it.
+        :return: The dictionary retrieved from the json, or the empty dict if
+        the field is empty.
         """
-        result = self._connection.execute("select json from test_results where identifier = ?",
-                                          [self._row])
+        result = self._connection.execute(
+            'select json from test_results where identifier = ?', [self._row])
         json_field = result.fetchone()[0]
         dictionary = {}
         if json_field is not None:
@@ -66,9 +70,10 @@ class ResultsDatabaseSchemaClient(object):
 class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
     """
     Provides write access to a SQLite3 database containing test results.
-    For compatibility with the interfaces supplied by ResultsWriter/ResultsReader,
-    the flat-file equivalents, instances of this class accept a test name and date,
-    and provide access to the values in the row matching those properties only.
+    For compatibility with the interfaces supplied by
+    ResultsWriter/ResultsReader, the flat-file equivalents, instances of this
+    class accept a test name and date, and provide access to the values in the
+    row matching those properties only.
     """
 
     def __init__(self, filename, test_name, date):
@@ -81,21 +86,27 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
 
     def __ensure_schema(self):
         """
-        Establish that a test_results table exists, and if it didn't before, that it has the correct schema.
+        Establish that a test_results table exists, and if it didn't before,
+        that it has the correct schema.
         :return: None.
         """
         _ensure_database_schema(self._connection)
 
     def __ensure_row_exists(self):
         """
-        Create a row in the table to represent the current result, and store its primary key.
+        Create a row in the table to represent the current result, and store
+        its primary key.
         :return: None
         """
         # ensure the row exists
-        self._connection.execute("insert into test_results(name,date) values (?,?)", (self._name, self._date))
+        self._connection.execute(
+            'insert into test_results(name,date) values (?,?)',
+            (self._name, self._date))
         self._connection.commit()
-        row_id = self._connection.execute("select identifier from test_results where name like ? and date = ?",
-                                        (self._name, self._date))
+        row_id = self._connection.execute(
+            'select identifier from test_results'
+            ' where name like ? and date = ?',
+            (self._name, self._date))
         self._row = row_id.fetchone()[0]
 
     def __setitem__(self, key, value):
@@ -105,30 +116,34 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         elif key in self.mapped_columns.keys():
             self[self.mapped_columns[key]] = value
         elif key in self.columns:
-            self._connection.execute("update test_results set {} = ? where identifier = ?".format(key),
-                                    (value, self._row))
+            self._connection.execute(
+                f'update test_results set {key} = ? where identifier = ?',
+                (value, self._row))
             self._connection.commit()
         else:
             dictionary = self.json_values()
             # workaround: if we're given a numpy array, make a Python list
-            if getattr(value, "tolist", None) is not None:
+            if getattr(value, 'tolist', None) is not None:
                 value = value.tolist()
             dictionary[key] = value
             json_field = json.dumps(dictionary)
-            self._connection.execute("update test_results set json = ? where identifier = ?",
-                                     (json_field, self._row))
+            self._connection.execute(
+                'update test_results set json = ? where identifier = ?',
+                (json_field, self._row))
             self._connection.commit()
 
     def write(self):
         """
-        Provides compatibility with the file-writer interface for writing test results.
+        Provides compatibility with the file-writer interface for writing test
+        results.
         :return: None.
         """
         pass
 
     def filename(self):
         """
-        Provides compatibility with the file-writer interface for writing test results.
+        Provides compatibility with the file-writer interface for writing test
+        results.
         :return: The path to the database.
         """
         return self._filename
@@ -144,11 +159,13 @@ class ResultsDatabaseReader(ResultsDatabaseSchemaClient):
 
     def __getitem__(self, item):
         if item in self.primary_columns or item in self.columns:
-            result = self._connection.execute("select {} from test_results where identifier = ?".format(item),
-                                              [self._row])
+            result = self._connection.execute(
+                f'select {item} from test_results where identifier = ?',
+                [self._row])
             database_row = result.fetchone()
             if database_row is None:
-                raise KeyError("row_id {} is not present in the database".format(self._row))
+                raise KeyError(
+                    f'row_id {self._row} is not present in the database')
             return database_row[0]
         if item in self.mapped_columns.keys():
             return self[self.mapped_columns[item]]
@@ -158,8 +175,9 @@ class ResultsDatabaseReader(ResultsDatabaseSchemaClient):
 
 class ResultsDatabaseResultsSet(object):
     """
-    Represents a collection of rows in the test results database. Provides keyed access to the fields in the
-    results, so set["foo"] gives you a list of the "foo" fields for all of the results in the set.
+    Represents a collection of rows in the test results database. Provides
+    keyed access to the fields in the results, so set['foo'] gives you a list
+    of the 'foo' fields for all of the results in the set.
     """
     def __init__(self, result_rows):
         self._rows = result_rows
@@ -177,15 +195,18 @@ class ResultsDatabaseResultsSet(object):
 
 def find_test_results(name, database):
     """
-    Fetches a set of all results for a test with the given name in the database.
+    Fetches a set of all results for a test with the given name in the
+    database.
     :param name: The name of the test to find results for.
     :param database: A path to a pfunk test results database.
     :return: A ResultsDatabaseResultsSet with all of the relevant test results.
     """
     connection = connect_to_database(database)
-    results = connection.execute("select identifier from test_results where name like ?", [name])
+    results = connection.execute(
+        'select identifier from test_results where name like ?', [name])
     row_ids = [r[0] for r in results.fetchall()]
-    row_readers = [ResultsDatabaseReader(connection, row_id) for row_id in row_ids]
+    row_readers = [
+        ResultsDatabaseReader(connection, row_id) for row_id in row_ids]
     return ResultsDatabaseResultsSet(row_readers)
 
 
@@ -202,16 +223,23 @@ def connect_to_database(database):
 
 def find_test_dates(database):
     """
-    Returns a dict mapping test names to the time (a ``time.struct_time``) when they were last run.
-    If a test has not been run, then a default time (Jan 1 1970 00:00:00 UTC) is set.
+    Returns a dict mapping test names to the time (a ``time.struct_time``) when
+    they were last run.
+    If a test has not been run, then a default time (Jan 1 1970 00:00:00 UTC)
+    is set.
     """
     connection = connect_to_database(database)
     _ensure_database_schema(connection)
-    names_and_dates = connection.execute('select name, max(date) as "most_recent" from test_results group by name')\
-        .fetchall()
+    names_and_dates = connection.execute(
+        'select name, max(date) as "most_recent" from test_results'
+        ' group by name'
+    ).fetchall()
     connection.close()
-    name_date_map = {t[0]: time.strptime(t[1], "%Y-%m-%d-%H:%M:%S") for t in names_and_dates}
+    name_date_map = {
+        t[0]: time.strptime(t[1], '%Y-%m-%d-%H:%M:%S') for t in names_and_dates
+    }
     for test in pfunk.tests.tests():
         if test not in name_date_map.keys():
             name_date_map[test] = time.struct_time([0] * 9)
     return name_date_map
+
