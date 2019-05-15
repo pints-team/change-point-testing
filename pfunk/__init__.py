@@ -6,11 +6,11 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
+import logging
 import os
 import re
 import sys
 import time
-import logging
 
 
 # Set up logging

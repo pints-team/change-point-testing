@@ -6,24 +6,15 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
-from __future__ import absolute_import, division
-from __future__ import print_function, unicode_literals
-
+import logging
+import numpy as np
 import os
 import re
 import time
-import logging
-import numpy as np
 from scipy import stats
 
 import pfunk
 from ._resultsdb import find_test_dates
-
-# String types in Python 2 and 3
-try:
-    basestring
-except NameError:
-    basestring = str
 
 
 # High-precision floats

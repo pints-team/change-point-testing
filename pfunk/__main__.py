@@ -6,17 +6,14 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
-from __future__ import absolute_import, division
-from __future__ import print_function, unicode_literals
-
-from itertools import product
-
 import argparse
 import fnmatch
 import multiprocessing
 import os
 import subprocess
 import sys
+
+from itertools import product
 
 import pfunk
 import pfunk.tests

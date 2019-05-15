@@ -6,9 +6,6 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
-from __future__ import absolute_import, division
-from __future__ import print_function, unicode_literals
-
 import git
 import importlib
 import logging
@@ -17,7 +14,6 @@ import textwrap
 import time
 
 import pfunk
-from ._util import format_date
 
 
 def head():
@@ -100,9 +96,9 @@ def prepare_module():
 
     # Set identifying variables
     pfunk.PINTS_COMMIT = pfunk.pintsrepo.hash()
-    pfunk.PINTS_COMMIT_AUTHORED = format_date(
+    pfunk.PINTS_COMMIT_AUTHORED = pfunk.format_date(
         pfunk.pintsrepo.head().authored_date)
-    pfunk.PINTS_COMMIT_COMMITTED = format_date(
+    pfunk.PINTS_COMMIT_COMMITTED = pfunk.format_date(
         pfunk.pintsrepo.head().committed_date)
     pfunk.PINTS_COMMIT_MESSAGE = pfunk.pintsrepo.head().message
     pfunk.PINTS_VERSION = pints.version(formatted=True)

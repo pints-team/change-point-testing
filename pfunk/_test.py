@@ -6,15 +6,12 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
-from __future__ import absolute_import, division
-from __future__ import print_function, unicode_literals
-
 import os
 
 import glob
-import pfunk
 import logging
 import numpy as np
+import pfunk
 
 
 class FunctionalTest(object):
