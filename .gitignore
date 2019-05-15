@@ -19,5 +19,10 @@ __pycache__/
 # vscode
 .vscode
 
+# Virtual environments
+env
+venv
+conda
+
 # The default location for writing test results using SQLite
 test_results.db
