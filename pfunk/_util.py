@@ -13,9 +13,12 @@ from __future__ import print_function, unicode_literals
 import numpy as np
 import time
 
+import pfunk
+
 
 def format_date(seconds_since_epoch):
-    return time.strftime("%a, %d %b %Y %H:%M", time.gmtime(seconds_since_epoch))
+    return time.strftime(
+        pfunk.DATE_FORMAT, time.gmtime(seconds_since_epoch))
 
 
 def weave(chains):
