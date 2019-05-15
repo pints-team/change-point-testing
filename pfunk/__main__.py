@@ -231,21 +231,21 @@ def commit_results(args):
     print('Done')
 
 
-def weekend(args):
-    """
-    Keep running tests, generating reports, and committing results.
-    """
-    while True:
-        pfunk.pfunkrepo.pull()
-        pfunk.pfunkrepo.prepare_module()
-        for i in range(10):
-            name = pfunk.find_next_test()
-            print('Running test ' + name)
-            pfunk.tests.run(name)
-            pfunk.tests.plot(name)
-            print('Done')
-        pfunk.generate_report()
-        pfunk.resultsrepo.commit_results()
+#def weekend(args):
+#    """
+#    Keep running tests, generating reports, and committing results.
+#    """
+#    while True:
+#        pfunk.pfunkrepo.pull()
+#        pfunk.pfunkrepo.prepare_module()
+#        for i in range(10):
+#            name = pfunk.find_next_test()
+#            print('Running test ' + name)
+#            pfunk.tests.run(name)
+#            pfunk.tests.plot(name)
+#            print('Done')
+#        pfunk.generate_report()
+#        pfunk.resultsrepo.commit_results()
 
 
 def investigate(args):
@@ -499,11 +499,11 @@ def main():
     commit_parser.set_defaults(func=commit_results)
 
     # Keep running tests, generating reports, and committing results
-    weekend_parser = subparsers.add_parser(
-        'weekend',
-        help='Keep running tests, generating reports, and committing results',
-    )
-    weekend_parser.set_defaults(func=weekend)
+    #weekend_parser = subparsers.add_parser(
+    #    'weekend',
+    #    help='Keep running tests, generating reports, and committing results',
+    #)
+    #weekend_parser.set_defaults(func=weekend)
 
     # Investigate when a specific change happened
     investigate_parser = subparsers.add_parser(
