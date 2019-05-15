@@ -123,9 +123,12 @@ def run(args):
                 print('Running {} {} times with {} processes:'.format(
                     name, args.r, nproc), flush=True)
 
-            # Starmap with product of name and
-            # range: -> [(name, 0), (name, 1), ...]
-            pool.starmap(pfunk.tests.run, product([name], [args.database], range(args.r)))
+                # Starmap with product of name and
+                # range: -> [(name, 0), (name, 1), ...]
+                pool.starmap(
+                    pfunk.tests.run,
+                    product([name], [args.database], range(args.r))
+                )
         else:
             # Run without multiprocessing
             print('Running without multiprocessing')
