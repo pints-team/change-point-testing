@@ -174,17 +174,17 @@ class FunctionalTest(object):
         """
         raise NotImplementedError
 
-    def run(self, file):
+    def run(self, path, run_number):
         """
         Runs this test and logs the output.
         """
-        # Create logger for _global_ console/file output
+        # Log status
         log = logging.getLogger(__name__)
         log.info('Running test: ' + self.name())
 
         # Seed numpy random generator, so that we know the value
-        seed = np.random.randint(2**32)    # Numpy says max seed is 2**32 - 1
-        np.random.seed(seed)
+        seed = np.random.randint(2**32 - 1)  # Numpy says max seed is 2**32 - 1
+        np.random.seed([seed, run_number])
 
         # Create test name
         date = pfunk.date()
@@ -192,7 +192,7 @@ class FunctionalTest(object):
 
         # Create result writer
 
-        w = self._writer_generator(name, date, file)
+        w = self._writer_generator(name, date, path)
         w['status'] = 'uninitialised'
         w['date'] = date
         w['name'] = name

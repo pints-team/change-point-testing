@@ -26,7 +26,7 @@ def tests():
 def run(name, database, run_number=0,):
     """ Runs a selected test. """
     print('Running test {} run {}'.format(name, run_number), flush=True)
-    _tests[name].run(database)
+    _tests[name].run(database, run_number)
 
 
 def plot(name, database, show=False):
