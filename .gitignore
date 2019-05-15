@@ -19,8 +19,5 @@ __pycache__/
 # vscode
 .vscode
 
-# Temporary azure log file
-poke-azure.log
-
 # The default location for writing test results using SQLite
 test_results.db
