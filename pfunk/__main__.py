@@ -117,8 +117,8 @@ def run(args):
         if nproc > 1:
             # Run in parallel
             with multiprocessing.Pool(processes=nproc) as pool:
-                print('Running {} {} times with {} processes:'.format(
-                    name, args.r, nproc), flush=True)
+                print(f'Running {name} {args.r} times with {nproc} processes:',
+                      flush=True)
 
                 # Starmap with product of name and
                 # range: -> [(name, 0), (name, 1), ...]
@@ -128,8 +128,9 @@ def run(args):
                 )
         else:
             # Run without multiprocessing
-            print('Running without multiprocessing')
+            print(f'Running {name} {args.r} times without multiprocessing')
             for i in range(args.r):
+                print(f'Running test {name} run {i}')
                 pfunk.tests.run(name, args.database, i)
 
         if args.analyse:
