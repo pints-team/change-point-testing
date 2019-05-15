@@ -30,7 +30,8 @@ def _ensure_database_schema(connection):
     pints_commit varchar,
     pfunk_commit varchar,
     commit_hashes varchar,
-    seed integer,
+    seed_1 integer,
+    seed_2 integer,
     method varchar,
     json varchar
     )"""
@@ -45,8 +46,19 @@ class ResultsDatabaseSchemaClient(object):
     """
     primary_columns = ['identifier']
     mapped_columns = {'commit': 'commit_hashes'}
-    columns = ['name', 'date', 'status', 'python', 'pints', 'pints_commit',
-               'pfunk_commit', 'commit_hashes', 'seed', 'method']
+    columns = [
+        'name',
+        'date',
+        'status',
+        'python',
+        'pints',
+        'pints_commit',
+        'pfunk_commit',
+        'commit_hashes',
+        'seed_1',
+        'seed_2',
+        'method',
+    ]
 
     def json_values(self):
         """

@@ -180,7 +180,7 @@ class FunctionalTest(object):
         """
         # Log status
         log = logging.getLogger(__name__)
-        log.info('Running test: ' + self.name())
+        log.info(f'Running test: {self._name} run {run_number}')
 
         # Seed numpy random generator, so that we know the value
         seed = np.random.randint(2**32 - 1)  # Numpy says max seed is 2**32 - 1
@@ -191,8 +191,9 @@ class FunctionalTest(object):
         name = self.name()
 
         # Create result writer
-
         w = self._writer_generator(name, date, path)
+
+        # Write initial results
         w['status'] = 'uninitialised'
         w['date'] = date
         w['name'] = name
@@ -207,7 +208,8 @@ class FunctionalTest(object):
         w['pfunk_committed_date'] = pfunk.PFUNK_COMMIT_COMMITTED
         w['pfunk_commit_msg'] = pfunk.PFUNK_COMMIT_MESSAGE
         w['commit'] = pfunk.PFUNK_COMMIT + '/' + pfunk.PINTS_COMMIT
-        w['seed'] = seed
+        w['seed_1'] = seed
+        w['seed_2'] = run_number
 
         # Run test
         try:
