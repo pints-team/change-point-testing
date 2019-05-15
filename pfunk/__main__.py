@@ -28,6 +28,12 @@ def list_tests(args):
     """
     Shows all available tests and the date they were last run.
     """
+    if args.next:
+        # Show next test only
+        print(pfunk.find_next_test(args.database))
+        return
+
+    # Show table of tests
     dates = pfunk.find_test_dates(args.database)
     w = max(4, max([len(k) for k in dates.keys()]))
     print('| Name' + ' ' * (w - 4) + ' | Last run            |')
@@ -348,6 +354,11 @@ def main():
 
     # Show a list of all available tests
     list_parser = subparsers.add_parser('list', help='List tests')
+    list_parser.add_argument(
+        '--next',
+        action='store_true',
+        help='Show only the next scheduled test',
+    )
     list_parser.add_argument(
         '--database',
         action=CleanFileAction,
