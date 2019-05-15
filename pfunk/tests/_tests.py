@@ -6,7 +6,7 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
-import pfunk, os
+import pfunk
 
 _tests = {}
 
@@ -39,8 +39,9 @@ def analyse(name, database):
     return _tests[name].analyse(database)
 
 
-def results_writer_generator(name, date, file):
-    return pfunk.ResultsDatabaseWriter(file, name, date)
+def results_writer_generator(name, date, path):
+    """ Returns a ResultsDatabaseWriter. """
+    return pfunk.ResultsDatabaseWriter(path, name, date)
 
 
 from .optimisation import OptimisationLogistic
@@ -67,7 +68,8 @@ add(OptimisationBR(results_writer_generator, 'PSO', 2.0))
 from .mcmc_normal import MCMCNormal
 # Single-chain methods
 add(MCMCNormal(results_writer_generator, 'AdaptiveCovarianceMCMC', 1, 0.05))
-add(MCMCNormal(results_writer_generator, 'HamiltonianMCMC', 1, 0.05, max_iter=1000))
+add(MCMCNormal(
+    results_writer_generator, 'HamiltonianMCMC', 1, 0.05, max_iter=1000))
 add(MCMCNormal(results_writer_generator, 'MetropolisRandomWalkMCMC', 1, 0.2))
 add(MCMCNormal(results_writer_generator, 'PopulationMCMC', 1, 1.0))
 # Multi-chain methods
@@ -80,11 +82,12 @@ add(MCMCNormal(results_writer_generator, 'EmceeHammerMCMC', 3, 0.1))
 from .mcmc_banana import MCMCBanana
 # Single-chain methods
 add(MCMCBanana(results_writer_generator, 'AdaptiveCovarianceMCMC', 1, 1.0))
-#add(MCMCBanana(results_writer_generator, 'HamiltonianMCMC', 1, 1.0))  # Requires gradient
+# Requires gradient
+#add(MCMCBanana(results_writer_generator, 'HamiltonianMCMC', 1, 1.0))
 add(MCMCBanana(results_writer_generator, 'MetropolisRandomWalkMCMC', 5, 1.0))
 #add(MCMCBanana(results_writer_generator, 'PopulationMCMC', 1, 1.0, 50000))
 # Multi-chain methods
-# add(MCMCBanana(results_writer_generator, 'DifferentialEvolutionMCMC', 3, 1.0))
+#add(MCMCBanana(results_writer_generator, 'DifferentialEvolutionMCMC', 3, 1.0))
 add(MCMCBanana(results_writer_generator, 'DreamMCMC', 4, 1.0))
 add(MCMCBanana(results_writer_generator, 'EmceeHammerMCMC', 3, 1.0))
 
@@ -94,7 +97,7 @@ add(MCMCBanana(results_writer_generator, 'EmceeHammerMCMC', 3, 1.0))
 #from .mcmc_egg_box import MCMCEggBox
 # Single-chain methods
 #add(MCMCEggBox(results_writer_generator, 'AdaptiveCovarianceMCMC', 1, 1.0))
-#add(MCMCEggBox(results_writer_generator, 'HamiltonianMCMC', 1, 1.0))  # Requires gradient
+#add(MCMCEggBox(results_writer_generator, 'HamiltonianMCMC', 1, 1.0))
 #add(MCMCEggBox(results_writer_generator, 'MetropolisRandomWalkMCMC', 1, 1.0))
 #add(MCMCEggBox(results_writer_generator, 'PopulationMCMC', 1, 1.0))
 # Multi-chain methods

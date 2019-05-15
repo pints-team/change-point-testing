@@ -73,7 +73,8 @@ if not sys.version_info >= (3, 4):
 
 
 # Default test results database path
-# Used to store or retrieve test results, but can be overridden with the --database argument.
+# Used to store or retrieve test results, but can be overridden with the
+# --database argument.
 DEFAULT_RESULTS_DB = "./test_results.db"
 
 # Pints version and pints/pfunk commits
@@ -94,8 +95,10 @@ PFUNK_COMMIT_AUTHORED = None
 PINTS_COMMIT_COMMITTED = None
 PFUNK_COMMIT_COMMITTED = None
 
-# Commit message. We keep this because merges can change commit hashes, but the authored date and message will survive
-# those. Of course, if you choose to interactive rebase and edit or squash the original commit, that's your choice.
+# Commit message. We keep this because merges can change commit hashes, but the
+# authored date and message will survive those. Of course, if you choose to
+# interactively rebase and edit or squash the original commit, that's your
+# choice.
 PINTS_COMMIT_MESSAGE = None
 PFUNK_COMMIT_MESSAGE = None
 

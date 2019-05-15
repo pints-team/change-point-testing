@@ -9,8 +9,8 @@
 from __future__ import absolute_import, division
 from __future__ import print_function, unicode_literals
 
-import importlib
 import git
+import importlib
 import logging
 import sys
 import textwrap
@@ -84,7 +84,7 @@ def prepare_module():
     """
     Prepares the Pints module for import (reloading if necessary).
     """
-    log = logging.getLogger(__name__)
+    #log = logging.getLogger(__name__)
 
     # Add the repo version of python to the system path, ensuring this is
     # preferred over a globally installed Pints.
@@ -100,8 +100,10 @@ def prepare_module():
 
     # Set identifying variables
     pfunk.PINTS_COMMIT = pfunk.pintsrepo.hash()
-    pfunk.PINTS_COMMIT_AUTHORED = format_date(pfunk.pintsrepo.head().authored_date)
-    pfunk.PINTS_COMMIT_COMMITTED = format_date(pfunk.pintsrepo.head().committed_date)
+    pfunk.PINTS_COMMIT_AUTHORED = format_date(
+        pfunk.pintsrepo.head().authored_date)
+    pfunk.PINTS_COMMIT_COMMITTED = format_date(
+        pfunk.pintsrepo.head().committed_date)
     pfunk.PINTS_COMMIT_MESSAGE = pfunk.pintsrepo.head().message
     pfunk.PINTS_VERSION = pints.version(formatted=True)
 

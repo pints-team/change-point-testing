@@ -328,9 +328,14 @@ def investigate(args):
 
 class CleanFileAction(argparse.Action):
     """
-    Turn a path in a command-line argument into a "clean" (absolute, with ~ expanded) path.
-    Examples: ./foo -> /wherever/pwd/is/foo
-    ~/foo -> /home/pints-user/foo
+    Turn a path in a command-line argument into a "clean" (absolute, with ~
+    expanded) path.
+
+    Examples::
+
+        ./foo -> /wherever/pwd/is/foo
+        ~/foo -> /home/pints-user/foo
+
     """
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, pfunk.clean_filename(values))
@@ -390,7 +395,8 @@ def main():
         '--database',
         action=CleanFileAction,
         default=pfunk.DEFAULT_RESULTS_DB,
-        help="A SQLite database in which to store run results. Will be created if it doesn't exist.",
+        help='A SQLite database in which to store run results. Will be created'
+             ' if it doesn\'t exist.',
     )
     run_parser.add_argument(
         '-r', default=1, type=int,

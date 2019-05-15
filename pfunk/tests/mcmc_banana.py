@@ -32,7 +32,8 @@ class MCMCBanana(pfunk.FunctionalTest):
 
     """
 
-    def __init__(self, writer_generator, method, nchains, pass_threshold, max_iter=10000):
+    def __init__(self, writer_generator, method, nchains, pass_threshold,
+                 max_iter=10000):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
@@ -91,7 +92,7 @@ class MCMCBanana(pfunk.FunctionalTest):
 
         # Set up a sampling routine
         mcmc = MCMCController(log_pdf, self._nchains, x0, method=method)
-        mcmc.set_parallel(False) # functional testing defaults to 5 runs in parallel
+        mcmc.set_parallel(False)  # allow external parallelisation instead
 
         # Log to file
         if not DEBUG:

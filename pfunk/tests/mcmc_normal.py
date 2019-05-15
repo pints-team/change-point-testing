@@ -27,7 +27,8 @@ class MCMCNormal(pfunk.FunctionalTest):
         testing.)
     """
 
-    def __init__(self,  writer_generator, method, nchains, pass_threshold, max_iter=10000):
+    def __init__(self, writer_generator, method, nchains, pass_threshold,
+                 max_iter=10000):
 
         # Can't check method here, don't want to import pints
         self._method = str(method)
@@ -82,7 +83,7 @@ class MCMCNormal(pfunk.FunctionalTest):
         # Create a sampling routine
         mcmc = pints.MCMCController(
             log_pdf, self._nchains, x0, sigma0=sigma, method=method)
-        mcmc.set_parallel(False) # functional testing defaults to 5 runs in parallel
+        mcmc.set_parallel(False)  # allow external parallelisation instead
 
         # Log to file
         if not DEBUG:

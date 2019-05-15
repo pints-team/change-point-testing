@@ -25,7 +25,8 @@ class Optimisation(pfunk.FunctionalTest):
     ``max_iterations``
         The maximum number of iterations to run (> 0).
     ``writer_generator``
-        A callable that will return a key-value store for the test result details.
+        A callable that will return a key-value store for the test result
+        details.
     """
 
     def __init__(self, writer_generator, method, pass_threshold):
@@ -69,7 +70,7 @@ class Optimisation(pfunk.FunctionalTest):
         evaluations = 0
         unchanged_iterations = 0
 
-        # Create sequential evaluator (functional testing defaults to 5 runs in parallel)
+        # Create sequential evaluator (allowing external parallelisation)
         evaluator = pints.SequentialEvaluator(score)
 
         # Keep track of best position and score
