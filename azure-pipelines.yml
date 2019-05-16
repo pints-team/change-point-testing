@@ -41,7 +41,7 @@ jobs:
 
   - script: ./funk analyse --last
     workingDirectory: $(funkDir)
-    displayName: Analise test
+    displayName: Analyse test
     failOnStderr: true # this is what reports a failure, due to printing to stderr in __main__.py
 
   - script: ./funk report
