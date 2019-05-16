@@ -2,7 +2,9 @@
 
 This repository is used to house functional tests of [Pints](https://github.com/pints-team/pints) algorithms. Unlike unit tests, they can be statistical in nature and take long to run.
 
-[Results are visible here](https://github.com/pints-team/functional-testing-results).
+[Tests running is controlled here](https://dev.azure.com/FergusCooper/PINTS)
+
+[Test results can be viewed here](https://github.com/pints-team/functional-testing-results).
 
 GitHub project management features (e.g. issues) have been disabled for this repo. For tickets and discussion, please see [The main pints repository on GitHub](https://github.com/pints-team/pints).
 
