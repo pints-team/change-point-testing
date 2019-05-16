@@ -47,7 +47,7 @@ PATH_REPORT = os.path.join(
     DIR_WEB_REPO, 'content', 'page', 'functional-curation.md')
 
 # The path to the website sync script
-PATH_WEB_SYNC_SCRIPT = os.path.join(DIR_WEB_REPO, 'fergus.sh')
+PATH_WEB_SYNC_SCRIPT = os.path.join(DIR_WEB_REPO, 'z-deploy-funk.sh')
 
 
 # Date formatting
