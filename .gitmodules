@@ -6,3 +6,6 @@
 	path = res
 	url = git@github.com:pints-team/functional-testing-results.git
 	master = master
+[submodule "website"]
+	path = website
+	url = git@github.com:pints-team/website.git
