@@ -190,35 +190,42 @@ class FunctionalTest(object):
         date = pfunk.date()
         name = self.name()
 
-        # Create result writer
-        w = self._writer_generator(name, date, path)
+        # Store an identifier to the result writer's output, so we don't have to hold onto it while running
+        # the (potentially very long) test
+        results_id = None
 
-        # Write initial results
-        w['status'] = 'uninitialised'
-        w['date'] = date
-        w['name'] = name
-        w['python'] = pfunk.PYTHON_VERSION
-        w['pints'] = pfunk.PINTS_VERSION
-        w['pints_commit'] = pfunk.PINTS_COMMIT
-        w['pints_authored_date'] = pfunk.PINTS_COMMIT_AUTHORED
-        w['pints_committed_date'] = pfunk.PINTS_COMMIT_COMMITTED
-        w['pints_commit_msg'] = pfunk.PINTS_COMMIT_MESSAGE
-        w['pfunk_commit'] = pfunk.PFUNK_COMMIT
-        w['pfunk_authored_date'] = pfunk.PFUNK_COMMIT_AUTHORED
-        w['pfunk_committed_date'] = pfunk.PFUNK_COMMIT_COMMITTED
-        w['pfunk_commit_msg'] = pfunk.PFUNK_COMMIT_MESSAGE
-        w['commit'] = pfunk.PFUNK_COMMIT + '/' + pfunk.PINTS_COMMIT
-        w['seed_1'] = seed
-        w['seed_2'] = run_number
+        # Create result writer
+        with self._writer_generator(name, date, path) as w:
+            w['status'] = 'uninitialised'
+            w['date'] = date
+            w['name'] = name
+            w['python'] = pfunk.PYTHON_VERSION
+            w['pints'] = pfunk.PINTS_VERSION
+            w['pints_commit'] = pfunk.PINTS_COMMIT
+            w['pints_authored_date'] = pfunk.PINTS_COMMIT_AUTHORED
+            w['pints_committed_date'] = pfunk.PINTS_COMMIT_COMMITTED
+            w['pints_commit_msg'] = pfunk.PINTS_COMMIT_MESSAGE
+            w['pfunk_commit'] = pfunk.PFUNK_COMMIT
+            w['pfunk_authored_date'] = pfunk.PFUNK_COMMIT_AUTHORED
+            w['pfunk_committed_date'] = pfunk.PFUNK_COMMIT_COMMITTED
+            w['pfunk_commit_msg'] = pfunk.PFUNK_COMMIT_MESSAGE
+            w['commit'] = pfunk.PFUNK_COMMIT + '/' + pfunk.PINTS_COMMIT
+            w['seed'] = seed
+            w['seed_1'] = seed
+            w['seed_2'] = run_number
+            results_id = w.row_id()
 
         # Run test
+        results = {}
         try:
-            self._run(w)
+            self._run(results)
         except Exception:
-            log.error(f'Exception in test {self.name()}')
-            w['status'] = 'failed'
+            log.error('Exception in test: ' + self.name())
+            results['status'] = 'failed'
             raise
         finally:
-            log.info(f'Writing result to {w.filename()}')
-            w.write()
+            log.info('Writing result to ' + path)
+            with self._writer_generator(name, date, path, results_id) as w:
+                for k in results.keys():
+                    w[k] = results[k]
 
