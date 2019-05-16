@@ -91,39 +91,64 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
     Provides write access to a SQLite3 database containing test results.
     For compatibility with the interfaces supplied by
     ResultsWriter/ResultsReader, the flat-file equivalents, instances of this
-    class accept a test name and date, and provide access to the values in the
-    row matching those properties only.
+    class accept a test name and date, and provide access to the values in a
+    row matching. However, due to adding multiprocessing support, test name
+    and date no longer uniquely identify a test invocation so a separate
+    integer counter is used as the primary key.
+
+    This class is a Context Manager, so use it in a with block:
+
+    >>> with ResultsDatabaseWriter(":memory:", "a_test_name", "2019-01-01T12:34:56") as w:
+    ...     w[status] = "pending"
     """
 
-    def __init__(self, filename, test_name, date):
-        self._connection = connect_to_database(filename)
-        self.__ensure_schema()
+    def __init__(self, filename, test_name, date, existing_row_id=None):
+        self._connection = None
         self._filename = filename
+        self.__ensure_schema()
         self._name = test_name
         self._date = date
-        self.__ensure_row_exists()
+        if existing_row_id is not None:
+            self._row = existing_row_id
+        else:
+            self.__ensure_row_exists()
+
+    def __enter__(self):
+        self._connection = connect_to_database(self.filename())
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._connection.close()
 
     def __ensure_schema(self):
         """
         Establish that a test_results table exists, and if it didn't before,
-        that it has the correct schema.
+        that it has the correct schema. Note that this method uses a temporary
+        connection so it can be called outside the Context Manager lifecycle.
         :return: None.
         """
-        _ensure_database_schema(self._connection)
+        conn = connect_to_database(self.filename())
+        _ensure_database_schema(conn)
+        conn.commit()
+        conn.close()
 
     def __ensure_row_exists(self):
         """
         Create a row in the table to represent the current result, and store
         its primary key.
+        Note that this method uses a temporary connection so it can be called outside of the
+        Context Manager lifecycle.
         :return: None
         """
         # ensure the row exists
-        self._connection.execute(
+        conn = connect_to_database(self.filename())
+        conn.execute(
             'insert into test_results(name,date) values (?,?)',
             (self._name, self._date))
-        row_id = self._connection.execute('select last_insert_rowid()')
+        row_id = conn.execute('select last_insert_rowid()')
         self._row = row_id.fetchone()[0]
-        self._connection.commit()
+        conn.commit()
+        conn.close()
 
     def row_id(self):
         """
@@ -238,7 +263,7 @@ def connect_to_database(database):
     :param database: A path to a pfunk test results database.
     :return: An open sqlite3 connection to the database.
     """
-    connection = sqlite3.connect(database)
+    connection = sqlite3.connect(database, timeout=30)
     connection.row_factory = sqlite3.Row
     return connection
 

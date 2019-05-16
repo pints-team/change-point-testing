@@ -39,9 +39,9 @@ def analyse(name, database):
     return _tests[name].analyse(database)
 
 
-def results_writer_generator(name, date, path):
+def results_writer_generator(name, date, path, identifier=None):
     """ Returns a ResultsDatabaseWriter. """
-    return pfunk.ResultsDatabaseWriter(path, name, date)
+    return pfunk.ResultsDatabaseWriter(path, name, date, identifier)
 
 
 from .optimisation import OptimisationLogistic
