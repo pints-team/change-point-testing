@@ -250,7 +250,8 @@ def find_test_results(name, database):
     """
     connection = connect_to_database(database)
     results = connection.execute(
-        'select identifier from test_results where name like ?', [name])
+        'select identifier from test_results where name like ?'
+        'order by pints_committed_date, pfunk_committed_date', [name])
     row_ids = [r[0] for r in results.fetchall()]
     row_readers = [
         ResultsDatabaseReader(connection, row_id) for row_id in row_ids]

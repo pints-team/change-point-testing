@@ -117,16 +117,24 @@ class FunctionalTest(object):
             log.error('Exception in plot: ' + self.name())
             raise
 
-        # Create path (assuming 1 figure; will fix with unique_path if more)
-        date = pfunk.date()
-        name = self.name()
-        path = name + '-' + date + '.png'
+        # Path for single figure (will be adapted if there's more)
+        path = self.name() + '.png'
 
-        # Store names of generated files and glob mask of pathname to delete
-        # old figures later
+        # Delete existing files
         generated = []
-        mask = name + '-' + '*.png'
+        mask = self.name() + '*.png'
+        # Delete old figures
+        for path in glob.glob(os.path.join(pfunk.DIR_PLOT, mask)):
+            path = os.path.realpath(path)
+            if not path.startswith(pfunk.DIR_PLOT):
+                break
+            try:
+                os.remove(path)
+                log.info('Removed old plot: ' + path)
+            except IOError:
+                log.info('Removal of old plot failed: ' + path)
 
+        # Store
         try:
             # Assume that the user returns an iterable object containing
             # figures
@@ -149,18 +157,7 @@ class FunctionalTest(object):
             plt.show()
         plt.close('all')
 
-        # Delete old figures
-        for path in glob.glob(os.path.join(pfunk.DIR_PLOT, mask)):
-            path = os.path.realpath(path)
-            if not path.startswith(pfunk.DIR_PLOT):
-                continue
-            if path in generated:
-                continue
-            try:
-                os.remove(path)
-                log.info('Removed old plot: ' + path)
-            except IOError:
-                log.info('Removal of old plot failed: ' + path)
+
 
     def _run(self, result_writer):
         """

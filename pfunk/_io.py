@@ -46,9 +46,8 @@ def clean_filename(filename):
 
 def find_test_plots():
     """
-    Scans the plot directory, and returns a tuple ``(plots, dates)``, where
-    ``plots`` maps test names to a list of their most recent plot files, and
-    ``dates`` maps test names to the corresponding dates.
+    Scans the plot directory, and returns a list mapping test names to their
+    plot files.
     """
     # Get logger
     log = logging.getLogger(__name__)
@@ -60,37 +59,29 @@ def find_test_plots():
     dates = {}
 
     # Find all plot files
-    for path in os.listdir(pfunk.DIR_PLOT):
+    root = pfunk.DIR_PLOT
+    for path in os.listdir(root):
 
         # Attempt to read filename as test result
         base, ext = os.path.splitext(path)
-        parts = base.split('-', 1)
-        if len(parts) != 2:
-            log.info('Skipping file in plot dir ' + path)
-            continue
-        name, date = parts
 
-        # Multiple plots? Then get index
-        pos = date.rfind(':')
-        pos = date.find('-', pos)
-        if pos >= 0:
-            #index = int(date[pos + 1:])
-            date = date[:pos]
+        # Multiple plots? Then get initial part
+        name = base.split('-')[0]
 
         # Skip unknown tests
         if name not in names:
             continue
 
-        # Attempt to parse date
-        date = time.strptime(date, pfunk.DATE_FORMAT)
-
-        # Store plot if latests
-
-        if name not in dates or date > dates[name]:
-            dates[name] = date
-            plots[name] = [path]
-        elif date == dates[name]:
+        # Store plot
+        if name in plots:
             plots[name].append(path)
+        else:
+            plots[name] = [path]
+
+        # Store date
+        date = os.path.getmtime(os.path.join(root, path))
+        date = time.gmtime(date)
+        dates[name] = date
 
     return plots, dates
 
@@ -269,22 +260,28 @@ def generate_report(database):
         return time.strftime(f) if when is None else time.strftime(f, when)
 
     # Plot location, relative to file
-    filename = os.path.join(pfunk.DIR_RES_REPO, 'README.md')
-    dirname = os.path.relpath(pfunk.DIR_PLOT, start=pfunk.DIR_RES_REPO)
+    filename = pfunk.PATH_REPORT
+    dirname = ''
 
     # Generate markdown report
     eol = '\n'
     with open(filename, 'w') as f:
 
+        # Meta
+        f.write(f'---{eol}')
+        f.write(f'title: "Functional testing"{eol}')
+        f.write(f'date: "{time.strftime("%Y-%m-%d")}"{eol}')
+        f.write(f'---{eol}')
+
         # Header
-        f.write('# Pints functional testing report' + 3 * eol)
-        f.write('Generated on: ' + dfmt() + 3 * eol)
+        f.write(f'# Pints functional testing report{3 * eol}')
+        f.write(f'Generated on: {dfmt()}{3 * eol}')
 
         # List of failed tests
         if failed:
             f.write('Failed tests:' + eol)
             for name in failed:
-                f.write('- [' + name + '](#' + name.lower() + ')' + eol)
+                f.write(f'- [{name}](#{name.lower()}){eol}')
         else:
             f.write('All tests passed.' + eol)
         f.write(eol)
@@ -293,20 +290,20 @@ def generate_report(database):
         if passed:
             f.write('Passed tests:' + eol)
             for name in passed:
-                f.write('- [' + name + '](#' + name.lower() + ')' + eol)
+                f.write(f'- [{name}](#{name.lower()}){eol}')
             f.write(eol)
 
         # Note about axis labels
-        f.write('### Note about axis labels' + eol)
-        f.write('Labels on the x-axis commonly use the notation ')
-        f.write('`<pints commit> <pfunk commit>`.' + eol)
+        f.write(f'### Note about axis labels{eol}')
+        f.write(f'Labels on the x-axis commonly use the notation ')
+        f.write(f'`<pints commit> <pfunk commit>`.{eol}')
         f.write(eol)
 
         # Individual tests
         for name, date in sorted(dates.items(), key=lambda x: x[0]):
-            f.write('## ' + name + 2 * eol)
-            f.write('- Last run on: ' + dfmt(date) + eol)
-            f.write('- Status: ' + ('ok' if states[name] else 'FAILED') + eol)
+            f.write(f'## {name}{2 * eol}')
+            f.write(f'- Last run on: {dfmt(date)}{eol}')
+            f.write(f'- Status: {"ok" if states[name] else "FAILED"}{eol}')
 
             if name in plots:
                 f.write(
@@ -315,7 +312,7 @@ def generate_report(database):
                 for plot in sorted(
                         plots[name], key=lambda x: os.path.splitext(x)[0]):
                     path = os.path.join(dirname, plot)
-                    f.write(eol + '![' + plot + '](' + path + ')' + eol)
+                    f.write(f'{eol}![{plot}]({path}){eol}')
                 f.write(eol)
 
             f.write(eol)
@@ -329,7 +326,7 @@ def generate_badge(failed=False):
     Generates a badge for github.
     """
     # Plot location, relative to file
-    filename = os.path.join(pfunk.DIR_RES_REPO, 'badge.svg')
+    filename = os.path.join(pfunk.DIR_PLOT, 'badge.svg')
 
     badge = []
     badge.append(

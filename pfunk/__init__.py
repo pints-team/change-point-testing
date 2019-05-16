@@ -13,6 +13,11 @@ import sys
 import time
 
 
+# Require at least Python 3.6 (for importlib.reload and f-strings)
+if not sys.version_info >= (3, 6):
+    raise RuntimeError('Functional testing requires Python 3.6+')
+
+
 # Set up logging
 if 'PFUNK_DEBUG' in os.environ:
     logging.basicConfig(level=logging.INFO)
@@ -22,27 +27,27 @@ log = logging.getLogger(__name__)
 log.info('Loading Pints Functional Testing.')
 
 
-# Define directories to use
-# The root of this repo
+# The root of this repository
 DIR_PFUNK = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-# The root of the pints repo (submodule) and module
+
+# The pints repository (submodule)
 DIR_PINTS_REPO = os.path.join(DIR_PFUNK, 'pints')
+
+# Location of the Pints module
 DIR_PINTS_MODULE = os.path.join(DIR_PINTS_REPO, 'pints')
-# The root of the results repo (submodule) and subdirectoroes
-DIR_RES_REPO = os.path.join(DIR_PFUNK, 'res')
-_DIR_RESULT_DEFAULT = os.path.join(DIR_RES_REPO, 'results')
-DIR_RESULT = _DIR_RESULT_DEFAULT
-_DIR_PLOT_DEFAULT = os.path.join(DIR_RES_REPO, 'plots')
-DIR_PLOT = _DIR_PLOT_DEFAULT
 
+# The website repository (submodule)
+DIR_WEB_REPO = os.path.join(DIR_PFUNK, 'website')
 
-# Ensure result and plot directories exist
-if not os.path.isdir(DIR_RESULT):
-    log.info('Creating result dir: ' + DIR_RESULT)
-    os.makedirs(DIR_RESULT)
-if not os.path.isdir(DIR_PLOT):
-    log.info('Creating plot dir: ' + DIR_PLOT)
-    os.makedirs(DIR_PLOT)
+# The path to write plots and badges to
+DIR_PLOT = os.path.join(DIR_WEB_REPO, 'static', 'untracked')
+
+# The path to write the report to
+PATH_REPORT = os.path.join(
+    DIR_WEB_REPO, 'content', 'page', 'functional-curation.md')
+
+# The path to the website sync script
+PATH_WEB_SYNC_SCRIPT = os.path.join(DIR_WEB_REPO, 'fergus.sh')
 
 
 # Date formatting
@@ -60,19 +65,15 @@ def date(when=None):
 NAME_FORMAT = re.compile(r'^[a-zA-Z]\w*$')
 
 
-# Python version
-PYTHON_VERSION = sys.version.replace('\n', '')
-
-
-# Require at least Python 3.6 (for importlib.reload and f-strings)
-if not sys.version_info >= (3, 6):
-    raise RuntimeError('Functional testing requires Python 3.6+')
-
-
 # Default test results database path
 # Used to store or retrieve test results, but can be overridden with the
 # --database argument.
 DEFAULT_RESULTS_DB = "./test_results.db"
+
+
+# Python version
+PYTHON_VERSION = sys.version.replace('\n', '')
+
 
 # Pints version and pints/pfunk commits
 # These are set using (repo).prepare_module
@@ -106,7 +107,7 @@ PFUNK_COMMIT_MESSAGE = None
 from . import (  # noqa
     pfunkrepo,
     pintsrepo,
-    resultsrepo,
+    website,
 )
 
 from ._io import (  # noqa

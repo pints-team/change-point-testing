@@ -88,26 +88,17 @@ def run(args):
         pfunk.pintsrepo.pull()
 
     # Allow testing of older pints versions
-    if args.t:
-        pints_checkout, results_dir = args.t
+    if args.commit:
 
         # Check analysing and plotting is disabled
         if args.analyse or args.plot or args.show:
-            print('When testing specific commits or branches, plots and/or'
+            print('When testing specific commits, plots and/or'
                   ' analysis cannot be run.')
             sys.exit(1)
 
-        # Change result directory
-        results_dir = os.path.abspath(results_dir)
-        if results_dir == pfunk._DIR_RESULT_DEFAULT:
-            print('When testing specific commits or branches, an alternative'
-                  ' results directory must be specified.')
-            sys.exit(1)
-        pfunk.DIR_RESULT = results_dir
-
         # Check out alternative pints version
-        print('Checking out ' + pints_checkout)
-        pfunk.pintsrepo.checkout(pints_checkout)
+        print(f'Checking out {args.commit}')
+        pfunk.pintsrepo.checkout(args.commit)
         print(pfunk.pintsrepo.info())
 
     # Prepare module
@@ -136,7 +127,6 @@ def run(args):
             # Run without multiprocessing
             print(f'Running {name} {args.r} times without multiprocessing')
             for i in range(args.r):
-                print(f'Running test {name} run {i}')
                 pfunk.tests.run(name, args.database, i)
 
         if args.analyse:
@@ -155,24 +145,6 @@ def plot(args):
     """
     Creates a plot for one or all tests.
     """
-    # Set alternative directories, if required
-    if args.t:
-        results_dir, plot_dir = args.t
-
-        # Change result directory
-        results_dir = os.path.abspath(results_dir)
-        if results_dir == pfunk._DIR_RESULT_DEFAULT:
-            print('Alternative results directory cannot be the default one.')
-            sys.exit(1)
-        pfunk.DIR_RESULT = results_dir
-
-        # Change plot directory
-        plot_dir = os.path.abspath(plot_dir)
-        if plot_dir == pfunk._DIR_PLOT_DEFAULT:
-            print('Alternative plot directory cannot be the default one.')
-            sys.exit(1)
-        pfunk.DIR_PLOT = plot_dir
-
     # Make plots
     if args.name:
         for name in _parse_pattern(args.name):
@@ -228,30 +200,13 @@ def generate_report(args):
     print('Done')
 
 
-def commit_results(args):
+def upload_results(args):
     """
     Commits any new results.
     """
     print('Committing new test results')
-    pfunk.resultsrepo.commit_results()
+    pfunk.website.upload_results()
     print('Done')
-
-
-#def weekend(args):
-#    """
-#    Keep running tests, generating reports, and committing results.
-#    """
-#    while True:
-#        pfunk.pfunkrepo.pull()
-#        pfunk.pfunkrepo.prepare_module()
-#        for i in range(10):
-#            name = pfunk.find_next_test()
-#            print('Running test ' + name)
-#            pfunk.tests.run(name)
-#            pfunk.tests.plot(name)
-#            print('Done')
-#        pfunk.generate_report()
-#        pfunk.resultsrepo.commit_results()
 
 
 def investigate(args):
@@ -264,29 +219,6 @@ def investigate(args):
 
     # Get test names
     names = _parse_pattern(args.name[0])
-
-    # Get directory to store everything in
-    temp_dir = args.temp_dir[0]
-    if os.path.exists(temp_dir):
-        if not os.path.isdir(temp_dir):
-            print('Given temp_dir already exists and is not a directory.')
-            sys.exit(1)
-        if os.listdir(temp_dir):
-            print('Given temp_dir already exists and is not empty.')
-            sys.exit(1)
-    else:
-        os.makedirs(temp_dir)
-
-    # Change result and plot directory
-    temp_dir = os.path.abspath(temp_dir)
-    if temp_dir == pfunk._DIR_RESULT_DEFAULT:
-        print('Temporary directory cannot be the results directory.')
-        sys.exit(1)
-    if temp_dir == pfunk._DIR_PLOT_DEFAULT:
-        print('Temporary directory cannot be the plot directory.')
-        sys.exit(1)
-    pfunk.DIR_RESULT = temp_dir
-    pfunk.DIR_PLOT = temp_dir
 
     # Update pints repo
     pfunk.pintsrepo.pull()
@@ -312,11 +244,12 @@ def investigate(args):
         sys.argv[0],
         'run', args.name[0],
         '-r', str(repeats),
+        '--database', args.database,
         '--no-refresh',
     ]
 
     for commit in commits:
-        cmd = base + ['-t', commit, temp_dir]
+        cmd = base + ['-commit', commit]
         try:
             p = subprocess.Popen(cmd)
             p.wait()
@@ -325,9 +258,12 @@ def investigate(args):
             print('ABORTED')
             return
 
+        if p.returncode != 0:
+            print(f'RUN FAILED FOR COMMIT {commit}')
+
     # Analyse results
     for name in names:
-        pfunk.tests.plot(name, args.show)
+        pfunk.tests.plot(name, args.database, args.show)
 
 
 class CleanFileAction(argparse.Action):
@@ -412,9 +348,8 @@ def main():
         help='Number of test repeats to run.',
     )
     run_parser.add_argument(
-        '-t', nargs=2, metavar=('commit', 'result_dir'),
-        help='Test a specific Pints commit (or branch) and store results in'
-             ' a non-standard output directory.',
+        '-commit', nargs=1, type=str,
+        help='Test a specific Pints commit',
     )
     run_parser.add_argument(
         '--no-refresh',
@@ -445,10 +380,6 @@ def main():
         '--show',
         action='store_true',
         help='Show plots on screen',
-    )
-    plot_parser.add_argument(
-        '-t', nargs=2, metavar=('result_dir', 'plot_dir'),
-        help='Load results and store plots in custom directories',
     )
     plot_parser.add_argument(
         '--database',
@@ -485,7 +416,7 @@ def main():
         '--database',
         action=CleanFileAction,
         default=pfunk.DEFAULT_RESULTS_DB,
-        help='Test results database for analysis',
+        help='Test results database',
     )
     analyse_parser.set_defaults(func=analyse)
 
@@ -498,7 +429,7 @@ def main():
         '--database',
         action=CleanFileAction,
         default=pfunk.DEFAULT_RESULTS_DB,
-        help='Test results database for report',
+        help='Test results database',
     )
     report_parser.set_defaults(func=generate_report)
 
@@ -507,7 +438,7 @@ def main():
         'commit',
         help='Commit any new test results',
     )
-    commit_parser.set_defaults(func=commit_results)
+    commit_parser.set_defaults(func=upload_results)
 
     # Keep running tests, generating reports, and committing results
     #weekend_parser = subparsers.add_parser(
@@ -529,13 +460,6 @@ def main():
         nargs=1,
         action='store',
         help='The test to investigate',
-    )
-    investigate_parser.add_argument(
-        'temp_dir',
-        metavar='<temp_dir>',
-        nargs=1,
-        action='store',
-        help='A path to store results and plots in.',
     )
     group = investigate_parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
@@ -560,6 +484,12 @@ def main():
         '--show',
         action='store_true',
         help='Show plots on screen',
+    )
+    investigate_parser.add_argument(
+        '--database',
+        action=CleanFileAction,
+        default=pfunk.DEFAULT_RESULTS_DB,
+        help='Test results database',
     )
     investigate_parser.set_defaults(func=investigate)
 
