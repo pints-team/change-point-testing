@@ -4,7 +4,7 @@ This repository is used to house functional tests of [Pints](https://github.com/
 
 [Tests running is controlled here](https://dev.azure.com/FergusCooper/PINTS)
 
-[Test results can be viewed here](https://github.com/pints-team/functional-testing-results).
+[Test results can be viewed here](https://www.cs.ox.ac.uk/projects/PINTS/functional-testing).
 
 GitHub project management features (e.g. issues) have been disabled for this repo. For tickets and discussion, please see [The main pints repository on GitHub](https://github.com/pints-team/pints).
 
