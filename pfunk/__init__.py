@@ -40,7 +40,7 @@ DIR_PINTS_MODULE = os.path.join(DIR_PINTS_REPO, 'pints')
 DIR_WEB_REPO = os.path.join(DIR_PFUNK, 'website')
 
 # The path to write plots and badges to
-DIR_PLOT = os.path.join(DIR_WEB_REPO, 'static', 'untracked')
+DIR_PLOT = os.path.join(DIR_WEB_REPO, 'static', 'functional-testing')
 
 # The path to write the report to
 PATH_REPORT = os.path.join(

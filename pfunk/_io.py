@@ -279,18 +279,20 @@ def generate_report(database):
 
         # List of failed tests
         if failed:
-            f.write('Failed tests:' + eol)
+            f.write('Failed tests:' + 2 * eol)
             for name in failed:
-                f.write(f'- [{name}](#{name.lower()}){eol}')
+                href = name.lower().replace('_', '-')
+                f.write(f'- [{name}](#{href}){eol}')
         else:
             f.write('All tests passed.' + eol)
         f.write(eol)
 
         # List of passed tests
         if passed:
-            f.write('Passed tests:' + eol)
+            f.write('Passed tests:' + 2 * eol)
             for name in passed:
-                f.write(f'- [{name}](#{name.lower()}){eol}')
+                href = name.lower().replace('_', '-')
+                f.write(f'- [{name}](#{href}){eol}')
             f.write(eol)
 
         # Note about axis labels
