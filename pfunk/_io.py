@@ -211,7 +211,7 @@ def gather_statistics_per_commit(
         if len(yf):
             mean.append(np.mean(yf))
             std.append(np.std(yf))
-        else:
+        elif len(y):
             mean.append(y[0])
             std.append(0)
 
