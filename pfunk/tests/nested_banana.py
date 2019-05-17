@@ -84,15 +84,6 @@ class NestedBanana(pfunk.FunctionalTest):
         # Run
         samples, logZ = sampler.run()
 
-        # Calculate KLD for a sliding window
-        n_samples = len(samples)    # Total samples
-        n_window = 500              # Window size
-        n_jump = 20                 # Spacing between windows
-        iters = list(range(0, n_samples - n_window + n_jump, n_jump))
-        result['iters'] = iters
-        result['klds'] = [
-            log_pdf.kl_divergence(samples[i:i + n_window]) for i in iters]
-
         # Store kullback-leibler divergence
         result['kld'] = log_pdf.kl_divergence(samples)
 
@@ -113,17 +104,6 @@ class NestedBanana(pfunk.FunctionalTest):
             'kld',
             'Banana w. ' + self._method,
             'Kullback-Leibler divergence', 3 * self._pass_threshold)
-        )
-
-        # Figure: KL over time
-        figs.append(pfunk.plot.convergence(
-            results,
-            'iters',
-            'klds',
-            'Banana w. ' + self._method,
-            'Iteration (sliding window)',
-            'Kullback-Leibler divergence',
-            0, 1)
         )
 
         return figs

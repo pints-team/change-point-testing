@@ -13,7 +13,7 @@ import pfunk
 
 class Optimisation(pfunk.FunctionalTest):
     """
-    Runs an optimisation and tracks convergence and relative best position.
+    Runs an optimisation and tracks relative best position.
 
     Arguments:
 
@@ -75,9 +75,6 @@ class Optimisation(pfunk.FunctionalTest):
         fbest = float('inf')
 
         # Start searching
-        evals = []
-        frels = []
-
         running = True
         while running:
             xs = optimiser.ask()
@@ -102,10 +99,6 @@ class Optimisation(pfunk.FunctionalTest):
             iterations += 1
             evaluations += len(fs)
 
-            # Log evaluations and relative score
-            evals.append(evaluations)
-            frels.append(fbest / ftrue)
-
             # Maximum number of iterations
             if iterations >= 5000:
                 running = False
@@ -126,10 +119,6 @@ class Optimisation(pfunk.FunctionalTest):
         # Store solution, relative to likelihood at 'true' solution
         # This should be 1 or below 1 if the optimum was found
         result['fbest_relative'] = fbest / ftrue
-
-        # Store convergence information
-        result['evals'] = evals
-        result['frels'] = frels
 
         # Store status
         result['status'] = 'done'
@@ -152,26 +141,6 @@ class Optimisation(pfunk.FunctionalTest):
             'fbest_relative',
             self.name(),
             'Final f(best) / f(true)', 1 + 3 * self._pass_threshold)
-        )
-
-        #
-        # Plot 2: Convergence
-        #
-        # Get good limits for plot
-        evals, frels = results['evals', 'frels']
-        frels = [f[-1] for f in frels]
-        mid, rng = stats.scoreatpercentile(frels, 50), stats.iqr(frels)
-        ymin = mid - 2 * rng
-        ymax = mid + 2 * rng
-
-        figs.append(pfunk.plot.convergence(
-            results,
-            'evals',
-            'frels',
-            self.name(),
-            'Evaluations',
-            'f(best) / f(true)',
-            ymin, ymax)
         )
 
         # Return

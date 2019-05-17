@@ -115,15 +115,6 @@ class MCMCBanana(pfunk.FunctionalTest):
         # iteration for multi-chain methods)
         chain = pfunk.weave(chains)
 
-        # Calculate KLD for a sliding window
-        n_samples = len(chain)              # Total samples
-        n_window = 500 * self._nchains      # Window size
-        n_jump = 20 * self._nchains         # Spacing between windows
-        iters = list(range(0, n_samples - n_window + n_jump, n_jump))
-        result['iters'] = iters
-        result['klds'] = [
-            log_pdf.kl_divergence(chain[i:i + n_window]) for i in iters]
-
         # Remove burn-in
         # For multi-chain, multiply by n_chains because we wove the chains
         # together.
@@ -154,17 +145,6 @@ class MCMCBanana(pfunk.FunctionalTest):
             'kld',
             'Banana w. ' + self._method,
             'Kullback-Leibler divergence', 3 * self._pass_threshold)
-        )
-
-        # Figure: KL over time
-        figs.append(pfunk.plot.convergence(
-            results,
-            'iters',
-            'klds',
-            'Banana w. ' + self._method,
-            'Iteration (sliding window)',
-            'Kullback-Leibler divergence',
-            0, 10)
         )
 
         # Figure: ESS per commit
