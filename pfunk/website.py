@@ -23,7 +23,7 @@ def upload_results():
     # Call the synchronisation script in a subprocess
     cmd = [pfunk.PATH_WEB_SYNC_SCRIPT]
     try:
-        p = subprocess.Popen(cmd)
+        p = subprocess.Popen(cmd, cwd=pfunk.DIR_WEB_REPO)
         p.wait()
     except KeyboardInterrupt:
         p.terminate()
