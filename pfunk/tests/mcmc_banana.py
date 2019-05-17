@@ -156,6 +156,14 @@ class MCMCBanana(pfunk.FunctionalTest):
             'Kullback-Leibler divergence', 3 * self._pass_threshold)
         )
 
+        # Figure: KL histogram
+        figs.append(pfunk.plot.histogram(
+            results,
+            'kld',
+            'Banana w. ' + self._method,
+            'Kullback-Leibler divergence')
+        )
+
         # Figure: KL over time
         figs.append(pfunk.plot.convergence(
             results,
@@ -169,6 +177,14 @@ class MCMCBanana(pfunk.FunctionalTest):
 
         # Figure: ESS per commit
         figs.append(pfunk.plot.variable(
+            results,
+            'ess',
+            'Banana w. ' + self._method,
+            'Effective sample size')
+        )
+
+        # Figure: ESS histogram
+        figs.append(pfunk.plot.histogram(
             results,
             'ess',
             'Banana w. ' + self._method,
