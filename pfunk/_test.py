@@ -100,8 +100,8 @@ class FunctionalTest(object):
         Generates the plots defined for this test
 
         All plots returned by the test are written out to a filename defined
-        by the test name and current date. If ``show==True`` then the figures
-        are also shown on the current display.
+        by the test name. If ``show==True`` then the figures are also shown on
+        the current display.
         """
         # Create logger for _global_ console/file output
         log = logging.getLogger(__name__)
@@ -118,11 +118,11 @@ class FunctionalTest(object):
             raise
 
         # Path for single figure (will be adapted if there's more)
-        path = self.name() + '.png'
+        path = self.name() + '.svg'
 
         # Delete existing files
         generated = []
-        mask = self.name() + '*.png'
+        mask = self.name() + '*.svg'
         # Delete old figures
         for path in glob.glob(os.path.join(pfunk.DIR_PLOT, mask)):
             path = os.path.realpath(path)
