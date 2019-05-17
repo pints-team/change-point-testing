@@ -44,7 +44,7 @@ DIR_PLOT = os.path.join(DIR_WEB_REPO, 'static', 'untracked')
 
 # The path to write the report to
 PATH_REPORT = os.path.join(
-    DIR_WEB_REPO, 'content', 'page', 'functional-curation.md')
+    DIR_WEB_REPO, 'content', 'page', 'functional-testing.md')
 
 # The path to the website sync script
 PATH_WEB_SYNC_SCRIPT = os.path.join(DIR_WEB_REPO, 'z-deploy-funk.sh')
