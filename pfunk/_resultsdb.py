@@ -36,8 +36,7 @@ def _ensure_database_schema(connection):
     pfunk_authored_date date,
     pfunk_committed_date date,
     pfunk_commit_msg varchar,
-    seed_1 integer,
-    seed_2 integer,
+    seed integer,
     json varchar
     )"""
     connection.execute(query)
@@ -66,8 +65,7 @@ class ResultsDatabaseSchemaClient(object):
         'pfunk_authored_date',
         'pfunk_committed_date',
         'pfunk_commit_msg',
-        'seed_1',
-        'seed_2',
+        'seed',
     ]
 
     def json_values(self):

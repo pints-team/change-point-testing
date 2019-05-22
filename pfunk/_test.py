@@ -117,6 +117,9 @@ class FunctionalTest(object):
             log.error('Exception in plot: ' + self.name())
             raise
 
+        # Ensure the plots directory exists, or script will fail on fig.savefig
+        os.makedirs(pfunk.DIR_PLOT, exist_ok=True)
+
         # Path for single figure (will be adapted if there's more)
         path = self.name() + '.svg'
 
@@ -157,8 +160,6 @@ class FunctionalTest(object):
             plt.show()
         plt.close('all')
 
-
-
     def _run(self, result_writer):
         """
         This will be defined for an individual test. It will run the test,
@@ -180,15 +181,16 @@ class FunctionalTest(object):
         log.info(f'Running test: {self._name} run {run_number}')
 
         # Seed numpy random generator, so that we know the value
-        seed = np.random.randint(2**32 - 1)  # Numpy says max seed is 2**32 - 1
-        np.random.seed([seed, run_number])
+        max_uint32 = np.iinfo(np.uint32).max
+        seed = int(np.mod(np.random.randint(max_uint32) + run_number, max_uint32))
+        np.random.seed(seed)
 
         # Create test name
         date = pfunk.date()
         name = self.name()
 
-        # Store an identifier to the result writer's output, so we don't have to hold onto it while running
-        # the (potentially very long) test
+        # Store an identifier to the result writer's output, so we don't have to hold onto it
+        # while running the (potentially very long) test
         results_id = None
 
         # Create result writer
@@ -208,8 +210,6 @@ class FunctionalTest(object):
             w['pfunk_commit_msg'] = pfunk.PFUNK_COMMIT_MESSAGE
             w['commit'] = pfunk.PFUNK_COMMIT + '/' + pfunk.PINTS_COMMIT
             w['seed'] = seed
-            w['seed_1'] = seed
-            w['seed_2'] = run_number
             results_id = w.row_id()
 
         # Run test
@@ -225,4 +225,3 @@ class FunctionalTest(object):
             with self._writer_generator(name, date, path, results_id) as w:
                 for k in results.keys():
                     w[k] = results[k]
-
