@@ -15,7 +15,6 @@ from scipy import stats
 
 import pfunk
 
-
 # High-precision floats
 FLOAT_FORMAT = '{: .17e}'
 
@@ -134,7 +133,10 @@ def gather_statistics_per_commit(
 
     """
     # Fetch commits and scores
-    commits, scores = results['commit', variable]
+    pfunk_commits, pints_commits, scores = results['pfunk_commit', 'pints_commit', variable]
+
+    commits = [f'{pfunk_commit}/{pints_commit}' for pfunk_commit, pints_commit in
+               zip(pfunk_commits, pints_commits)]
 
     # Gather values per commit
     unique = []
@@ -170,6 +172,7 @@ def gather_statistics_per_commit(
     def shorten(commit):
         """ Shorten commit names, possibly multiple separated by '/'. """
         return '\n'.join([x.strip()[:7] for x in commit.split('/')])
+
     if short_names:
         unique = [shorten(x) for x in unique]
         commits = [shorten(x) for x in commits]

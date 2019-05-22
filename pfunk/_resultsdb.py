@@ -29,7 +29,6 @@ def _ensure_database_schema(connection):
     pints varchar,
     pints_commit varchar,
     pfunk_commit varchar,
-    commit_hashes varchar,
     pints_authored_date date,
     pints_committed_date date,
     pints_commit_msg varchar,
@@ -49,7 +48,6 @@ class ResultsDatabaseSchemaClient(object):
     database columns and how to interpret the JSON column.
     """
     primary_columns = ['identifier']
-    mapped_columns = {'commit': 'commit_hashes'}
     columns = [
         'name',
         'date',
@@ -58,7 +56,6 @@ class ResultsDatabaseSchemaClient(object):
         'pints',
         'pints_commit',
         'pfunk_commit',
-        'commit_hashes',
         'pints_authored_date',
         'pints_committed_date',
         'pints_commit_msg',
@@ -158,8 +155,6 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         if key in self.primary_columns:
             # don't update these
             pass
-        elif key in self.mapped_columns.keys():
-            self[self.mapped_columns[key]] = value
         elif key in self.columns:
             self._connection.execute(
                 f'update test_results set {key} = ? where identifier = ?',
@@ -212,8 +207,6 @@ class ResultsDatabaseReader(ResultsDatabaseSchemaClient):
                 raise KeyError(
                     f'row_id {self._row} is not present in the database')
             return database_row[0]
-        if item in self.mapped_columns.keys():
-            return self[self.mapped_columns[item]]
         dictionary = defaultdict(lambda: None, self.json_values())
         return dictionary[item]
 

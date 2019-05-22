@@ -208,7 +208,6 @@ class FunctionalTest(object):
             w['pfunk_authored_date'] = pfunk.PFUNK_COMMIT_AUTHORED
             w['pfunk_committed_date'] = pfunk.PFUNK_COMMIT_COMMITTED
             w['pfunk_commit_msg'] = pfunk.PFUNK_COMMIT_MESSAGE
-            w['commit'] = pfunk.PFUNK_COMMIT + '/' + pfunk.PINTS_COMMIT
             w['seed'] = seed
             results_id = w.row_id()
 
