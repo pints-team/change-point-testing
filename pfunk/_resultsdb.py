@@ -29,15 +29,13 @@ def _ensure_database_schema(connection):
     pints varchar,
     pints_commit varchar,
     pfunk_commit varchar,
-    commit_hashes varchar,
     pints_authored_date date,
     pints_committed_date date,
     pints_commit_msg varchar,
     pfunk_authored_date date,
     pfunk_committed_date date,
     pfunk_commit_msg varchar,
-    seed_1 integer,
-    seed_2 integer,
+    seed integer,
     json varchar
     )"""
     connection.execute(query)
@@ -50,7 +48,6 @@ class ResultsDatabaseSchemaClient(object):
     database columns and how to interpret the JSON column.
     """
     primary_columns = ['identifier']
-    mapped_columns = {'commit': 'commit_hashes'}
     columns = [
         'name',
         'date',
@@ -59,15 +56,13 @@ class ResultsDatabaseSchemaClient(object):
         'pints',
         'pints_commit',
         'pfunk_commit',
-        'commit_hashes',
         'pints_authored_date',
         'pints_committed_date',
         'pints_commit_msg',
         'pfunk_authored_date',
         'pfunk_committed_date',
         'pfunk_commit_msg',
-        'seed_1',
-        'seed_2',
+        'seed',
     ]
 
     def json_values(self):
@@ -98,7 +93,8 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
 
     This class is a Context Manager, so use it in a with block:
 
-    >>> with ResultsDatabaseWriter(":memory:", "a_test_name", "2019-01-01T12:34:56") as w:
+    >>> with ResultsDatabaseWriter(":memory:", "a_test_name",
+    ...                            "2019-01-01T12:34:56") as w:
     ...     w[status] = "pending"
     """
 
@@ -136,8 +132,8 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         """
         Create a row in the table to represent the current result, and store
         its primary key.
-        Note that this method uses a temporary connection so it can be called outside of the
-        Context Manager lifecycle.
+        Note that this method uses a temporary connection so it can be called
+        outside of the Context Manager lifecycle.
         :return: None
         """
         # ensure the row exists
@@ -152,7 +148,8 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
 
     def row_id(self):
         """
-        Return the primary key for this writer's table row. Mostly for debugging.
+        Return the primary key for this writer's table row. Mostly for
+        debugging.
         """
         return self._row
 
@@ -160,8 +157,6 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         if key in self.primary_columns:
             # don't update these
             pass
-        elif key in self.mapped_columns.keys():
-            self[self.mapped_columns[key]] = value
         elif key in self.columns:
             self._connection.execute(
                 f'update test_results set {key} = ? where identifier = ?',
@@ -200,6 +195,7 @@ class ResultsDatabaseReader(ResultsDatabaseSchemaClient):
     """
     Provides read access to a row in the test results database.
     """
+
     def __init__(self, connection, row_id):
         self._connection = connection
         self._row = row_id
@@ -214,8 +210,6 @@ class ResultsDatabaseReader(ResultsDatabaseSchemaClient):
                 raise KeyError(
                     f'row_id {self._row} is not present in the database')
             return database_row[0]
-        if item in self.mapped_columns.keys():
-            return self[self.mapped_columns[item]]
         dictionary = defaultdict(lambda: None, self.json_values())
         return dictionary[item]
 
@@ -226,6 +220,7 @@ class ResultsDatabaseResultsSet(object):
     keyed access to the fields in the results, so set['foo'] gives you a list
     of the 'foo' fields for all of the results in the set.
     """
+
     def __init__(self, result_rows):
         self._rows = result_rows
 
@@ -290,4 +285,3 @@ def find_test_dates(database):
         if test not in name_date_map.keys():
             name_date_map[test] = time.struct_time([0] * 9)
     return name_date_map
-

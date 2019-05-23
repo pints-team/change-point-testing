@@ -6,7 +6,6 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
-import logging
 import numpy as np
 import os
 import re
@@ -14,7 +13,6 @@ import time
 from scipy import stats
 
 import pfunk
-
 
 # High-precision floats
 FLOAT_FORMAT = '{: .17e}'
@@ -49,9 +47,6 @@ def find_test_plots():
     Scans the plot directory, and returns a list mapping test names to their
     plot files.
     """
-    # Get logger
-    log = logging.getLogger(__name__)
-
     # Get a list of available tests
     import pfunk.tests
     names = pfunk.tests.tests()
@@ -134,7 +129,12 @@ def gather_statistics_per_commit(
 
     """
     # Fetch commits and scores
-    commits, scores = results['commit', variable]
+    pfunk_commits, pints_commits, scores = results[
+        'pfunk_commit', 'pints_commit', variable
+    ]
+
+    commits = [f'{pfunk_commit}/{pints_commit}' for pfunk_commit, pints_commit
+               in zip(pfunk_commits, pints_commits)]
 
     # Gather values per commit
     unique = []
@@ -170,6 +170,7 @@ def gather_statistics_per_commit(
     def shorten(commit):
         """ Shorten commit names, possibly multiple separated by '/'. """
         return '\n'.join([x.strip()[:7] for x in commit.split('/')])
+
     if short_names:
         unique = [shorten(x) for x in unique]
         commits = [shorten(x) for x in commits]
@@ -182,13 +183,13 @@ def gather_statistics_per_commit(
             y = y[np.isfinite(y)]
             if len(y) < 2:
                 continue
-            #mid, rng = np.mean(y), np.std(y)
+            # mid, rng = np.mean(y), np.std(y)
             mid, rng = stats.scoreatpercentile(y, 50), stats.iqr(y)
             distance = np.abs(y - mid)
             ifurthest = np.argmax(distance)
             while distance[ifurthest] > r * rng:
                 y = np.delete(y, ifurthest)
-                #mean, std = np.mean(y), np.std(y)
+                # mean, std = np.mean(y), np.std(y)
                 mid, rng = stats.scoreatpercentile(y, 50), stats.iqr(y)
                 distance = np.abs(y - mid)
                 ifurthest = np.argmax(distance)
@@ -346,15 +347,15 @@ def generate_badge(failed=False):
         '<rect width="88" height="20" rx="3" fill="#fff"/>'
         '</clipPath>'
     )
-    #colour = '#e05d44' if failed else '#4c1'
+    # colour = '#e05d44' if failed else '#4c1'
     colour = '#2a88d0'
 
     badge.append(
         '<g clip-path="url(#a)">'
         '<path fill="#555" d="M0 0h37v20H0z"/>'
         '<path fill="' + colour + '" d="M37 0h51v20H37z"/>'
-        '<path fill="url(#b)" d="M0 0h88v20H0z"/>'
-        '</g>'
+                                  '<path fill="url(#b)" d="M0 0h88v20H0z"/>'
+                                  '</g>'
     )
     badge.append(
         '<g fill="#fff" text-anchor="middle"'
@@ -373,8 +374,8 @@ def generate_badge(failed=False):
         ' textLength="270">' + title + '</text>'
     )
 
-    #pass_text = 'failing' if failed else 'passing'
-    #pass_text_length = str(330 if failed else 410)
+    # pass_text = 'failing' if failed else 'passing'
+    # pass_text_length = str(330 if failed else 410)
     pass_text = 'running'
     pass_text_length = str(410)
 
@@ -392,4 +393,3 @@ def generate_badge(failed=False):
 
     with open(filename, 'w') as f:
         f.write(''.join(badge))
-
