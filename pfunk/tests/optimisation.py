@@ -6,8 +6,6 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
-from scipy import stats
-
 import pfunk
 
 

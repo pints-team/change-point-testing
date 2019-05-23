@@ -17,6 +17,9 @@ def upload_results():
     """
     Upload the generated plots and report file to the website.
     """
+    # Get logger
+    log = logging.getLogger(__name__)
+
     # Refresh website
     _refresh_repo()
 

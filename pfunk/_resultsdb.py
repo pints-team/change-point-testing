@@ -93,7 +93,8 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
 
     This class is a Context Manager, so use it in a with block:
 
-    >>> with ResultsDatabaseWriter(":memory:", "a_test_name", "2019-01-01T12:34:56") as w:
+    >>> with ResultsDatabaseWriter(":memory:", "a_test_name",
+    ...                            "2019-01-01T12:34:56") as w:
     ...     w[status] = "pending"
     """
 
@@ -131,8 +132,8 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
         """
         Create a row in the table to represent the current result, and store
         its primary key.
-        Note that this method uses a temporary connection so it can be called outside of the
-        Context Manager lifecycle.
+        Note that this method uses a temporary connection so it can be called
+        outside of the Context Manager lifecycle.
         :return: None
         """
         # ensure the row exists
@@ -147,7 +148,8 @@ class ResultsDatabaseWriter(ResultsDatabaseSchemaClient):
 
     def row_id(self):
         """
-        Return the primary key for this writer's table row. Mostly for debugging.
+        Return the primary key for this writer's table row. Mostly for
+        debugging.
         """
         return self._row
 
@@ -193,6 +195,7 @@ class ResultsDatabaseReader(ResultsDatabaseSchemaClient):
     """
     Provides read access to a row in the test results database.
     """
+
     def __init__(self, connection, row_id):
         self._connection = connection
         self._row = row_id
@@ -217,6 +220,7 @@ class ResultsDatabaseResultsSet(object):
     keyed access to the fields in the results, so set['foo'] gives you a list
     of the 'foo' fields for all of the results in the set.
     """
+
     def __init__(self, result_rows):
         self._rows = result_rows
 
@@ -281,4 +285,3 @@ def find_test_dates(database):
         if test not in name_date_map.keys():
             name_date_map[test] = time.struct_time([0] * 9)
     return name_date_map
-

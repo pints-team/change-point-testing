@@ -9,7 +9,6 @@
 import argparse
 import fnmatch
 import multiprocessing
-import os
 import subprocess
 import sys
 
@@ -17,11 +16,6 @@ from itertools import product
 
 import pfunk
 import pfunk.tests
-
-
-# Debug warnings
-#import warnings
-#warnings.filterwarnings('error', category=FutureWarning)
 
 
 def list_tests(args):

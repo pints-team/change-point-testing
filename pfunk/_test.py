@@ -182,15 +182,17 @@ class FunctionalTest(object):
 
         # Seed numpy random generator, so that we know the value
         max_uint32 = np.iinfo(np.uint32).max
-        seed = int(np.mod(np.random.randint(max_uint32) + run_number, max_uint32))
+        seed = int(np.mod(
+            np.random.randint(max_uint32) + run_number, max_uint32
+        ))
         np.random.seed(seed)
 
         # Create test name
         date = pfunk.date()
         name = self.name()
 
-        # Store an identifier to the result writer's output, so we don't have to hold onto it
-        # while running the (potentially very long) test
+        # Store an identifier to the result writer's output, so we don't have
+        # to hold onto it while running the (potentially very long) test
         results_id = None
 
         # Create result writer
