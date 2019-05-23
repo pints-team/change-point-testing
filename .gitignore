@@ -26,3 +26,6 @@ conda
 
 # The default location for writing test results using SQLite
 test_results.db
+
+# Any archived test databases
+test_results.db.archived*
