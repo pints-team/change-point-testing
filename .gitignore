@@ -29,3 +29,4 @@ test_results.db
 
 # Any archived test databases
 test_results.db.archived*
+analysis/out/
