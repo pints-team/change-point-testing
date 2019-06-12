@@ -7,8 +7,7 @@
 #  functional testing software package.
 #
 
-trigger:
-- azure-ci
+trigger: none
 
 pr: none
 
