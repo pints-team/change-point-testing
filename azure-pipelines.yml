@@ -11,6 +11,11 @@ trigger: none
 
 pr: none
 
+schedules:
+- cron: "0 * * * *"
+  displayName: Hourly next functional test
+  always: true
+
 jobs:
 
 - job: RunEverything
