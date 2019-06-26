@@ -12,12 +12,12 @@ trigger: none
 pr: none
 
 schedules:
-- cron: "0 * * * *"
+- cron: '0 * * * *'
   displayName: Hourly next functional test
   branches:
     include:
     - master
-  always: true
+  always: 'true'
 
 jobs:
 
