@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/OxfordRSE/pints-functional-testing/_apis/build/status/pints-team.functional-testing?branchName=master)](https://dev.azure.com/OxfordRSE/pints-functional-testing/_build/latest?definitionId=1&branchName=master)
+
 # Pints Functional Testing
 
 This repository is used to house functional tests of [Pints](https://github.com/pints-team/pints) algorithms. Unlike unit tests, they can be statistical in nature and take long to run.
