@@ -1,12 +1,11 @@
 [![Build Status](https://dev.azure.com/OxfordRSE/pints-functional-testing/_apis/build/status/pints-team.functional-testing?branchName=master)](https://dev.azure.com/OxfordRSE/pints-functional-testing/_build/latest?definitionId=1&branchName=master)
+[![Results](https://www.cs.ox.ac.uk/projects/PINTS/functional-testing)
 
 # Pints Functional Testing
 
 This repository is used to house functional tests of [Pints](https://github.com/pints-team/pints) algorithms. Unlike unit tests, they can be statistical in nature and take long to run.
 
-[Tests running is controlled here](https://dev.azure.com/FergusCooper/PINTS)
-
-[Test results can be viewed here](https://www.cs.ox.ac.uk/projects/PINTS/functional-testing).
+[Test results can be viewed here](https://www.cs.ox.ac.uk/projects/PINTS/functional-testing) (or by clicking the blue badge above).
 
 GitHub project management features (e.g. issues) have been disabled for this repo. For tickets and discussion, please see [The main pints repository on GitHub](https://github.com/pints-team/pints).
 
