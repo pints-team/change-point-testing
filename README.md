@@ -1,5 +1,5 @@
 [![Build Status](https://dev.azure.com/OxfordRSE/pints-functional-testing/_apis/build/status/pints-team.functional-testing?branchName=master)](https://dev.azure.com/OxfordRSE/pints-functional-testing/_build/latest?definitionId=1&branchName=master)
-[![Results](https://www.cs.ox.ac.uk/projects/PINTS/functional-testing)
+[![Results](badge.svg)](https://www.cs.ox.ac.uk/projects/PINTS/functional-testing)
 
 # Pints Functional Testing
 
