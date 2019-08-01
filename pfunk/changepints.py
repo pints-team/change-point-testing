@@ -17,7 +17,7 @@ class ChangePints:
         self.penalty = penalty
 
     def data(self, source):
-        self.signal = np.array(source)
+        self.signal = np.array(source).flatten()
         algo = rpt.Pelt(model=self.model).fit(self.signal)
         self.bkpts = algo.predict(pen=self.penalty)
         return self
