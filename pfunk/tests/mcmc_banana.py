@@ -11,7 +11,6 @@ import numpy as np
 
 import pfunk
 import pfunk.plot
-from pfunk.changepints import ChangePints
 
 
 class MCMCBanana(pfunk.FunctionalTest):
@@ -133,8 +132,8 @@ class MCMCBanana(pfunk.FunctionalTest):
         result['status'] = 'done'
 
     def _analyse(self, results):
-        return not ChangePints().data(results['kld']).crossed_threshold() and \
-            pfunk.assert_not_deviated_from(0, self._pass_threshold, results, 'kld')
+        return pfunk.assert_not_deviated_from(
+            0, self._pass_threshold, results, 'kld')
 
     def _plot(self, results):
 
