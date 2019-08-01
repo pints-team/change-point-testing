@@ -33,6 +33,6 @@ class ChangePints:
         "Inverse of crossed_threshold"
         return not self.crossed_threshold(nbkpts)
 
-    def show(self):
-        rpt.display(self.signal, self.breakpoints())
-        plt.show()
+    def figure(self):
+        fig, ax = rpt.display(self.signal, self.breakpoints())
+        return fig
