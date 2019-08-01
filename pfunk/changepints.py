@@ -29,6 +29,10 @@ class ChangePints:
         "If number of breakpoints > nbkpts, return False"
         return len(self.breakpoints()) > nbkpts
 
+    def within_threshold(self, nbkpts=1):
+        "Inverse of crossed_threshold"
+        return not self.crossed_threshold(nbkpts)
+
     def show(self):
         rpt.display(self.signal, self.breakpoints())
         plt.show()

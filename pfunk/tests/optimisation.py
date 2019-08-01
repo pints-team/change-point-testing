@@ -7,6 +7,7 @@
 #  functional testing software package.
 #
 import pfunk
+from pfunk.changepints import ChangePints
 
 
 class Optimisation(pfunk.FunctionalTest):
