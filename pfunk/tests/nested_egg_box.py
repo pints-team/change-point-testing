@@ -98,5 +98,6 @@ class NestedEggBox(pfunk.FunctionalTest):
             'Egg box w. ' + self._method,
             'Kullback-Leibler-based score', 3 * self._pass_threshold)
         )
+        figs.append(pfunk.ChangePints().data(results['kld']).figure())
 
         return figs

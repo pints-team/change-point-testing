@@ -145,5 +145,6 @@ class MCMCNormal(pfunk.FunctionalTest):
             'Normal w. ' + self._method,
             'Effective sample size')
         )
+        figs.append(pfunk.ChangePints().data(results['kld']).figure())
 
         return figs

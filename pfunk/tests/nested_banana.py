@@ -105,5 +105,6 @@ class NestedBanana(pfunk.FunctionalTest):
             'Banana w. ' + self._method,
             'Kullback-Leibler divergence', 3 * self._pass_threshold)
         )
+        figs.append(pfunk.ChangePints().data(results['kld']).figure())
 
         return figs

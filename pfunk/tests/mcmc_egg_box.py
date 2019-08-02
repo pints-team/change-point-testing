@@ -141,5 +141,7 @@ class MCMCEggBox(pfunk.FunctionalTest):
             'Egg box w. ' + self._method,
             'Effective sample size')
         )
+        figs.append(pfunk.ChangePints().data(results['kld']).figure())
+
 
         return figs

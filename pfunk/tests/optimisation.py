@@ -140,6 +140,8 @@ class Optimisation(pfunk.FunctionalTest):
             self.name(),
             'Final f(best) / f(true)', 1 + 3 * self._pass_threshold)
         )
+        figs.append(pfunk.ChangePints().data(
+            results['fbest_relative']).figure())
 
         # Return
         return figs
