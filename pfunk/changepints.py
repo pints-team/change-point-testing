@@ -21,8 +21,8 @@ class ChangePints:
         :param model: model (default rbf)to use, same as options in ruptures.detection.Pelt
         :param penalty: penalty, same option as ruptures.detection.Pelt.predict
         """
-        self.model = model
-        self.penalty = penalty
+        self._model = model
+        self._penalty = penalty
 
     def data(self, source):
         """
@@ -30,16 +30,16 @@ class ChangePints:
 
         :param source: timeseries array
         """
-        self.signal = np.array(source).flatten()
-        algo = rpt.Pelt(model=self.model).fit(self.signal)
-        self.bkpts = algo.predict(pen=self.penalty)
+        self._signal = np.array(source).flatten()
+        algo = rpt.Pelt(model=self._model).fit(self._signal)
+        self._bkpts = algo.predict(pen=self._penalty)
         return self
 
     def breakpoints(self):
         """
         Returns list of breakpoints
         """
-        return self.bkpts
+        return self._bkpts
 
     def crossed_threshold(self, nbkpts=1):
         """
