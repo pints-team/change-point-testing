@@ -3,3 +3,4 @@ matplotlib>=1.5
 numpy>=1.8
 scipy>=0.14
 gitpython
+ruptures>=1.0.1
