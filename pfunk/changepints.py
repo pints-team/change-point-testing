@@ -18,8 +18,8 @@ class ChangePints:
         """
         Creates ChangePints object
 
-        :param model: model (default rbf)to use, same as options in ruptures.detection.Pelt
-        :param penalty: penalty, same option as ruptures.detection.Pelt.predict
+        :param str model: model (default rbf) to use, same as options in :class:`ruptures.detection.Pelt`
+        :param int penalty: penalty, same option as :meth:`ruptures.detection.Pelt.predict`
         """
         self._model = model
         self._penalty = penalty
@@ -39,6 +39,8 @@ class ChangePints:
     def breakpoints(self):
         """
         Returns list of breakpoints
+
+        :rtype: List[int]
         """
         return self._bkpts
 
