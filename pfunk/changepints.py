@@ -12,6 +12,10 @@ import ruptures as rpt
 class ChangePints:
     """
     Methods for changepoint detection
+
+    Example usage:
+    >>> ChangePints().data(signal).within_threshold()
+    False
     """
 
     def __init__(self, model="rbf", penalty=3):
