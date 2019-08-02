@@ -73,5 +73,5 @@ class ChangePints:
 
         :rtype: :class:`matplotlib.figure.Figure`
         """
-        fig, ax = rpt.display(self.signal, self.breakpoints())
+        fig, ax = rpt.display(self._signal, self.breakpoints())
         return fig
