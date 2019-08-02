@@ -134,3 +134,5 @@ from ._util import (  # noqa
 from ._test import (    # noqa
     FunctionalTest,
 )
+
+from .changepints import ChangePints
