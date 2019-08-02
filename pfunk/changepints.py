@@ -39,7 +39,6 @@ class ChangePints:
         self._bkpts = algo.predict(pen=self._penalty)
         return self
 
-    @property
     def breakpoints(self):
         """
         Returns list of breakpoints
@@ -56,7 +55,7 @@ class ChangePints:
         :param nbkpts: threshold number of breakpoints (default: 1)
         :rtype: bool
         """
-        return len(self.breakpoints) > nbkpts
+        return len(self.breakpoints()) > nbkpts
 
     def within_threshold(self, nbkpts=1):
         """
