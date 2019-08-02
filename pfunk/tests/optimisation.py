@@ -7,7 +7,6 @@
 #  functional testing software package.
 #
 import pfunk
-from pfunk.changepints import ChangePints
 
 
 class Optimisation(pfunk.FunctionalTest):
@@ -141,7 +140,8 @@ class Optimisation(pfunk.FunctionalTest):
             self.name(),
             'Final f(best) / f(true)', 1 + 3 * self._pass_threshold)
         )
-        figs.append(ChangePints().data(results['fbest_relative']).figure())
+        figs.append(pfunk.ChangePints().data(
+            results['fbest_relative']).figure())
 
         # Return
         return figs
