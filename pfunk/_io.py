@@ -6,6 +6,7 @@
 #  For licensing information, see the LICENSE file distributed with the Pints
 #  functional testing software package.
 #
+import logging
 import numpy as np
 import os
 import re
@@ -53,8 +54,14 @@ def find_test_plots():
     plots = {}
     dates = {}
 
-    # Find all plot files
+    # Check if directory exists
     root = pfunk.DIR_PLOT
+    if not os.path.isdir(root):
+        log = logging.getLogger(__name__)
+        log.warning('Path to plots is not a directory: ' + root)
+        return plots, dates
+
+    # Find all plot files
     for path in os.listdir(root):
 
         # Attempt to read filename as test result
@@ -328,6 +335,14 @@ def generate_badge(failed=False):
     """
     Generates a badge for github.
     """
+    # Check plot path exists
+    if not os.path.isdir(pfunk.DIR_PLOT):
+        log = logging.getLogger(__name__)
+        log.warning(
+            'Unable to create badge: path to plots is not a directory: '
+            + pfunk.DIR_PLOT)
+        return
+
     # Plot location, relative to file
     filename = os.path.join(pfunk.DIR_PLOT, 'badge.svg')
 
