@@ -256,6 +256,7 @@ def find_test_results(name, database):
 def connect_to_database(database):
     """
     Establishes a connection to a test results database.
+
     :param database: A path to a pfunk test results database.
     :return: An open sqlite3 connection to the database.
     """
@@ -264,13 +265,17 @@ def connect_to_database(database):
     return connection
 
 
-def find_test_dates(database):
+def find_test_dates(database, ignore_unknown=True):
     """
     Returns a dict mapping test names to the time (a ``time.struct_time``) when
     they were last run.
+
     If a test has not been run, then a default time (Jan 1 1970 00:00:00 UTC)
     is set.
+    Only tests that are currently defined in ``pfunk`` are returned, to get the
+    full list, use ``ignore_unknown=False``.
     """
+    # Fetch test names and dates
     connection = connect_to_database(database)
     _ensure_database_schema(connection)
     names_and_dates = connection.execute(
@@ -281,7 +286,16 @@ def find_test_dates(database):
     name_date_map = {
         t[0]: time.strptime(t[1], '%Y-%m-%d-%H:%M:%S') for t in names_and_dates
     }
-    for test in pfunk.tests.tests():
-        if test not in name_date_map.keys():
+
+    # Add date for known tests that are not mentioned in the db
+    known_tests = pfunk.tests.tests()
+    for test in known_tests:
+        if test not in name_date_map:
             name_date_map[test] = time.struct_time([0] * 9)
+
+    # Remove unknown tests that are mentioned in the db
+    unknown_tests = set(name_date_map.keys()) - set(known_tests)
+    for test in unknown_tests:
+        del(name_date_map[test])
+
     return name_date_map
