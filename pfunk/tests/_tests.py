@@ -92,7 +92,7 @@ add(MCMCBanana(rwg, 'DreamMCMC', 4, 1.0))
 add(MCMCBanana(rwg, 'EmceeHammerMCMC', 3, 1.0))
 add(MCMCBanana(rwg, 'HaarioACMC', 1, 1.0))
 add(MCMCBanana(rwg, 'HaarioBardenetACMC', 1, 1.0))
-#add(MCMCBanana(rwg, 'HamiltonianMCMC', 1, 1.0))    # gradient
+add(MCMCBanana(rwg, 'HamiltonianMCMC', 1, 1.0))
 add(MCMCBanana(rwg, 'MALAMCMC', 1, 1.0))
 add(MCMCBanana(rwg, 'MetropolisRandomWalkMCMC', 5, 1.0))
 add(MCMCBanana(rwg, 'PopulationMCMC', 1, 1.0, max_iter=50000))
