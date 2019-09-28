@@ -44,30 +44,32 @@ def rwg(name, date, path, identifier=None):
     return pfunk.ResultsDatabaseWriter(path, name, date, identifier)
 
 
+# All optimisers
 from .optimisation import OptimisationLogistic
 add(OptimisationLogistic(rwg, 'CMAES', 1.0))
-add(OptimisationLogistic(rwg, 'XNES', 1.0))
-add(OptimisationLogistic(rwg, 'SNES', 1.0))
-add(OptimisationLogistic(rwg, 'PSO', 1.0))
 add(OptimisationLogistic(rwg, 'NelderMead', 1.0))
+add(OptimisationLogistic(rwg, 'PSO', 1.0))
+add(OptimisationLogistic(rwg, 'SNES', 1.0))
+add(OptimisationLogistic(rwg, 'XNES', 1.0))
 
 
+# Global optimisers
 from .optimisation import OptimisationFN
 add(OptimisationFN(rwg, 'CMAES', 1.0))
-add(OptimisationFN(rwg, 'XNES', 1.0))
-add(OptimisationFN(rwg, 'SNES', 1.0))
 add(OptimisationFN(rwg, 'PSO', 1.0))
-add(OptimisationFN(rwg, 'NelderMead', 1.0))
+add(OptimisationFN(rwg, 'SNES', 1.0))
+add(OptimisationFN(rwg, 'XNES', 1.0))
 
 
+# Global optimisers
 from .optimisation import OptimisationBR
 add(OptimisationBR(rwg, 'CMAES', 2.0))
-add(OptimisationBR(rwg, 'XNES', 2.0))
-add(OptimisationBR(rwg, 'SNES', 4.0))
 add(OptimisationBR(rwg, 'PSO', 2.0))
-add(OptimisationBR(rwg, 'NelderMead', 2.0))
+add(OptimisationBR(rwg, 'SNES', 4.0))
+add(OptimisationBR(rwg, 'XNES', 2.0))
 
 
+# All MCMC methods
 from .mcmc_normal import MCMCNormal
 add(MCMCNormal(rwg, 'DifferentialEvolutionMCMC', 3, 0.1))
 add(MCMCNormal(rwg, 'DreamMCMC', 3, 0.1))
@@ -81,49 +83,39 @@ add(MCMCNormal(rwg, 'PopulationMCMC', 1, 1.0))
 add(MCMCNormal(rwg, 'RelativisticMCMC', 1, 1.0))
 add(MCMCNormal(rwg, 'SliceDoublingMCMC', 1, 1.0))
 add(MCMCNormal(rwg, 'SliceStepoutMCMC', 1, 1.0))
-# Multi-chain methods
 
 
-# issue 518 - turn off banana test for mcmc samplers
+# All MCMC methods?
+#   issue 518 - turn off banana test for mcmc samplers
+#   michael - have re-enabled these to see what happens
 from .mcmc_banana import MCMCBanana
-# Single-chain methods
-add(MCMCBanana(rwg, 'DifferentialEvolutionMCMC', 3, 1.0))
+add(MCMCBanana(rwg, 'DifferentialEvolutionMCMC', 4, 1.0))
 add(MCMCBanana(rwg, 'DreamMCMC', 4, 1.0))
-add(MCMCBanana(rwg, 'EmceeHammerMCMC', 3, 1.0))
+add(MCMCBanana(rwg, 'EmceeHammerMCMC', 4, 1.0))
 add(MCMCBanana(rwg, 'HaarioACMC', 1, 1.0))
 add(MCMCBanana(rwg, 'HaarioBardenetACMC', 1, 1.0))
 add(MCMCBanana(rwg, 'HamiltonianMCMC', 1, 1.0))
 add(MCMCBanana(rwg, 'MALAMCMC', 1, 1.0))
-add(MCMCBanana(rwg, 'MetropolisRandomWalkMCMC', 5, 1.0))
+add(MCMCBanana(rwg, 'MetropolisRandomWalkMCMC', 1, 1.0))
 add(MCMCBanana(rwg, 'PopulationMCMC', 1, 1.0, max_iter=50000))
 add(MCMCBanana(rwg, 'RelativisticMCMC', 1, 1.0))
 add(MCMCBanana(rwg, 'SliceDoublingMCMC', 1, 1.0))
 add(MCMCBanana(rwg, 'SliceStepoutMCMC', 1, 1.0))
 
 
-# issue 516 - turn off egg box test for mcmc samplers
-# due to high difficulty of the problem
-#from .mcmc_egg_box import MCMCEggBox
-# Single-chain methods
-#add(MCMCEggBox(rwg, 'AdaptiveCovarianceMCMC', 1, 1.0))
-#add(MCMCEggBox(rwg, 'HamiltonianMCMC', 1, 1.0))
-#add(MCMCEggBox(rwg, 'MetropolisRandomWalkMCMC', 1, 1.0))
-#add(MCMCEggBox(rwg, 'PopulationMCMC', 1, 1.0))
-# Multi-chain methods
-#add(MCMCEggBox(rwg, 'DifferentialEvolutionMCMC', 6, 1.0))
-#add(MCMCEggBox(rwg, 'DreamMCMC', 6, 1.0))
-
-
+# Nested samplers
 from .nested_normal import NestedNormal
 add(NestedNormal(rwg, 'NestedEllipsoidSampler', 0.16))
 add(NestedNormal(rwg, 'NestedRejectionSampler', 0.16))
 
 
+# Nested samplers
 from .nested_banana import NestedBanana
 add(NestedBanana(rwg, 'NestedEllipsoidSampler', 0.1))
 add(NestedBanana(rwg, 'NestedRejectionSampler', 1.0))
 
 
+# Nested samplers
 from .nested_egg_box import NestedEggBox
 add(NestedEggBox(rwg, 'NestedEllipsoidSampler', 0.12))
 add(NestedEggBox(rwg, 'NestedRejectionSampler', 0.12))
