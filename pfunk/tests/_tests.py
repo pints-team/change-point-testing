@@ -77,12 +77,12 @@ add(MCMCNormal(rwg, 'EmceeHammerMCMC', 3, 0.1))
 add(MCMCNormal(rwg, 'HaarioACMC', 1, 0.05))
 add(MCMCNormal(rwg, 'HaarioBardenetACMC', 1, 0.05))
 add(MCMCNormal(rwg, 'HamiltonianMCMC', 1, 0.05, max_iter=1000))
-add(MCMCNormal(rwg, 'MALAMCMC', 1, 1.0))
-add(MCMCNormal(rwg, 'MetropolisRandomWalkMCMC', 1, 0.2))
+add(MCMCNormal(rwg, 'MALAMCMC', 1, 0.1))
+add(MCMCNormal(rwg, 'MetropolisRandomWalkMCMC', 0.1, 0.2))
 add(MCMCNormal(rwg, 'PopulationMCMC', 1, 1.0))
 add(MCMCNormal(rwg, 'RelativisticMCMC', 1, 1.0))
-add(MCMCNormal(rwg, 'SliceDoublingMCMC', 1, 1.0))
-add(MCMCNormal(rwg, 'SliceStepoutMCMC', 1, 1.0))
+add(MCMCNormal(rwg, 'SliceDoublingMCMC', 1, 0.01))
+add(MCMCNormal(rwg, 'SliceStepoutMCMC', 1, 0.01))
 
 
 # All MCMC methods?
