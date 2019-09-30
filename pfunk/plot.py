@@ -18,6 +18,20 @@ import pfunk
 def variable(results, variable, title, ylabel, threshold=None):
     """
     Creates and returns a default plot for a variable vs commits.
+
+    Parameters
+    ----------
+    results : ResultsDatabaseResultsSet
+        Results for this plot
+    variable : str
+        The variable to plot
+    title : str
+        A title for this plot
+    ylabel : str
+        A y-axis label
+    threshold : float
+        An optional pass/fail threshold: if given, a horizontal line will be
+        drawn at this value.
     """
     fig = plt.figure(figsize=(11, 4.5))
     plt.suptitle(title + ' : ' + pfunk.date())

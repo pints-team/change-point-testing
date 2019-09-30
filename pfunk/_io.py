@@ -118,19 +118,19 @@ def gather_statistics_per_commit(
     and ``mean`` and ``std`` are the mean and standard deviations per unique
     commit.
 
-    Arguments::
-
-    ``results``
+    Parameters
+    ----------
+    results : ResultsDatabaseResultsSet
         The results object to get data from.
-    ``variable``
+    variable : str
         The variable to get data for.
-    ``remove_outliers``
+    remove_outliers : boolean
         Optional argument. If set to ``True`` outliers will be removed from the
         returned data, and won't be included when calculating mean and std.
-    ``short_names``
+    short_names : boolean
         Optional argument. If set to ``False`` the long commit names will be
         returned.
-    ``n``
+    n : int
         Optional argument. If set, only the last n unique commits will be
         analysed
 

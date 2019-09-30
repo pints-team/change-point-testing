@@ -235,7 +235,7 @@ class ResultsDatabaseResultsSet(object):
         return [self.get_single_item(i) for i in item]
 
 
-def find_test_results(name, database):
+def find_test_results(name, database, ignore_incomplete=True):
     """
     Fetches a set of all results for a test with the given name in the
     database.
@@ -244,9 +244,13 @@ def find_test_results(name, database):
     :return: A ResultsDatabaseResultsSet with all of the relevant test results.
     """
     connection = connect_to_database(database)
-    results = connection.execute(
-        'select identifier from test_results where name like ?'
-        'order by pints_committed_date, pfunk_committed_date', [name])
+    q1 = 'select identifier from test_results where name like ?'
+    q2 = ' AND status like ?'
+    q3 = ' order by pints_committed_date, pfunk_committed_date'
+    if ignore_incomplete:
+        results = connection.execute(q1 + q2 + q3, [name, 'done'])
+    else:
+        results = connection.execute(q1 + q2, [name])
     row_ids = [r[0] for r in results.fetchall()]
     row_readers = [
         ResultsDatabaseReader(connection, row_id) for row_id in row_ids]
