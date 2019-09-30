@@ -65,10 +65,8 @@ class MCMCNormal(pfunk.FunctionalTest):
         sigma = np.diag(np.array([1, 3]))
         log_pdf = pints.toy.GaussianLogPDF(xtrue, sigma)
 
-        # Create a log prior
-        log_prior = pints.MultivariateGaussianLogPrior(xtrue + 1, sigma * 2)
-
         # Generate random points
+        log_prior = pints.MultivariateGaussianLogPrior(xtrue + 1, sigma * 2)
         x0 = log_prior.sample(self._nchains)
 
         # Create a realistic sigma - for some methods only!

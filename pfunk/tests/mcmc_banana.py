@@ -80,10 +80,8 @@ class MCMCBanana(pfunk.FunctionalTest):
         # Create a log pdf (use multi-modal, but with a single mode)
         log_pdf = TwistedGaussianLogPDF(dimension=2, b=0.1)
 
-        # Generate a prior
-        log_prior = MultivariateGaussianLogPrior([0, 0], [[10, 0], [0, 10]])
-
         # Generate random starting point(s)
+        log_prior = MultivariateGaussianLogPrior([0, 0], [[10, 0], [0, 10]])
         x0 = log_prior.sample(self._nchains)
 
         # Set up a sampling routine
