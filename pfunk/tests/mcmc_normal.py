@@ -74,6 +74,12 @@ class MCMCNormal(pfunk.FunctionalTest):
             log_pdf, self._nchains, x0, sigma0=sigma, method=method)
         mcmc.set_parallel(False)  # allow external parallelisation instead
 
+        # Set hyperparameters for selected methods
+        if method == pints.MALAMCMC:
+            for sampler in mcmc.samplers():
+                # Set MALA step size
+                sampler.set_epsilon([1.5, 1.5])
+
         # Log to file
         if not DEBUG:
             mcmc.set_log_to_screen(False)
