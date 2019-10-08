@@ -69,11 +69,6 @@ class MCMCNormal(pfunk.FunctionalTest):
         log_prior = pints.MultivariateGaussianLogPrior(xtrue + 1, sigma * 2)
         x0 = log_prior.sample(self._nchains)
 
-        # Create a realistic sigma - for some methods only!
-        sigma = None
-        if method == pints.HamiltonianMCMC:
-            sigma = np.diag(np.array([1, 3]))
-
         # Create a sampling routine
         mcmc = pints.MCMCController(
             log_pdf, self._nchains, x0, sigma0=sigma, method=method)
