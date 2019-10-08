@@ -84,8 +84,12 @@ class MCMCBanana(pfunk.FunctionalTest):
         log_prior = MultivariateGaussianLogPrior([0, 0], [[10, 0], [0, 10]])
         x0 = log_prior.sample(self._nchains)
 
+        # Set an initial covariance matrix
+        sigma0 = np.diag(np.array([1, 3]))
+
         # Set up a sampling routine
-        mcmc = MCMCController(log_pdf, self._nchains, x0, method=method)
+        mcmc = MCMCController(
+            log_pdf, self._nchains, x0, sigma0=sigma0, method=method)
         mcmc.set_parallel(False)  # allow external parallelisation instead
 
         # Log to file
