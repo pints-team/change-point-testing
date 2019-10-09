@@ -87,6 +87,10 @@ class MCMCBanana(pfunk.FunctionalTest):
         # Set an initial covariance matrix
         sigma0 = np.diag(np.array([1, 3]))
 
+        # Population MCMC seems to work much better without an initial sigma
+        if method == pints.PopulationMCMC:
+            sigma0 = None
+
         # Set up a sampling routine
         mcmc = MCMCController(
             log_pdf, self._nchains, x0, sigma0=sigma0, method=method)
