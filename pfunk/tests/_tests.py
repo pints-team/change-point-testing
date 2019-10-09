@@ -71,7 +71,7 @@ add(OptimisationBR(rwg, 'XNES', 2.0))
 
 # All MCMC methods
 from .mcmc_normal import MCMCNormal
-add(MCMCNormal(rwg, 'DifferentialEvolutionMCMC', 3, 0.1))
+add(MCMCNormal(rwg, 'DifferentialEvolutionMCMC', 3, 0.2))
 add(MCMCNormal(rwg, 'DreamMCMC', 3, 0.1))
 add(MCMCNormal(rwg, 'EmceeHammerMCMC', 3, 0.1))
 add(MCMCNormal(rwg, 'HaarioACMC', 1, 0.05))
