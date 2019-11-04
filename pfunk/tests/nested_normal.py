@@ -72,7 +72,7 @@ class NestedNormal(pfunk.FunctionalTest):
         sampler.set_n_posterior_samples(1000)
 
         # Run
-        samples, logZ = sampler.run()
+        samples = sampler.run()
 
         # Store kullback-leibler divergence
         result['kld'] = log_pdf.kl_divergence(samples)
