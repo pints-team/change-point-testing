@@ -64,7 +64,7 @@ class NestedEggBox(pfunk.FunctionalTest):
             [0, 0], [[d, 0], [0, d]])
 
         # Create a nested sampler
-        sampler = method(log_pdf, log_prior)
+        sampler = pints.NestedController(log_pdf, log_prior, method=method)
 
         # Log to file
         if not DEBUG:

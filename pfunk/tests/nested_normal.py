@@ -61,7 +61,7 @@ class NestedNormal(pfunk.FunctionalTest):
         log_prior = pints.MultivariateGaussianLogPrior(xtrue + 1, sigma * 2)
 
         # Create a nested sampler
-        sampler = method(log_pdf, log_prior)
+        sampler = pints.NestedController(log_pdf, log_prior, method=method)
 
         # Log to file
         if not DEBUG:
