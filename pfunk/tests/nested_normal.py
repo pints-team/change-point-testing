@@ -69,7 +69,7 @@ class NestedNormal(pfunk.FunctionalTest):
 
         # Set max iterations
         sampler.set_iterations(4000)
-        sampler.set_posterior_samples(1000)
+        sampler.set_n_posterior_samples(1000)
 
         # Run
         samples, logZ = sampler.run()
