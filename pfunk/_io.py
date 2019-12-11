@@ -289,7 +289,7 @@ def generate_report(database):
         if failed:
             f.write('Failed tests:' + 2 * eol)
             for name in failed:
-                href = name.lower().replace('_', '-')
+                href = name.lower().replace('_', '')
                 f.write(f'- [{name}](#{href}){eol}')
         else:
             f.write('All tests passed.' + eol)
@@ -299,7 +299,7 @@ def generate_report(database):
         if passed:
             f.write('Passed tests:' + 2 * eol)
             for name in passed:
-                href = name.lower().replace('_', '-')
+                href = name.lower().replace('_', '')
                 f.write(f'- [{name}](#{href}){eol}')
             f.write(eol)
 
