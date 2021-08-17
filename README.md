@@ -1,9 +1,9 @@
 [![Build Status](https://dev.azure.com/OxfordRSE/pints-functional-testing/_apis/build/status/pints-team.functional-testing?branchName=master)](https://dev.azure.com/OxfordRSE/pints-functional-testing/_build/latest?definitionId=1&branchName=master)
 [![Results](badge-results.svg)](https://www.cs.ox.ac.uk/projects/PINTS/functional-testing)
 
-# Pints Functional Testing
+# Pints Change Point Testing
 
-This repository is used to house functional tests of [Pints](https://github.com/pints-team/pints) algorithms. Unlike unit tests, they can be statistical in nature and take long to run.
+This repository is used to code that will become a change point detection module, used to see if the statistical properties of a piece of software change over time. It will be used to make sure [PINTS](https://github.com/pints-team/pints) functions reliably.
 
 [Test results can be viewed here](https://www.cs.ox.ac.uk/projects/PINTS/functional-testing) (or by clicking the blue badge above).
 
