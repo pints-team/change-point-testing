@@ -5,9 +5,9 @@
 
 This repository is used to code that will become a change point detection module, used to see if the statistical properties of a piece of software change over time. It will be used to make sure [PINTS](https://github.com/pints-team/pints) functions reliably.
 
-[Test results can be viewed here](https://www.cs.ox.ac.uk/projects/PINTS/functional-testing) (or by clicking the blue badge above).
+The information here is out of date. This will be rewritten at some point: https://github.com/pints-team/change-point-testing/issues/38
 
-GitHub project management features (e.g. issues) have been disabled for this repo. For tickets and discussion, please see [The main pints repository on GitHub](https://github.com/pints-team/pints).
+[Old test results can be viewed here](https://www.cs.ox.ac.uk/projects/PINTS/functional-testing) (or by clicking the blue badge above).
 
 
 ## Installation
