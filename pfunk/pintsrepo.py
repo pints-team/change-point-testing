@@ -52,13 +52,13 @@ def info():
 
 def pull():
     """
-    Pulls remote changes and checks out the latest commit from master.
+    Pulls remote changes and checks out the latest commit from main.
     """
     log = logging.getLogger(__name__)
 
-    log.info('Checking out master branch')
+    log.info('Checking out main branch')
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
-    repo.git.checkout('master')
+    repo.git.checkout('main')
 
     log.info('Perfoming git pull')
     log.info(repo.git.pull())
@@ -106,14 +106,14 @@ def prepare_module():
 
 def latest_commits(n):
     """
-    Returns the hashes of the last ``n`` commits in the Pints repo (master
+    Returns the hashes of the last ``n`` commits in the Pints repo (main
     branch), sorted old-to-new.
     """
     n = int(n)
     assert n > 0
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
-    repo.git.checkout('master')
-    commits = list(repo.iter_commits('master', max_count=n))
+    repo.git.checkout('main')
+    commits = list(repo.iter_commits('main', max_count=n))
     commits.reverse()
     return [c.hexsha for c in commits]
 
@@ -121,14 +121,14 @@ def latest_commits(n):
 def commits_since(commit):
     """
     Returns the hashes of all commits since (and including) the given commit
-    (specified as a hash) in the Pitns repo (master branch), sorted old-to-new.
+    (specified as a hash) in the Pitns repo (main branch), sorted old-to-new.
     """
     repo = git.Repo(pfunk.DIR_PINTS_REPO)
-    repo.git.checkout('master')
+    repo.git.checkout('main')
 
     found = False
     commits = []
-    for c in repo.iter_commits('master'):
+    for c in repo.iter_commits('main'):
         commits.append(c.hexsha)
         if c.hexsha == commit:
             found = True

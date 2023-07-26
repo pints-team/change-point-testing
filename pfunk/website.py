@@ -38,9 +38,7 @@ def upload_results():
 
 
 def _refresh_repo():
-    """
-    Pulls the website submodule
-    """
+    """ Pulls the website submodule. """
     log = logging.getLogger(__name__)
 
     log.info('Loading website repo')
