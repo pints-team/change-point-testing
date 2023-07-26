@@ -16,14 +16,14 @@ schedules:
   displayName: Hourly next functional test
   branches:
     include:
-    - master
+    - main
   always: true
 
 jobs:
 
 - job: RunEverything
 
-  displayName: Master job to run all steps
+  displayName: Main job to run all steps
 
   variables:
     funkDir: /home/pints/functional-testing
